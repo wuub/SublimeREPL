@@ -75,17 +75,27 @@ class ReplView(object):
         view.settings().set("repl_id", repl.id)
         view.settings().set("repl", True)
         self.repl = repl
-        # init
         self._view = view
         if syntax:
             view.set_syntax_file(syntax)
         self._output_end = view.size()
+        self.view_init()
         self._repl_reader = ReplReader(repl)
         self._repl_reader.start()
         self._history = History()
         self._history_match = None
         # begin refreshing attached view
         self.update_view_loop()
+
+    def view_init(self):
+        from srlic import verify_license
+        lic = sublime.load_settings("Global.sublime-settings").get("sublimerepl_license")
+        (ok, licensee) = verify_license(lic)
+        if ok:
+            self.write("SublimeREPL Licenced to: %s\n" % (licensee,))
+        else:
+            self.write("!!! SublimeREPL - for evaluation and Non-Commercial use only !!!\n")
+
 
     def update_view(self, view):
         """If projects were switched, a view could be a new instance"""
@@ -171,14 +181,16 @@ class ReplView(object):
 
 class OpenReplCommand(sublime_plugin.WindowCommand):
     def run(self, encoding, type, syntax=None, *args, **kwds):
-        window = self.window
-        r = repl.Repl.subclass(type)(encoding, *args, **kwds)
-        view = window.new_file()
-        rv = ReplView(view, r, syntax)
-        repl_views[r.id] = rv
-        view.set_scratch(True)
-        view.set_name("*REPL* [%s]" % (r.name(),))
-        
+        try:
+            window = self.window
+            r = repl.Repl.subclass(type)(encoding, *args, **kwds)
+            view = window.new_file()
+            rv = ReplView(view, r, syntax)
+            repl_views[r.id] = rv
+            view.set_scratch(True)
+            view.set_name("*REPL* [%s]" % (r.name(),))
+        except Exception, e:
+            sublime.error_message(str(e))    
 
 class ReplEnterCommand(sublime_plugin.TextCommand):
     def run(self, edit):
