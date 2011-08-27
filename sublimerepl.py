@@ -75,6 +75,10 @@ class ReplView(object):
         self.repl_reader = ReplReader(repl)
         self.repl_reader.start()
         self.update_view_loop()
+        self._history_stack = []
+        self._history_pos = None
+        self._history_prefix = None
+
 
     def user_input(self):
         """Returns text entered by the user"""
@@ -121,6 +125,36 @@ class ReplView(object):
         if is_still_working:
             sublime.set_timeout(self.update_view_loop, 100)
 
+    def push_history(self, command):
+        # slice newline from command
+        self._history_stack.append(command[:-1])
+        self._history_prefix = None
+        self._history_pos = None
+
+    def view_previous_command(self, edit):
+        if self._history_pos is None:
+            self._history_pos = len(self._history_stack) - 1
+            self._history_prefix = self.user_input()
+        else:
+            if self._history_pos == 0:
+                return 
+            self._history_pos -= 1
+        self.replace_current_with_history(edit)
+        
+    def replace_current_with_history(self, edit):
+        user_region = sublime.Region(self.output_end, self.view.size())
+        self.view.erase(edit, user_region)
+        self.view.insert(edit, user_region.begin(), self._history_stack[self._history_pos])
+
+    def view_next_command(self, edit):
+        if self._history_pos is None:
+            return
+        if self._history_pos == len(self._history_stack) - 1:
+            return 
+        self._history_pos += 1
+        self.replace_current_with_history(edit)
+
+
 
 
 class SubprocessRepl(Repl):
@@ -155,44 +189,65 @@ class SubprocessRepl(Repl):
 import sublime_plugin
 repls = {}
 
+def repl_view(view):
+    id = view.settings().get("repl_id")
+    if not repls.has_key(id):
+        return None
+    return repls[id]
+
+
 class OpenReplCommand(sublime_plugin.WindowCommand):
     def run(self):
         window = self.window
         view = window.new_file()
+        view.set_scratch(True)
         cmd = ["cmd", "/Q"]
         r = SubprocessRepl("cp852", cmd)
         rv = ReplView(view, r)
         repls[r.id] = rv
         
 
+class ReplEnterCommand(sublime_plugin.TextCommand):
+    def run(self, edit):
+        self.view.run_command("insert", {"characters": "\n"})
+        v = self.view
+        if v.sel()[0].begin() != v.size():
+            return
+        rv = repl_view(v)
+        command = rv.user_input()
+        rv.adjust_end()
+        rv.push_history(command)
+        rv.repl.write(command)
 
-class SublimeReplListener(sublime_plugin.EventListener):
-    def rv(self, view):
-        ri = view.settings().get("repl_id")
-        if not repls.has_key(ri):
-            return None
-        return repls[ri]
-        
+class ReplViewPreviousCommand(sublime_plugin.TextCommand):
+    def run(self, edit):
+        repl_view(self.view).view_previous_command(edit)
+
+class ReplViewNextCommand(sublime_plugin.TextCommand):
+    def run(self, edit):
+        repl_view(self.view).view_next_command(edit)
+
+class SublimeReplListener(sublime_plugin.EventListener):        
     def on_close(self, view):
-        rv = self.rv(view)
+        rv = repl_view(view)
         if not rv:
             return
         print "closing"
         rv.repl.close()
 
-    def on_modified(self, view):
-        rv = self.rv(view)
-        if not rv:
-            return
-        sel = view.sel()[0]
-        if sel.end() != sel.begin() or sel.end() != view.size():
-            return
-        last = view.substr(sublime.Region(view.size() - 1, view.size()))
-        if last != "\n":
-            return
-        command = rv.user_input()
-        rv.adjust_end()
-        rv.repl.write(command)
+#     def on_modified(self, view):
+#         rv = self.rv(view)
+#         if not rv:
+#             return
+#         sel = view.sel()[0]
+#         if sel.end() != sel.begin() or sel.end() != view.size():
+#             return
+#         last = view.substr(sublime.Region(view.size() - 1, view.size()))
+#         if last != "\n":
+#             return
+#         command = rv.user_input()
+#         rv.adjust_end()
+#         rv.repl.write(command)
 
 
 # class Reader(threading.Thread):
