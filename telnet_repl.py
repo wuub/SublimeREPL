@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import telnetlib
 import repl
 
