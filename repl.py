@@ -1,0 +1,70 @@
+from uuid import uuid4  
+from codecs import getincrementaldecoder, getencoder
+
+
+class NoReplError(LookupError):
+    """Looking for Repl subclass failed"""
+    pass
+
+class Repl(object):
+    """Class that represents a process that is being executed.
+       For example this can be python, bash or a telnet session"""
+
+    @classmethod
+    def subclass(cls, type):
+        """Returns subclass of Repl of given type eq. SubprocessRepl"""
+        todo = [cls]
+        seen = set()
+        while True:
+            if not todo:
+                raise NoReplError
+            cur = todo.pop()
+            if cur in seen:
+                continue
+            if cur.__name__[:-4].lower() == type:
+                return cur
+            todo.extend(cur.__subclasses__())
+
+    def __init__(self, encoding):
+        self.id = uuid4().hex
+        self.decoder = getincrementaldecoder(encoding)()
+        self.encoder = getencoder(encoding)
+
+    def close(self):
+        if self.is_alive():
+            self.kill()
+
+    def name(self):
+        """Returns name of this repl that should be used as a filename"""
+        return NotImplementedError
+    
+    def is_alive(self):
+        """ Returns true if the undelying process is stil working"""
+        raise NotImplementedError
+    
+    def write_bytes(self, bytes):
+        raise NotImplementedError        
+
+    def read_bytes(self):
+        """Reads at lest one byte of Repl output. Returns None if output died.
+           Can block!!!"""
+        raise NotImplementedError
+
+    def kill(self):
+        """Kills the underlying repl"""
+        raise NotImplementedError
+
+    def write(self, command):
+        """Encodes and evaluates a given command"""
+        (bytes, how_many) = self.encoder(command)
+        return self.write_bytes(bytes)
+
+    def read(self):
+        """Reads at least one decoded char of output"""
+        while True:
+            bs = self.read_bytes()
+            if not bs:
+                return None
+            output = self.decoder.decode(bs)
+            if output:
+                return output

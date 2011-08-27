@@ -1,0 +1,40 @@
+[
+    {
+        "caption": "REPL",
+        "mnemonic": "r",
+        "id": "REPL",
+        "children":
+        [
+            {"command": "open_repl", 
+             "caption": "Python",
+             "mnemonic": "p",
+             "args": {
+                "type": "subprocess",
+                "encoding": "utf8",
+                "cmd": ["python", "-i"],
+                "syntax": "Packages/Python/Python.tmLanguage"
+                }
+            },
+            {"command": "open_repl", 
+             "caption": "Lua",
+             "mnemonic": "l",
+             "args": {
+                "type": "subprocess",
+                "encoding": "utf8",
+                "cmd": ["lua", "-i"],
+                "syntax": "Packages/Lua/Lua.tmLanguage"
+                }
+            },
+            {"command": "open_repl", 
+             "caption": "Windows-CMD",
+             "mnemonic": "c",
+             "args": {
+                "type": "subprocess",
+                "encoding": "cp852",
+                "cmd": ["cmd", "\\Q"],
+                "syntax": "Packages/Text/Plain text.tmLanguage"
+                }
+            }
+        ]
+    }
+]

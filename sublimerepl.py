@@ -2,8 +2,7 @@ import threading
 import Queue
 import sublime
 import sublime_plugin
-
-
+import repl
 
 repl_views = {}
 
@@ -14,54 +13,6 @@ def repl_view(view):
     rv = repl_views[id]
     rv.update_view(view)
     return rv
-
-
-
-class Repl(object):
-    """Class that represents a process that is being executed.
-       For example this can be python, bash or a telnet session"""
-
-    def __init__(self, encoding):
-        from uuid import uuid4
-        from codecs import getincrementaldecoder, getencoder
-        self.id = uuid4().hex
-        self.decoder = getincrementaldecoder(encoding)()
-        self.encoder = getencoder(encoding)
-
-    def name(self):
-        """Returns name of this repl that should be used as a filename"""
-        return NotImplementedError
-    
-    def is_alive(self):
-        """ Returns true if the undelying process is stil working"""
-        raise NotImplementedError
-    
-    def write_bytes(self, bytes):
-        raise NotImplementedError        
-
-    def read_bytes(self):
-        """Reads at lest one byte of Repl output. Returns None if output died.
-           Can block!!!"""
-        raise NotImplementedError
-
-    def close(self):
-        """Closes underlying repl"""
-        raise NotImplementedError
-
-    def write(self, command):
-        """Encodes and evaluates a given command"""
-        (bytes, how_many) = self.encoder(command)
-        return self.write_bytes(bytes)
-
-    def read(self):
-        """Reads at least one decoded char of output"""
-        while True:
-            bs = self.read_bytes()
-            if not bs:
-                return None
-            output = self.decoder.decode(bs)
-            if output:
-                return output
 
 
 class ReplReader(threading.Thread):
@@ -185,7 +136,10 @@ class ReplView(object):
             self.write(data)
         if is_still_working:
             sublime.set_timeout(self.update_view_loop, 100)
-
+        else:
+            self.write("\n***Repl Closed***\n""")
+            self._view.set_read_only(True)
+            
     def push_history(self, command):
         self._history.push(command)
         self._history_match = None
@@ -215,85 +169,15 @@ class ReplView(object):
         self._view.insert(edit, user_region.begin(), cmd)
 
 
-class SubprocessRepl(Repl):
-    def __init__(self, encoding, cmd):
-        import subprocess, os
-        super(SubprocessRepl, self).__init__(encoding)
-        self._cmd = cmd
-        startupinfo = None
-        if os.name == 'nt':
-            startupinfo = subprocess.STARTUPINFO()
-            startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
-        self.popen = subprocess.Popen(
-                        cmd, 
-                        startupinfo=startupinfo,
-                        bufsize=1, 
-                        stderr=subprocess.STDOUT,
-                        stdin=subprocess.PIPE,
-                        stdout=subprocess.PIPE)
-
-    def name(self):
-        if isinstance(self._cmd, basestring):
-            return self._cmd
-        return " ".join([str(x) for x in self._cmd])
-
-    def is_alive(self):
-        return self.popen.poll() is None
-
-    def read_bytes(self):
-        # this is windows specific problem, that you cannot tell if there 
-        # are more bytes ready, so we read
-        return self.popen.stdout.read(1)
-
-    def write_bytes(self, bytes):
-        si = self.popen.stdin 
-        si.write(bytes)
-        si.flush()
-
-    def close(self):
-        if self.is_alive():
-            self.popen.kill()
-
-
-class TelnetRepl(Repl):
-    def __init__(self, encoding, host="localhost", port=23):
-        import telnetlib
-        super(TelnetRepl, self).__init__(encoding)
-        self._telnet = telnetlib.Telnet()
-        self._telnet.open(host, int(port))
-        self._alive = True
-
-    def name(self):
-        return "%s:%s" % (self._telnet.host, self._telnet.port)
-
-    def is_alive(self):
-        return self._alive
-
-    def read_bytes(self):
-        return self._telnet.read_some()
-
-    def write_bytes(self, bytes):
-        self._telnet.write(bytes)
-
-    def close(self):
-        if self.is_alive():
-            self._telnet.close()
-            self._alive = False
-
-
-
 class OpenReplCommand(sublime_plugin.WindowCommand):
     def run(self, encoding, type, syntax=None, *args, **kwds):
         window = self.window
+        r = repl.Repl.subclass(type)(encoding, *args, **kwds)
         view = window.new_file()
-        if type == "subprocess":
-            r = SubprocessRepl(encoding, *args, **kwds)
-        elif type == "telnet":
-            r = TelnetRepl(encoding, *args, **kwds)
         rv = ReplView(view, r, syntax)
         repl_views[r.id] = rv
         view.set_scratch(True)
-        view.set_name(r.name())
+        view.set_name("*REPL* [%s]" % (r.name(),))
         
 
 class ReplEnterCommand(sublime_plugin.TextCommand):
@@ -321,5 +205,4 @@ class SublimeReplListener(sublime_plugin.EventListener):
         rv = repl_view(view)
         if not rv:
             return
-        print "closing"
         rv.repl.close()

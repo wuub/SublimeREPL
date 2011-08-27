@@ -1,2 +1,0 @@
-* on_close() is not issued when projects are changed using Ctrl+Alt+P
-* view.id() and view.buffer_id() are not retained when projects are switched using Ctrl+Alt+P
