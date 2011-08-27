@@ -1,0 +1,8 @@
+[
+	{ "keys": ["alt+p"], "command": "insert", "args": {"characters": "a"},
+	"context":
+		[
+			{ "key": "setting.repl", "operator": "equal", "operand": true }
+		]
+	}
+]
