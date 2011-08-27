@@ -1,0 +1,20 @@
+[
+	{ "keys": ["alt+p"], "command": "repl_view_previous",
+	"context":
+		[
+			{ "key": "setting.repl", "operator": "equal", "operand": true }
+		]
+	},
+	{ "keys": ["alt+n"], "command": "repl_view_next",
+	"context":
+		[
+			{ "key": "setting.repl", "operator": "equal", "operand": true }
+		]
+	},
+	{ "keys": ["enter"], "command": "repl_enter", "args": {},
+	"context":
+		[
+			{ "key": "setting.repl", "operator": "equal", "operand": true }
+		]
+	}
+]
