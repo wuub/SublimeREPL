@@ -64,50 +64,91 @@ class ReplReader(threading.Thread):
         print("Reader exiting")
 
 
+class HistoryMatchList(object):
+    def __init__(self, command_prefix, commands):
+        self._command_prefix = command_prefix
+        self._commands = commands
+        self._cur = len(commands) # no '-1' on purpose
+
+    def current_command(self):
+        if not self._commands:
+            return ""
+        return self._commands[self._cur]
+
+    def prev_command(self):
+        self._cur = max(0, self._cur - 1)
+        return self.current_command()
+
+    def next_command(self):
+        self._cur = min(len(self._commands) -1, self._cur + 1)
+        return self.current_command()
+
+
+class History(object):
+    def __init__(self):
+        self._stack = []
+
+    def push(self, command):
+        cmd = command.strip()
+        if not cmd:
+            return
+        self._stack.append(cmd)
+
+    def match(self, command_prefix):
+        matching_commands = []
+        for cmd in self._stack:
+            if cmd.startswith(command_prefix):
+                matching_commands.append(cmd)
+        return HistoryMatchList(command_prefix, matching_commands)
+
 class ReplView(object):
     def __init__(self, view, repl, *args, **kwds):
-        self.repl = repl
-        self.view = view
         view.settings().set("repl_id", repl.id)
         view.settings().set("repl", True)
-        # where the last write from repl occured 
-        self.output_end = view.size()
-        self.repl_reader = ReplReader(repl)
-        self.repl_reader.start()
+        self.repl = repl
+        # init
+        self._view = view
+        self._output_end = view.size()
+        self._repl_reader = ReplReader(repl)
+        self._repl_reader.start()
+        self._history = History()
+        self._history_match = None
+        # begin refreshing attached view
         self.update_view_loop()
-        self._history_stack = []
-        self._history_pos = None
-        self._history_prefix = None
 
+    def update_view(self, view):
+        """If projects were switched, a view could be a new instance"""
+        if self._view is not view:
+            self._view = view
 
     def user_input(self):
         """Returns text entered by the user"""
-        region = sublime.Region(self.output_end, self.view.size())
-        return self.view.substr(region)
+        region = sublime.Region(self._output_end, self._view.size())
+        return self._view.substr(region)
 
     def adjust_end(self):
-        self.output_end = self.view.size()
+        self._output_end = self._view.size()
 
     def write(self, unistr):
         """Writes output from Repl into this view."""
         # string is assumet to be already correctly encoded
-        v = self.view
+        v = self._view
         edit = v.begin_edit()
         try:
-            v.insert(edit, self.output_end, unistr)
-            self.output_end += len(unistr)
+            v.insert(edit, self._output_end, unistr)
+            self._output_end += len(unistr)
         finally:
             v.end_edit(edit)
         self.scroll_to_end()
 
     def scroll_to_end(self):
-        v = self.view
+        v = self._view
         v.show(v.line(v.size()).begin())
 
     def new_output(self):
         """Returns new data from Repl and bool indicating if Repl is still 
            working"""
-        q = self.repl_reader.queue
+        q = self._repl_reader.queue
         data = ""
         try:
             while True:
@@ -126,34 +167,32 @@ class ReplView(object):
             sublime.set_timeout(self.update_view_loop, 100)
 
     def push_history(self, command):
-        # slice newline from command
-        self._history_stack.append(command[:-1])
-        self._history_prefix = None
-        self._history_pos = None
+        self._history.push(command)
+        self._history_match = None
 
-    def view_previous_command(self, edit):
-        if self._history_pos is None:
-            self._history_pos = len(self._history_stack) - 1
-            self._history_prefix = self.user_input()
-        else:
-            if self._history_pos == 0:
-                return 
-            self._history_pos -= 1
-        self.replace_current_with_history(edit)
+    def ensure_history_match(self):
+        user_input = self.user_input()
+        if self._history_match is not None:
+            if user_input != self._history_match.current_command():
+                # user did something! reset
+                self._history_match = None
+        if self._history_match is None:
+            self._history_match = self._history.match(user_input)
         
-    def replace_current_with_history(self, edit):
-        user_region = sublime.Region(self.output_end, self.view.size())
-        self.view.erase(edit, user_region)
-        self.view.insert(edit, user_region.begin(), self._history_stack[self._history_pos])
-
+    def view_previous_command(self, edit):
+        self.ensure_history_match()
+        self.replace_current_with_history(edit, self._history_match.prev_command())
+        
     def view_next_command(self, edit):
-        if self._history_pos is None:
-            return
-        if self._history_pos == len(self._history_stack) - 1:
-            return 
-        self._history_pos += 1
-        self.replace_current_with_history(edit)
+        self.ensure_history_match()
+        self.replace_current_with_history(edit, self._history_match.next_command())
 
+    def replace_current_with_history(self, edit, cmd):
+        if not cmd:
+            return #don't replace if no match
+        user_region = sublime.Region(self._output_end, self._view.size())
+        self._view.erase(edit, user_region)
+        self._view.insert(edit, user_region.begin(), cmd)
 
 
 
@@ -183,7 +222,8 @@ class SubprocessRepl(Repl):
         si.flush()
 
     def close(self):
-        self.popen.kill()
+        if self.is_alive():
+            self.popen.kill()
 
 
 import sublime_plugin
@@ -193,7 +233,9 @@ def repl_view(view):
     id = view.settings().get("repl_id")
     if not repls.has_key(id):
         return None
-    return repls[id]
+    rv = repls[id]
+    rv.update_view(view)
+    return rv
 
 
 class OpenReplCommand(sublime_plugin.WindowCommand):
@@ -209,8 +251,8 @@ class OpenReplCommand(sublime_plugin.WindowCommand):
 
 class ReplEnterCommand(sublime_plugin.TextCommand):
     def run(self, edit):
-        self.view.run_command("insert", {"characters": "\n"})
         v = self.view
+        v.run_command("insert", {"characters": "\n"})
         if v.sel()[0].begin() != v.size():
             return
         rv = repl_view(v)
@@ -318,20 +360,20 @@ class SublimeReplListener(sublime_plugin.EventListener):
 # class SublimeWriter(object):
 #     def __init__(self, queue, view):
 #         self.queue = queue
-#         self.view = view
+#         self._view = view
 #         self.adjust_end()
 
 #     def adjust_end(self):
-#         self.end = self.view.size()
+#         self.end = self._view.size()
 
 #     def entered_text(self):
-#         return self.view.substr(sublime.Region(self.end, self.view.size()))
+#         return self._view.substr(sublime.Region(self.end, self._view.size()))
 
 #     def start(self):
 #         sublime.set_timeout(self.write, 100)
 
 #     def int_write(self, data):
-#         view = self.view
+#         view = self._view
 #         edit = view.begin_edit()
 #         view.insert(edit, self.end, data.decode("cp1250"))
 #         self.end += len(data)
@@ -370,11 +412,11 @@ class SublimeReplListener(sublime_plugin.EventListener):
 #         self.repl = SubprocessRepl(cmd)
 #         self.reader = Reader(self.repl, self.queue)
         
-#         self.view = window.new_file()
-#         self.view.set_scratch(True)
-#         self.view.set_name(name)
+#         self._view = window.new_file()
+#         self._view.set_scratch(True)
+#         self._view.set_name(name)
 
-#         self.writer = SublimeWriter(self.queue, self.view)
+#         self.writer = SublimeWriter(self.queue, self._view)
 
 #         self.reader.start()
 #         self.writer.start()
