@@ -34,6 +34,17 @@
                 "cmd": ["cmd", "\\Q"],
                 "syntax": "Packages/Text/Plain text.tmLanguage"
                 }
+            },
+            {"command": "open_repl", 
+             "caption": "MozRepl",
+             "mnemonic": "m",
+             "args": {
+                "type": "telnet",
+                "encoding": "utf8",
+                "host":"localhost",
+                "port": 4242,
+                "syntax": "Packages/JavaScript/JavaScript.tmLanguage"
+                }
             }
         ]
     }
