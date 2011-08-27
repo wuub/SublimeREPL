@@ -1,6 +1,20 @@
 import threading
 import Queue
 import sublime
+import sublime_plugin
+
+
+
+repl_views = {}
+
+def repl_view(view):
+    id = view.settings().get("repl_id")
+    if not repl_views.has_key(id):
+        return None
+    rv = repl_views[id]
+    rv.update_view(view)
+    return rv
+
 
 
 class Repl(object):
@@ -14,6 +28,10 @@ class Repl(object):
         self.decoder = getincrementaldecoder(encoding)()
         self.encoder = getencoder(encoding)
 
+    def name(self):
+        """Returns name of this repl that should be used as a filename"""
+        return NotImplementedError
+    
     def is_alive(self):
         """ Returns true if the undelying process is stil working"""
         raise NotImplementedError
@@ -89,7 +107,7 @@ class History(object):
         self._stack = []
 
     def push(self, command):
-        cmd = command.strip()
+        cmd = command.rstrip()
         if not cmd:
             return
         self._stack.append(cmd)
@@ -102,12 +120,14 @@ class History(object):
         return HistoryMatchList(command_prefix, matching_commands)
 
 class ReplView(object):
-    def __init__(self, view, repl, *args, **kwds):
+    def __init__(self, view, repl, syntax):
         view.settings().set("repl_id", repl.id)
         view.settings().set("repl", True)
         self.repl = repl
         # init
         self._view = view
+        if syntax:
+            view.set_syntax_file(syntax)
         self._output_end = view.size()
         self._repl_reader = ReplReader(repl)
         self._repl_reader.start()
@@ -195,11 +215,11 @@ class ReplView(object):
         self._view.insert(edit, user_region.begin(), cmd)
 
 
-
 class SubprocessRepl(Repl):
-    def __init__(self, encoding, cmd, *args, **kwds):
+    def __init__(self, encoding, cmd):
         import subprocess, os
         super(SubprocessRepl, self).__init__(encoding)
+        self._cmd = cmd
         startupinfo = None
         if os.name == 'nt':
             startupinfo = subprocess.STARTUPINFO()
@@ -212,6 +232,10 @@ class SubprocessRepl(Repl):
                         stdin=subprocess.PIPE,
                         stdout=subprocess.PIPE)
 
+    def name(self):
+        if isinstance(self._cmd, basestring):
+            return self._cmd
+        return " ".join([str(x) for x in self._cmd])
 
     def is_alive(self):
         return self.popen.poll() is None
@@ -231,27 +255,45 @@ class SubprocessRepl(Repl):
             self.popen.kill()
 
 
-import sublime_plugin
-repls = {}
+class TelnetRepl(Repl):
+    def __init__(self, encoding, host="localhost", port=23):
+        import telnetlib
+        super(TelnetRepl, self).__init__(encoding)
+        self._telnet = telnetlib.Telnet()
+        self._telnet.open(host, int(port))
+        self._alive = True
 
-def repl_view(view):
-    id = view.settings().get("repl_id")
-    if not repls.has_key(id):
-        return None
-    rv = repls[id]
-    rv.update_view(view)
-    return rv
+    def name(self):
+        return "%s:%s" % (self._telnet.host, self._telnet.port)
+
+    def is_alive(self):
+        return self._alive
+
+    def read_bytes(self):
+        return self._telnet.read_some()
+
+    def write_bytes(self, bytes):
+        self._telnet.write(bytes)
+
+    def close(self):
+        if self.is_alive():
+            self._telnet.close()
+            self._alive = False
+
 
 
 class OpenReplCommand(sublime_plugin.WindowCommand):
-    def run(self):
+    def run(self, encoding, type, syntax=None, *args, **kwds):
         window = self.window
         view = window.new_file()
+        if type == "subprocess":
+            r = SubprocessRepl(encoding, *args, **kwds)
+        elif type == "telnet":
+            r = TelnetRepl(encoding, *args, **kwds)
+        rv = ReplView(view, r, syntax)
+        repl_views[r.id] = rv
         view.set_scratch(True)
-        cmd = ["cmd", "/Q"]
-        r = SubprocessRepl("cp852", cmd)
-        rv = ReplView(view, r)
-        repls[r.id] = rv
+        view.set_name(r.name())
         
 
 class ReplEnterCommand(sublime_plugin.TextCommand):
