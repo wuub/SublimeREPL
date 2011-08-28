@@ -52,7 +52,7 @@
              "args": {
                 "type": "subprocess",
                 "encoding": "utf8",
-                "cmd": ["bash", "\\Q"],
+                "cmd": ["bash", "-i"],
                 "syntax": "Packages/Text/Plain text.tmLanguage"
                 }
             }

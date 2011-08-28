@@ -195,7 +195,7 @@ def verify_license(blic):
         (name, sig) = lic.split("=|=", 1)
         verify(name, sig, init())
         return True, name.decode("utf-8")
-    except VerificationError:
+    except:
         return False, None
 
 __all__ = [verify_license]
