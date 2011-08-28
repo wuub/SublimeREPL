@@ -27,10 +27,11 @@ class Repl(object):
                 return cur
             todo.extend(cur.__subclasses__())
 
-    def __init__(self, encoding):
+    def __init__(self, encoding, external_id=None):
         self.id = uuid4().hex
         self.decoder = getincrementaldecoder(encoding)()
         self.encoder = getencoder(encoding)
+        self.external_id = external_id
 
     def close(self):
         if self.is_alive():
@@ -67,6 +68,9 @@ class Repl(object):
             bs = self.read_bytes()
             if not bs:
                 return None
-            output = self.decoder.decode(bs)
+            try:
+                output = self.decoder.decode(bs)
+            except Exception, e:
+                output = "[SublimeRepl: decode error]\n"
             if output:
                 return output

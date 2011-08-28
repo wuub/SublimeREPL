@@ -16,6 +16,18 @@ def repl_view(view):
     rv.update_view(view)
     return rv
 
+def find_repl(external_id):
+    for rv in repl_views.values():
+        if rv.external_id == external_id:
+            return rv
+    return None
+
+def delete_repl(view):
+    id = view.settings().get("repl_id")
+    if not repl_views.has_key(id):
+        return None
+    del repl_views[id]
+
 
 class ReplReader(threading.Thread):
     def __init__(self, repl):
@@ -88,6 +100,10 @@ class ReplView(object):
         self._history_match = None
         # begin refreshing attached view
         self.update_view_loop()
+
+    @property
+    def external_id(self):
+        return self.repl.external_id
 
     def view_init(self):
         from srlic import verify_license
@@ -191,6 +207,7 @@ class OpenReplCommand(sublime_plugin.WindowCommand):
             repl_views[r.id] = rv
             view.set_scratch(True)
             view.set_name("*REPL* [%s]" % (r.name(),))
+            return rv
         except Exception, e:
             sublime.error_message(str(e))    
 
@@ -220,3 +237,4 @@ class SublimeReplListener(sublime_plugin.EventListener):
         if not rv:
             return
         rv.repl.close()
+        delete_repl(view)

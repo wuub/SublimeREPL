@@ -5,8 +5,8 @@ import os
 import repl
 
 class SubprocessRepl(repl.Repl):
-    def __init__(self, encoding, cmd, **kwds):
-        super(SubprocessRepl, self).__init__(encoding)
+    def __init__(self, encoding, cmd, external_id=None, **kwds):
+        super(SubprocessRepl, self).__init__(encoding, external_id)
         self._cmd = cmd
         startupinfo = None
         if os.name == 'nt':
