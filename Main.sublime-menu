@@ -72,8 +72,20 @@
                 "cwd": "$file_path",
                 "syntax": "Packages/Text/Plain text.tmLanguage"
                 }
-            }
-            
+            },
+
+            {"command": "open_repl",
+             "caption": "Magik direct",
+             "args": {
+                 "type": "subprocess",
+                 "encoding": "utf8",
+                 "cmd": "D:\\lislapek\\!Wojtek\\test_sw\\web_env\\run.bat", 
+                 "env":{},
+                 "cwd": "D:\\lislapek\\!Wojtek\\test_sw\\web_env",
+                 "cmd_postfix": "$\n",
+                 "external_id": "*gis*" ,
+                 "syntax": "Packages/Magik/MagikTerminal.tmLanguage"
+            }}
         ]
     }
 ]
