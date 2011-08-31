@@ -29,11 +29,12 @@ class Repl(object):
                 return cur
             todo.extend(cur.__subclasses__())
 
-    def __init__(self, encoding, external_id=None):
+    def __init__(self, encoding, external_id=None, cmd_postfix=""):
         self.id = uuid4().hex
         self.decoder = getincrementaldecoder(encoding)()
         self.encoder = getencoder(encoding)
         self.external_id = external_id
+        self.cmd_postfix = cmd_postfix
 
     def close(self):
         if self.is_alive():
@@ -61,7 +62,7 @@ class Repl(object):
 
     def write(self, command):
         """Encodes and evaluates a given command"""
-        (bytes, how_many) = self.encoder(command)
+        (bytes, how_many) = self.encoder(command + self.cmd_postfix)
         return self.write_bytes(bytes)
 
     def read(self):

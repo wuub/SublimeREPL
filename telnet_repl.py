@@ -6,7 +6,7 @@ import repl
 class TelnetRepl(repl.Repl):
     TYPE = "telnet"
 
-    def __init__(self, encoding, external_id=None, host="localhost", port=23, cmd_postfix=None):
+    def __init__(self, encoding, external_id=None, host="localhost", port=23, cmd_postfix=""):
         """Create new TelnetRepl with the following initial values:
         encoding: one of python accepted encoding used to encode commands and decode responses
         external_id: external, persisten name of this repl used to find it later
@@ -14,7 +14,7 @@ class TelnetRepl(repl.Repl):
         port: telnet port to connect to
         cmd_postfix: some REPLS require you to end a command with a postfix to begin execution,
           think ';' or '.', you can force repl to add it automatically"""
-        super(TelnetRepl, self).__init__(encoding, external_id)
+        super(TelnetRepl, self).__init__(encoding, external_id, cmd_postfix)
         self._telnet = telnetlib.Telnet()
         #convert to int for user's sake, we don't care if it's an float or string 
         # as long as it can be turned into an INT
