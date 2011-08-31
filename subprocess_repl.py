@@ -7,20 +7,43 @@ import repl
 class SubprocessRepl(repl.Repl):
     TYPE = "subprocess"
 
-    def __init__(self, encoding, external_id=None, cmd=None, env=None, cwd=None, env_extension=None):
+    def __init__(self, encoding, external_id=None, cmd=None, env=None, cwd=None, extend_env=None):
         super(SubprocessRepl, self).__init__(encoding, external_id)
         self._cmd = cmd
+        self.popen = subprocess.Popen(
+                        cmd, 
+                        startupinfo=self.startupinfo(),
+                        bufsize=1, 
+                        cwd=self.cwd(cwd),
+                        env=self.env(env, extend_env),
+                        stderr=subprocess.STDOUT,
+                        stdin=subprocess.PIPE,
+                        stdout=subprocess.PIPE)
+
+    def cwd(self, cwd):
+        import os.path
+        if cwd and os.path.exists(cwd):
+            return cwd
+        return None
+
+    def env(self, env, extend_env):
+        import os
+        updated_env = env if env else os.environ.copy()
+        if extend_env:
+            updated_env.update(extend_env)
+        bytes_env = {}
+        for k,v in updated_env.items():
+            enc_k = self.encoder(unicode(k))[0]
+            enc_v = self.encoder(unicode(v))[0]
+            bytes_env[enc_k] = enc_v
+        return bytes_env
+
+    def startupinfo(self):
         startupinfo = None
         if os.name == 'nt':
             startupinfo = subprocess.STARTUPINFO()
             startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
-        self.popen = subprocess.Popen(
-                        cmd, 
-                        startupinfo=startupinfo,
-                        bufsize=1, 
-                        stderr=subprocess.STDOUT,
-                        stdin=subprocess.PIPE,
-                        stdout=subprocess.PIPE)
+        return startupinfo
 
     def name(self):
         if isinstance(self._cmd, basestring):

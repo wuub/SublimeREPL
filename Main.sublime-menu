@@ -12,6 +12,7 @@
                 "type": "subprocess",
                 "encoding": "utf8",
                 "cmd": ["python", "-i"],
+                "cwd": "$file_path",
                 "syntax": "Packages/Python/Python.tmLanguage"
                 }
             },
@@ -22,6 +23,7 @@
                 "type": "subprocess",
                 "encoding": "utf8",
                 "cmd": ["lua", "-i"],
+                "cwd": "$file_path",
                 "syntax": "Packages/Lua/Lua.tmLanguage"
                 }
             },
@@ -32,6 +34,7 @@
                 "type": "subprocess",
                 "encoding": "cp852",
                 "cmd": ["cmd", "\\Q"],
+                "cwd": "$file_path",
                 "syntax": "Packages/Text/Plain text.tmLanguage"
                 }
             },
@@ -66,6 +69,7 @@
                 "type": "subprocess",
                 "encoding": "utf8",
                 "cmd": ["bash", "-i"],
+                "cwd": "$file_path",
                 "syntax": "Packages/Text/Plain text.tmLanguage"
                 }
             }

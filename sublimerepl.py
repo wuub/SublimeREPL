@@ -29,7 +29,7 @@ def delete_repl(view):
     del repl_views[id]
 
 
-def translate_subst(window):
+def subst_for_translate(window):
     """ Return all available substitutions"""
     import os.path
     res = {
@@ -52,14 +52,22 @@ def translate_string(window, string, subst=None):
     #$file, $file_path, $packages
     from string import Template
     if subst is None:
-        subst = translate_subst(window)
+        subst = subst_for_translate(window)
     return Template(string).safe_substitute(**subst)
 
-def translate_dict(window, dictionary):
-    subst = translate_subst(window)
-    for k,v in dictionary.items():
-        dictionary[k] = translate_string(window, v, subst)
+def translate_dict(window, dictionary, subst=None):
+    if subst is None:
+        subst = subst_for_translate(window)
+    for k, v in dictionary.items():
+        if isinstance(v, dict):
+            dictionary[k] = translate_dict(window, v, subst)
+        elif isinstance(v, basestring):
+            dictionary[k] = translate_string(window, v, subst)
+        else:
+            # do nothing
+            pass
     return dictionary
+
 
 
 class ReplReader(threading.Thread):
@@ -237,6 +245,7 @@ class OpenReplCommand(sublime_plugin.WindowCommand):
     def run(self, encoding, type, syntax=None, **kwds):
         try:
             window = self.window
+            translate_dict(window, kwds)
             r = repl.Repl.subclass(type)(encoding, **kwds)
             view = window.new_file()
             rv = ReplView(view, r, syntax)
@@ -296,7 +305,7 @@ class SubprocessReplSendSignal(sublime_plugin.TextCommand):
                 return
             signame = sorted_names[num]
             sigcode = signals[signame]
-            self.safe_send_signal(sigcode)
+            self.safe_send_signal(subrepl, sigcode)
         self.view.window().show_quick_panel(sorted_names, signal_selected)
                 
     def safe_send_signal(self, subrepl, sigcode):
