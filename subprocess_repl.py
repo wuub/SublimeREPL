@@ -5,7 +5,9 @@ import os
 import repl
 
 class SubprocessRepl(repl.Repl):
-    def __init__(self, encoding, cmd, external_id=None, **kwds):
+    TYPE = "subprocess"
+
+    def __init__(self, encoding, external_id=None, cmd=None, env=None, cwd=None, env_extension=None):
         super(SubprocessRepl, self).__init__(encoding, external_id)
         self._cmd = cmd
         startupinfo = None
@@ -18,8 +20,7 @@ class SubprocessRepl(repl.Repl):
                         bufsize=1, 
                         stderr=subprocess.STDOUT,
                         stdin=subprocess.PIPE,
-                        stdout=subprocess.PIPE,
-                        **kwds)
+                        stdout=subprocess.PIPE)
 
     def name(self):
         if isinstance(self._cmd, basestring):
@@ -41,3 +42,17 @@ class SubprocessRepl(repl.Repl):
 
     def kill(self):
         self.popen.kill()
+
+    def available_signals(self):
+        import signal
+        signals = {}
+        for k, v in signal.__dict__.items():
+            if not k.startswith("SIG"):
+                continue
+            signals[k] = v
+        return signals
+
+    def send_signal(self, signal):
+        if self.is_alive():
+            self.popen.send_signal(signal)
+

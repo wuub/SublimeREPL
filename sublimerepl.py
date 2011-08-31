@@ -29,6 +29,39 @@ def delete_repl(view):
     del repl_views[id]
 
 
+def translate_subst(window):
+    """ Return all available substitutions"""
+    import os.path
+    res = {
+        "packages": sublime.packages_path(),
+        "installed_packages" : sublime.installed_packages_path()
+        }
+    av = window.active_view()
+    if av is None:
+        return res
+    filename = av.file_name()
+    if not filename:
+        return res
+    filename = os.path.abspath(filename)
+    res["file"] = filename
+    res["file_path"] = os.path.dirname(filename)
+    return res
+
+
+def translate_string(window, string, subst=None):
+    #$file, $file_path, $packages
+    from string import Template
+    if subst is None:
+        subst = translate_subst(window)
+    return Template(string).safe_substitute(**subst)
+
+def translate_dict(window, dictionary):
+    subst = translate_subst(window)
+    for k,v in dictionary.items():
+        dictionary[k] = translate_string(window, v, subst)
+    return dictionary
+
+
 class ReplReader(threading.Thread):
     def __init__(self, repl):
         super(ReplReader, self).__init__()
@@ -44,7 +77,6 @@ class ReplReader(threading.Thread):
             q.put(result)
             if result is None:
                 break
-        print("Reader exiting")
 
 
 class HistoryMatchList(object):
@@ -92,12 +124,16 @@ class ReplView(object):
         self._view = view
         if syntax:
             view.set_syntax_file(syntax)
+        
         self._output_end = view.size()
         self.view_init()
+        
         self._repl_reader = ReplReader(repl)
         self._repl_reader.start()
+
         self._history = History()
         self._history_match = None
+        
         # begin refreshing attached view
         self.update_view_loop()
 
@@ -110,9 +146,9 @@ class ReplView(object):
         lic = sublime.load_settings("Global.sublime-settings").get("sublimerepl_license")
         (ok, licensee) = verify_license(lic)
         if ok:
-            self.write("SublimeREPL Licenced to: %s\n" % (licensee,))
+            self.write("SublimeREPL 0.1 registered by: %s\n" % (licensee,))
         else:
-            self.write("!!! SublimeREPL - for evaluation and Non-Commercial use only !!!\n")
+            self.write("!!! SublimeREPL 0.1 - unregistered trial !!!\n")
 
 
     def update_view(self, view):
@@ -198,10 +234,10 @@ class ReplView(object):
 
 
 class OpenReplCommand(sublime_plugin.WindowCommand):
-    def run(self, encoding, type, syntax=None, *args, **kwds):
+    def run(self, encoding, type, syntax=None, **kwds):
         try:
             window = self.window
-            r = repl.Repl.subclass(type)(encoding, *args, **kwds)
+            r = repl.Repl.subclass(type)(encoding, **kwds)
             view = window.new_file()
             rv = ReplView(view, r, syntax)
             repl_views[r.id] = rv
@@ -238,3 +274,44 @@ class SublimeReplListener(sublime_plugin.EventListener):
             return
         rv.repl.close()
         delete_repl(view)
+
+
+class SubprocessReplSendSignal(sublime_plugin.TextCommand):
+    def run(self, edit, signal=None):
+        rv = repl_view(self.view)
+        subrepl = rv.repl
+        signals = subrepl.available_signals()
+        sorted_names = sorted(signals.keys())              
+        if signals.has_key(signal):
+            #signal given by name
+            self.safe_send_signal(subrepl, signals[signal])
+            return
+        if signal in signals.values():
+            #signal given by code (correct one!)
+            self.safe_send_signal(subrepl, signal)
+            return
+        # no or incorrect signal given
+        def signal_selected(num):
+            if num == -1:
+                return
+            signame = sorted_names[num]
+            sigcode = signals[signame]
+            self.safe_send_signal(sigcode)
+        self.view.window().show_quick_panel(sorted_names, signal_selected)
+                
+    def safe_send_signal(self, subrepl, sigcode):
+        try:
+            subrepl.send_signal(sigcode)
+        except Exception, e:
+            sublime.error_message(str(e))
+
+    def is_visible(self):
+        rv = repl_view(self.view)
+        return rv and hasattr(rv.repl, "send_signal")
+
+    def is_enabled(self):
+        return self.is_visible()
+
+    def description(self):
+        return "Send SIGNAL"
+

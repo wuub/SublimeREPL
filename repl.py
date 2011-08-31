@@ -12,6 +12,8 @@ class Repl(object):
     """Class that represents a process that is being executed.
        For example this can be python, bash or a telnet session"""
 
+    TYPE = "<base>"
+
     @classmethod
     def subclass(cls, type):
         """Returns subclass of Repl of given type eq. SubprocessRepl"""
@@ -23,7 +25,7 @@ class Repl(object):
             cur = todo.pop()
             if cur in seen:
                 continue
-            if cur.__name__[:-4].lower() == type:
+            if cur.TYPE == type:
                 return cur
             todo.extend(cur.__subclasses__())
 
