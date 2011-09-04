@@ -1,0 +1,99 @@
+= SublimeREPL for SublimeText2 
+
+== Features
+
+* Run your favorite interpreter [python, ruby, lua, prolog :)] or Telnet session to an external tool (MozRepl) inside a Sublime buffer. 
+* Use ALT+P & ALT+N (Ctrl+P & Ctrl+N on OSX) to access command history.
+
+== Screenshots
+
+[[http://wuub.net/sublimerepl/win1.png|{{http://wuub.net/sublimerepl/win1_s.png|Windows MozRepl}}]]
+[[http://wuub.net/sublimerepl/debian1.png|{{http://wuub.net/sublimerepl/debian1_s.png|Debian launch python}}]]
+[[http://wuub.net/sublimerepl/debian2.png|{{http://wuub.net/sublimerepl/debian2_s.png|Debian send SIGNAL}}]]
+[[http://wuub.net/sublimerepl/osx1.png|{{http://wuub.net/sublimerepl/osx1_s.png|OSX Python}}]]
+
+== License and Price
+
+I'm happy to release SublimeREPL's code under a permissive BSD License. 
+
+However, if SublimeREPL helps you earn money, you should feel morally obligated to [[https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=4DGEPH7QAVHH6&lc=GB&item_name=SublimeREPL&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted|**Donate**.]] Pick whatever price you think is right. 
+
+
+== Compatibility
+
+SublimeREPL is developed against the latest SublimeText2 development build (2112) on Windows 7 x64.
+It is also periodically tested on OSX 10.6.8 and Debian 6.0.2.
+ 
+
+== Installation
+
+Drop SublimeREPL into your Packages directory and you're set. 
+
+== Documentation
+
+Several REPLs are available in Tools | SublimeREPL menu. Those can be configured in Packages\SublimeREPL\Main.sublime-menu.
+
+
+If you wish to have more control over the launched process/telnet session use *repl_open* command. For example:
+
+** Subprocess REPL for Python
+
+{{{ 
+{"command": "repl_open", 
+                 "caption": "Python",
+                 "mnemonic": "p",
+                 "args": {
+                    "type": "subprocess",
+                    "encoding": "utf8",
+                    "cmd": ["python", "-i"],
+                    "cwd": "$file_path",
+                    "syntax": "Packages/Python/Python.tmLanguage",
+                    "external_id": "python"
+                    }
+                }
+}}}
+
+** Telnet REPL for MozRepl
+
+{{{
+{"command": "repl_open", 
+                 "caption": "MozRepl",
+                 "mnemonic": "m",
+                 "args": {
+                    "type": "telnet",
+                    "encoding": "utf8",
+                    "host":"localhost",
+                    "port": 4242,
+                    "syntax": "Packages/JavaScript/JavaScript.tmLanguage"
+                    }
+                }
+}}}
+
+
+Common REPL attributes:
+ * type (mandatory): type of repl that will be spawned, "telnet" or "subprocess"
+ * encoding (mandatory): what encoding will the spawned REPL use
+ * cmd_postfix (optional, default: "\n"): command is evaluated when you press enter at the end of a buffer,  cmd_postfix allows you to automatically append some kind of postfix before it happens. For example use ";\n " to  end each line with a semicolon. 
+ * syntax (optional): syntax file to use for a newly created sublime view
+ * external_id (optional): allows you to specify a string that will allow you to get a handle for spawned REPL later 
+
+Subprocess REPL attributes:
+ * cmd (mandatory): command to spawn, see subprocess module documentation for details 
+ * env (optional): dictionary defining the environment variables for the spawned process,  
+ * cwd (optional): working directory for a spawned process
+ * extend_env (optional): environment variables that will be appended to the env inherited from the current process
+
+Telnet REPL attributes:
+ * host (mandatory): 
+ * port (mandatory):   
+
+== FAQ
+
+1. Is this a terminal emulator?
+
+No. 
+
+2. I tried to launch an interpreter for [my-favorite-language], but it didn't work. 
+
+Because SublimeREPL does not emulate a terminal environment some (all?) interpreters spawn in non-interactive mode by default. 
+You should force your interpreter to launch in a interactive mode using a command flag (usually "-i"). 
