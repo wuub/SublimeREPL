@@ -134,7 +134,6 @@ class ReplView(object):
             view.set_syntax_file(syntax)
         
         self._output_end = view.size()
-        self.view_init()
         
         self._repl_reader = ReplReader(repl)
         self._repl_reader.start()
@@ -148,16 +147,6 @@ class ReplView(object):
     @property
     def external_id(self):
         return self.repl.external_id
-
-    def view_init(self):
-        from srlic import verify_license
-        lic = sublime.load_settings("Global.sublime-settings").get("sublimerepl_license")
-        (ok, licensee) = verify_license(lic)
-        if ok:
-            self.write("SublimeREPL 0.1 registered by: %s\n" % (licensee,))
-        else:
-            self.write("!!! SublimeREPL 0.1 - unregistered trial !!!\n")
-
 
     def update_view(self, view):
         """If projects were switched, a view could be a new instance"""
@@ -241,7 +230,7 @@ class ReplView(object):
         self._view.insert(edit, user_region.begin(), cmd)
 
 
-class OpenReplCommand(sublime_plugin.WindowCommand):
+class ReplOpenCommand(sublime_plugin.WindowCommand):
     def run(self, encoding, type, syntax=None, **kwds):
         try:
             window = self.window
@@ -256,6 +245,7 @@ class OpenReplCommand(sublime_plugin.WindowCommand):
         except Exception, e:
             sublime.error_message(str(e))    
 
+
 class ReplEnterCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         v = self.view
@@ -268,13 +258,16 @@ class ReplEnterCommand(sublime_plugin.TextCommand):
         rv.push_history(command)
         rv.repl.write(command)
 
+
 class ReplViewPreviousCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         repl_view(self.view).view_previous_command(edit)
 
+
 class ReplViewNextCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         repl_view(self.view).view_next_command(edit)
+
 
 class SublimeReplListener(sublime_plugin.EventListener):        
     def on_close(self, view):

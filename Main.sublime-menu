@@ -1,91 +1,69 @@
 [
-    {
-        "caption": "REPL",
-        "mnemonic": "r",
-        "id": "REPL",
+     {
+        "id": "tools",
         "children":
-        [
-            {"command": "open_repl", 
-             "caption": "Python",
-             "mnemonic": "p",
-             "args": {
-                "type": "subprocess",
-                "encoding": "utf8",
-                "cmd": ["python", "-i"],
-                "cwd": "$file_path",
-                "syntax": "Packages/Python/Python.tmLanguage"
+        [{
+            "caption": "SublimeREPL",
+            "mnemonic": "r",
+            "id": "SublimeREPL",
+            "children":
+            [
+                {"command": "repl_open", 
+                 "caption": "Python",
+                 "mnemonic": "p",
+                 "args": {
+                    "type": "subprocess",
+                    "encoding": "utf8",
+                    "cmd": ["python", "-i"],
+                    "cwd": "$file_path",
+                    "syntax": "Packages/Python/Python.tmLanguage"
+                    }
+                },
+                {"command": "repl_open", 
+                 "caption": "Lua",
+                 "mnemonic": "l",
+                 "args": {
+                    "type": "subprocess",
+                    "encoding": "utf8",
+                    "cmd": ["lua", "-i"],
+                    "cwd": "$file_path",
+                    "syntax": "Packages/Lua/Lua.tmLanguage"
+                    }
+                },
+                {"command": "repl_open", 
+                 "caption": "Windows-CMD",
+                 "mnemonic": "c",
+                 "args": {
+                    "type": "subprocess",
+                    "encoding": "cp852",
+                    "cmd": ["cmd", "\\Q"],
+                    "cwd": "$file_path",
+                    "syntax": "Packages/Text/Plain text.tmLanguage"
+                    }
+                },
+                {"command": "repl_open", 
+                 "caption": "MozRepl",
+                 "mnemonic": "m",
+                 "args": {
+                    "type": "telnet",
+                    "encoding": "utf8",
+                    "host":"localhost",
+                    "port": 4242,
+                    "syntax": "Packages/JavaScript/JavaScript.tmLanguage"
+                    }
+                },
+                {"command": "repl_open", 
+                 "caption": "Bash",
+                 "mnemonic": "c",
+                 "args": {
+                    "type": "subprocess",
+                    "encoding": "utf8",
+                    "cmd": ["bash", "-i"],
+                    "cwd": "$file_path",
+                    "syntax": "Packages/Text/Plain text.tmLanguage"
+                    }
                 }
-            },
-            {"command": "open_repl", 
-             "caption": "Lua",
-             "mnemonic": "l",
-             "args": {
-                "type": "subprocess",
-                "encoding": "utf8",
-                "cmd": ["lua", "-i"],
-                "cwd": "$file_path",
-                "syntax": "Packages/Lua/Lua.tmLanguage"
-                }
-            },
-            {"command": "open_repl", 
-             "caption": "Windows-CMD",
-             "mnemonic": "c",
-             "args": {
-                "type": "subprocess",
-                "encoding": "cp852",
-                "cmd": ["cmd", "\\Q"],
-                "cwd": "$file_path",
-                "syntax": "Packages/Text/Plain text.tmLanguage"
-                }
-            },
-            {"command": "open_repl", 
-             "caption": "MozRepl",
-             "mnemonic": "m",
-             "args": {
-                "type": "telnet",
-                "encoding": "utf8",
-                "host":"localhost",
-                "port": 4242,
-                "syntax": "Packages/JavaScript/JavaScript.tmLanguage"
-                }
-            },
-            {"command": "open_repl", 
-             "caption": "Magik",
-             "mnemonic": "s",
-             "args": {
-                "type": "telnet",
-                "encoding": "utf8",
-                "host":"localhost",
-                "port": 14001,
-                "cmd_postfix": "$\n",
-                "external_id": "*gis*",
-                "syntax": "Packages/Magik/MagikTerminal.tmLanguage"
-                }
-            },
-            {"command": "open_repl", 
-             "caption": "Bash",
-             "mnemonic": "c",
-             "args": {
-                "type": "subprocess",
-                "encoding": "utf8",
-                "cmd": ["bash", "-i"],
-                "cwd": "$file_path",
-                "syntax": "Packages/Text/Plain text.tmLanguage"
-                }
-            },
-
-            {"command": "open_repl",
-             "caption": "Magik direct",
-             "args": {
-                 "type": "subprocess",
-                 "encoding": "utf8",
-                 "cmd": "D:\\lislapek\\!Wojtek\\test_sw\\web_env\\run.bat", 
-                 "env":{},
-                 "cwd": "D:\\lislapek\\!Wojtek\\test_sw\\web_env",
-                 "cmd_postfix": "$\n",
-                 "external_id": "*gis*" ,
-                 "syntax": "Packages/Magik/MagikTerminal.tmLanguage"
-            }}
-        ]
+            ]   
+        }]
     }
 ]
