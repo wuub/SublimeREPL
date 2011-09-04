@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+# Copyright (c) 2011, Wojciech Bederski (wuub.net) 
+# All rights reserved. 
+# See LICENSE.txt for details.
 
 import subprocess
 import os
@@ -7,7 +10,7 @@ import repl
 class SubprocessRepl(repl.Repl):
     TYPE = "subprocess"
 
-    def __init__(self, encoding, external_id=None, cmd_postfix="", cmd=None, env=None, cwd=None, extend_env=None):
+    def __init__(self, encoding, external_id=None, cmd_postfix="\n", cmd=None, env=None, cwd=None, extend_env=None):
         super(SubprocessRepl, self).__init__(encoding, external_id, cmd_postfix)
         self._cmd = cmd
         self.popen = subprocess.Popen(

@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+# Copyright (c) 2011, Wojciech Bederski (wuub.net) 
+# All rights reserved. 
+# See LICENSE.txt for details.
 
 import threading
 import Queue
@@ -22,7 +25,7 @@ def find_repl(external_id):
             return rv
     return None
 
-def delete_repl(view):
+def _delete_repl(view):
     id = view.settings().get("repl_id")
     if not repl_views.has_key(id):
         return None
@@ -249,10 +252,11 @@ class ReplOpenCommand(sublime_plugin.WindowCommand):
 class ReplEnterCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         v = self.view
-        v.run_command("insert", {"characters": "\n"})
         if v.sel()[0].begin() != v.size():
+            v.run_command("insert", {"characters": "\n"})
             return
         rv = repl_view(v)
+        v.run_command("insert", {"characters": rv.repl.cmd_postfix})
         command = rv.user_input()
         rv.adjust_end()
         rv.push_history(command)
@@ -275,7 +279,7 @@ class SublimeReplListener(sublime_plugin.EventListener):
         if not rv:
             return
         rv.repl.close()
-        delete_repl(view)
+        _delete_repl(view)
 
 
 class SubprocessReplSendSignal(sublime_plugin.TextCommand):

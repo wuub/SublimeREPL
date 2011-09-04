@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+# Copyright (c) 2011, Wojciech Bederski (wuub.net) 
+# All rights reserved. 
+# See LICENSE.txt for details.
 
 import telnetlib
 import repl
@@ -6,7 +9,7 @@ import repl
 class TelnetRepl(repl.Repl):
     TYPE = "telnet"
 
-    def __init__(self, encoding, external_id=None, host="localhost", port=23, cmd_postfix=""):
+    def __init__(self, encoding, external_id=None, host="localhost", port=23, cmd_postfix="\n"):
         """Create new TelnetRepl with the following initial values:
         encoding: one of python accepted encoding used to encode commands and decode responses
         external_id: external, persisten name of this repl used to find it later

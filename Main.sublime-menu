@@ -16,7 +16,8 @@
                     "encoding": "utf8",
                     "cmd": ["python", "-i"],
                     "cwd": "$file_path",
-                    "syntax": "Packages/Python/Python.tmLanguage"
+                    "syntax": "Packages/Python/Python.tmLanguage",
+                    "external_id": "python"
                     }
                 },
                 {"command": "repl_open", 

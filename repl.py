@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+# Copyright (c) 2011, Wojciech Bederski (wuub.net) 
+# All rights reserved. 
+# See LICENSE.txt for details.
 
 from uuid import uuid4  
 from codecs import getincrementaldecoder, getencoder
@@ -29,7 +32,7 @@ class Repl(object):
                 return cur
             todo.extend(cur.__subclasses__())
 
-    def __init__(self, encoding, external_id=None, cmd_postfix=""):
+    def __init__(self, encoding, external_id=None, cmd_postfix="\n"):
         self.id = uuid4().hex
         self.decoder = getincrementaldecoder(encoding)()
         self.encoder = getencoder(encoding)
@@ -62,7 +65,7 @@ class Repl(object):
 
     def write(self, command):
         """Encodes and evaluates a given command"""
-        (bytes, how_many) = self.encoder(command + self.cmd_postfix)
+        (bytes, how_many) = self.encoder(command)
         return self.write_bytes(bytes)
 
     def read(self):
