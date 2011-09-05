@@ -9,15 +9,25 @@
             "children":
             [
                 {"command": "repl_open", 
-                 "caption": "Python",
-                 "mnemonic": "p",
+                 "caption": "Bash",
+                 "mnemonic": "b",
                  "args": {
                     "type": "subprocess",
                     "encoding": "utf8",
-                    "cmd": ["python", "-i"],
+                    "cmd": ["bash", "-i"],
                     "cwd": "$file_path",
-                    "syntax": "Packages/Python/Python.tmLanguage",
-                    "external_id": "python"
+                    "syntax": "Packages/Text/Plain text.tmLanguage"
+                    }
+                },
+                {"command": "repl_open", 
+                 "caption": "Haskell",
+                 "mnemonic": "h",
+                 "args": {
+                    "type": "subprocess",
+                    "encoding": "utf8",
+                    "cmd": ["ghc", "--interactive"],
+                    "cwd": "$file_path",
+                    "syntax": "Packages/Haskell/Haskell.tmLanguage"
                     }
                 },
                 {"command": "repl_open", 
@@ -32,17 +42,6 @@
                     }
                 },
                 {"command": "repl_open", 
-                 "caption": "Windows-CMD",
-                 "mnemonic": "c",
-                 "args": {
-                    "type": "subprocess",
-                    "encoding": "cp852",
-                    "cmd": ["cmd", "\\Q"],
-                    "cwd": "$file_path",
-                    "syntax": "Packages/Text/Plain text.tmLanguage"
-                    }
-                },
-                {"command": "repl_open", 
                  "caption": "MozRepl",
                  "mnemonic": "m",
                  "args": {
@@ -54,12 +53,24 @@
                     }
                 },
                 {"command": "repl_open", 
-                 "caption": "Bash",
-                 "mnemonic": "c",
+                 "caption": "Python",
+                 "mnemonic": "p",
                  "args": {
                     "type": "subprocess",
                     "encoding": "utf8",
-                    "cmd": ["bash", "-i"],
+                    "cmd": ["python", "-i"],
+                    "cwd": "$file_path",
+                    "syntax": "Packages/Python/Python.tmLanguage",
+                    "external_id": "python"
+                    }
+                },              
+                {"command": "repl_open", 
+                 "caption": "Windows-CMD",
+                 "mnemonic": "c",
+                 "args": {
+                    "type": "subprocess",
+                    "encoding": "cp852",
+                    "cmd": ["cmd", "\\Q"],
                     "cwd": "$file_path",
                     "syntax": "Packages/Text/Plain text.tmLanguage"
                     }
