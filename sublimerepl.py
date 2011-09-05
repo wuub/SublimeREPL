@@ -170,7 +170,13 @@ class ReplView(object):
         return self._view.substr(region)
 
     def adjust_end(self):
-        self._output_end = self._view.size()
+        if self.repl.suppress_echo:
+            v = self._view
+            edit = v.begin_edit()
+            v.erase(edit, sublime.Region(self._output_end, v.size()))
+            v.end_edit(edit)
+        else:
+            self._output_end = self._view.size()
 
     def write(self, unistr):
         """Writes output from Repl into this view."""
