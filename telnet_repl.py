@@ -23,7 +23,6 @@ class TelnetRepl(repl.Repl):
         # as long as it can be turned into an INT
         self._telnet.open(host, int(port)) 
         self._alive = True
-        self._cmd_postfix = cmd_postfix
 
     def name(self):
         return "%s:%s" % (self._telnet.host, self._telnet.port)
@@ -36,8 +35,6 @@ class TelnetRepl(repl.Repl):
 
     def write_bytes(self, bytes):
         self._telnet.write(bytes)
-        if self._cmd_postfix:
-            self._telnet.write(self.encoder(self._cmd_postfix)[0])
 
     def kill(self):
         self._telnet.close()
