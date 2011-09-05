@@ -256,10 +256,10 @@ class ReplEnterCommand(sublime_plugin.TextCommand):
             v.run_command("insert", {"characters": "\n"})
             return
         rv = repl_view(v)
+        rv.push_history(rv.user_input()) # don't include cmd_postfix in history
         v.run_command("insert", {"characters": rv.repl.cmd_postfix})
         command = rv.user_input()
         rv.adjust_end()
-        rv.push_history(command)
         rv.repl.write(command)
 
 
