@@ -58,20 +58,28 @@ def translate_string(window, string, subst=None):
         subst = subst_for_translate(window)
     return Template(string).safe_substitute(**subst)
 
+def translate_list(window, list, subst=None):
+    if subst is None:
+        subst = subst_for_translate(window)
+    return [translate(window, x, subst) for x in list]
+
 def translate_dict(window, dictionary, subst=None):
     if subst is None:
         subst = subst_for_translate(window)
     for k, v in dictionary.items():
-        if isinstance(v, dict):
-            dictionary[k] = translate_dict(window, v, subst)
-        elif isinstance(v, basestring):
-            dictionary[k] = translate_string(window, v, subst)
-        else:
-            # do nothing
-            pass
+        dictionary[k] = translate(window, v, subst)
     return dictionary
 
-
+def translate(window, obj, subst=None):
+    if subst is None:
+        subst = subst_for_translate(window)
+    if isinstance(obj, dict):
+        return translate_dict(window, obj, subst)
+    if isinstance(obj, basestring):
+        return translate_string(window, obj, subst)
+    if isinstance(obj, list):
+        return translate_list(window, obj, subst)
+    return obj
 
 class ReplReader(threading.Thread):
     def __init__(self, repl):
@@ -237,7 +245,7 @@ class ReplOpenCommand(sublime_plugin.WindowCommand):
     def run(self, encoding, type, syntax=None, **kwds):
         try:
             window = self.window
-            translate_dict(window, kwds)
+            kwds = translate(window, kwds)
             r = repl.Repl.subclass(type)(encoding, **kwds)
             view = window.new_file()
             rv = ReplView(view, r, syntax)
