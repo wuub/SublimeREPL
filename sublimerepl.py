@@ -194,6 +194,9 @@ class ReplView(object):
         v = self._view
         v.show(v.line(v.size()).begin())
 
+    def append_input_text(self, edit, text):
+        self._view.insert(edit, self._view.size(), text)
+
     def new_output(self):
         """Returns new data from Repl and bool indicating if Repl is still 
            working"""
@@ -335,3 +338,11 @@ class SubprocessReplSendSignal(sublime_plugin.TextCommand):
     def description(self):
         return "Send SIGNAL"
 
+
+
+class ReplWriteTo(sublime_plugin.TextCommand):
+    def run(self, edit, external_id, text):
+        rv = find_repl(external_id)
+        if not rv:
+            return 
+        rv.append_input_text(edit, text)
