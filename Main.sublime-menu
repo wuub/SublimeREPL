@@ -27,6 +27,7 @@
                     "encoding": "utf8",
                     "cmd": ["ghc", "--interactive"],
                     "cwd": "$file_path",
+                    "external_id": "haskell",
                     "syntax": "Packages/Haskell/Haskell.tmLanguage"
                     }
                 },
@@ -38,6 +39,7 @@
                     "encoding": "utf8",
                     "cmd": ["lua", "-i"],
                     "cwd": "$file_path",
+                    "external_id": "lua",
                     "syntax": "Packages/Lua/Lua.tmLanguage"
                     }
                 },

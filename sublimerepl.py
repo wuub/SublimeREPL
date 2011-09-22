@@ -194,8 +194,13 @@ class ReplView(object):
         v = self._view
         v.show(v.line(v.size()).begin())
 
-    def append_input_text(self, edit, text):
-        self._view.insert(edit, self._view.size(), text)
+    def append_input_text(self, text, edit=None):
+        e = edit
+        if not edit:
+            e = self._view.begin_edit()
+        self._view.insert(e, self._view.size(), text)
+        if not edit:
+            self._view.end_edit(e)
 
     def new_output(self):
         """Returns new data from Repl and bool indicating if Repl is still 
