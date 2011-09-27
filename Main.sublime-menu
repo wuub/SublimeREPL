@@ -20,6 +20,17 @@
                     }
                 },
                 {"command": "repl_open", 
+                 "caption": "F#",
+                 "mnemonic": "f",
+                 "args": {
+                    "type": "subprocess",
+                    "encoding": "utf8",
+                    "cmd": ["fsi.exe", "--utf8output", "--gui-"],
+                    "cwd": "$file_path",
+                    "syntax": "Packages/Text/Plain text.tmLanguage"
+                    }
+                },
+                {"command": "repl_open", 
                  "caption": "Haskell",
                  "mnemonic": "h",
                  "args": {
