@@ -78,6 +78,19 @@
                     }
                 },              
                 {"command": "repl_open", 
+                 "caption": "Ruby - IRB",
+                 "mnemonic": "r",
+                 "args": {
+                    "type": "subprocess",
+                    "encoding": "utf8",
+                    "cmd": ["ruby", "C:\\Ruby187\\bin\\irb", "--inf-ruby-mode", "--noinspect"],
+                    "cwd": "$file_path",
+                    "syntax": "Packages/Text/Plain text.tmLanguage",
+                    "external_id": "ruby",
+                    "suppress_echo": true
+                    }
+                },              
+                {"command": "repl_open", 
                  "caption": "Windows-CMD",
                  "mnemonic": "c",
                  "args": {
