@@ -20,6 +20,18 @@
                     }
                 },
                 {"command": "repl_open", 
+                 "caption": "Clojure",
+                 "external_id": "clojure",
+                 "mnemonic": "c",
+                 "args": {
+                    "type": "subprocess",
+                    "encoding": "utf8",
+                    "cmd": ["java", "-jar", "clojure-1.3.0.jar", "-r"],
+                    "cwd": "$file_path",
+                    "syntax": "Packages/Clojure/Clojure.tmLanguage"
+                    }
+                },
+                {"command": "repl_open", 
                  "caption": "F#",
                  "mnemonic": "f",
                  "args": {
