@@ -25,7 +25,7 @@
                  "args": {
                     "type": "subprocess",
                     "encoding": "utf8",
-                    "cmd": ["java", "-jar", "clojure-1.3.0.jar", "-r"],
+                    "cmd":  ["lein", "repl"],
                     "cwd": "$file_path",
                     "external_id": "clojure",
                     "syntax": "Packages/Clojure/Clojure.tmLanguage"
