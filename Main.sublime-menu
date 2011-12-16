@@ -8,7 +8,7 @@
             "id": "SublimeREPL",
             "children":
             [
-                {"command": "repl_open", 
+                {"command": "repl_open",
                  "caption": "Bash",
                  "mnemonic": "b",
                  "args": {
@@ -19,7 +19,7 @@
                     "syntax": "Packages/Text/Plain text.tmLanguage"
                     }
                 },
-                {"command": "repl_open", 
+                {"command": "repl_open",
                  "caption": "F#",
                  "mnemonic": "f",
                  "args": {
@@ -30,7 +30,7 @@
                     "syntax": "Packages/Text/Plain text.tmLanguage"
                     }
                 },
-                {"command": "repl_open", 
+                {"command": "repl_open",
                  "caption": "Haskell",
                  "mnemonic": "h",
                  "args": {
@@ -42,7 +42,7 @@
                     "syntax": "Packages/Haskell/Haskell.tmLanguage"
                     }
                 },
-                {"command": "repl_open", 
+                {"command": "repl_open",
                  "caption": "Lua",
                  "mnemonic": "l",
                  "args": {
@@ -54,7 +54,7 @@
                     "syntax": "Packages/Lua/Lua.tmLanguage"
                     }
                 },
-                {"command": "repl_open", 
+                {"command": "repl_open",
                  "caption": "MozRepl",
                  "mnemonic": "m",
                  "args": {
@@ -65,7 +65,19 @@
                     "syntax": "Packages/JavaScript/JavaScript.tmLanguage"
                     }
                 },
-                {"command": "repl_open", 
+                {"command": "repl_open",
+                 "caption": "Node",
+                 "mnemonic": "n",
+                 "args": {
+                    "type": "subprocess",
+                    "encoding": "utf8",
+                    "cmd": ["node", "${packages}/SublimeREPL/repl.js"],
+                    "cwd": "$file_path",
+                    "syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+                    "external_id": "node"
+                    }
+                },
+                {"command": "repl_open",
                  "caption": "Python",
                  "mnemonic": "p",
                  "args": {
@@ -76,8 +88,8 @@
                     "syntax": "Packages/Python/Python.tmLanguage",
                     "external_id": "python"
                     }
-                },              
-                {"command": "repl_open", 
+                },
+                {"command": "repl_open",
                  "caption": "Windows-CMD",
                  "mnemonic": "c",
                  "args": {
@@ -88,7 +100,7 @@
                     "syntax": "Packages/Text/Plain text.tmLanguage"
                     }
                 }
-            ]   
+            ]
         }]
     }
 ]
