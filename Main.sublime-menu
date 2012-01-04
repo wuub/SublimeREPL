@@ -88,7 +88,18 @@
                     "external_id": "coffee-script",
                     "extend_env": {"NODE_DISABLE_COLORS": "1"}
                     }
-                },               
+                },
+                {"command": "repl_open", 
+                 "caption": "Clojure",
+                 "args": {
+                    "type": "subprocess",
+                    "encoding": "utf8",
+                    "cmd": ["lein", "repl"],
+                    "cwd": "$file_path",
+                    "syntax": "Packages/Clojure/Clojure.tmLanguage",
+                    "external_id": "clojure"
+                    }
+                },
                 {"command": "repl_open", 
                  "caption": "Windows-CMD",
                  "mnemonic": "c",
