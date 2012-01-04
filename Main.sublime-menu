@@ -76,7 +76,19 @@
                     "syntax": "Packages/Python/Python.tmLanguage",
                     "external_id": "python"
                     }
-                },              
+                },
+                {"command": "repl_open", 
+                 "caption": "Coffee-Script",
+                 "args": {
+                    "type": "subprocess",
+                    "encoding": "utf8",
+                    "cmd": ["coffee", "-i"],
+                    "cwd": "$file_path",
+                    "syntax": "Packages/CoffeeScript/Syntaxes/CoffeeScript.tmLanguage",
+                    "external_id": "coffee-script",
+                    "extend_env": {"NODE_DISABLE_COLORS": "1"}
+                    }
+                },               
                 {"command": "repl_open", 
                  "caption": "Windows-CMD",
                  "mnemonic": "c",
