@@ -15,10 +15,15 @@
                      "args": {
                         "type": "subprocess",
                         "encoding": "utf8",
-                        "cmd": ["lein", "repl"],
-                        "cwd": "$file_path",
+                        "cmd": {"windows": ["lein.bat", "repl"],
+                                "linux": ["lein", "repl"],
+                                "osx":  ["lein", "repl"]},
+                        "cwd": {"windows":"c:/Clojure", // where the lein.bat lives!
+                                "linux": "$file_path",
+                                "osx": "$file_path"},
                         "syntax": "Packages/Clojure/Clojure.tmLanguage",
-                        "external_id": "clojure"
+                        "external_id": "clojure",
+                        "extend_env": {"INSIDE_EMACS": 1}
                         }
                     },
                     {"command": "repl_open", 
