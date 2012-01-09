@@ -1,0 +1,26 @@
+[
+     {
+        "id": "tools",
+        "children":
+        [{
+            "caption": "SublimeREPL",
+            "mnemonic": "r",
+            "id": "SublimeREPL",
+            "children":
+            [
+                {"command": "repl_open", 
+                 "caption": "CoffeeScript",
+                 "args": {
+                    "type": "subprocess",
+                    "encoding": "utf8",
+                    "cmd": ["coffee", "-i"],
+                    "cwd": "$file_path",
+                    "syntax": "Packages/CoffeeScript/Syntaxes/CoffeeScript.tmLanguage",
+                    "external_id": "coffeescript",
+                    "extend_env": {"NODE_DISABLE_COLORS": "1"}
+                    }
+                }
+            ]   
+        }]
+    }
+]
