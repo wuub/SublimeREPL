@@ -11,6 +11,8 @@ import repl
 
 repl_views = {}
 
+PLATFORM = sublime.platform().lower()
+
 def repl_view(view):
     id = view.settings().get("repl_id")
     if not repl_views.has_key(id):
@@ -66,6 +68,8 @@ def translate_list(window, list, subst=None):
 def translate_dict(window, dictionary, subst=None):
     if subst is None:
         subst = subst_for_translate(window)
+    if PLATFORM in dictionary:
+        return translate(window, dictionary[PLATFORM], subst)
     for k, v in dictionary.items():
         dictionary[k] = translate(window, v, subst)
     return dictionary
