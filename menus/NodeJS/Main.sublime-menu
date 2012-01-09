@@ -1,0 +1,26 @@
+[
+     {
+        "id": "tools",
+        "children":
+        [{
+            "caption": "SublimeREPL",
+            "mnemonic": "r",
+            "id": "SublimeREPL",
+            "children":
+            [
+                {"command": "repl_open",
+                 "caption": "Node",
+                 "mnemonic": "n",
+                 "args": {
+                    "type": "subprocess",
+                    "encoding": "utf8",
+                    "cmd": ["node", "${packages}/SublimeREPL/menus/NodeJS/repl.js"],
+                    "cwd": "$file_path",
+                    "syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+                    "external_id": "node"
+                    }
+                }
+            ]   
+        }]
+    }
+]
