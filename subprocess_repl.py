@@ -49,6 +49,8 @@ class SubprocessRepl(repl.Repl):
         return startupinfo
 
     def name(self):
+        if self.external_id:
+            return self.external_id
         if isinstance(self._cmd, basestring):
             return self._cmd
         return " ".join([str(x) for x in self._cmd])
