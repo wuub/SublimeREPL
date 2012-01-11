@@ -15,7 +15,7 @@
                     "type": "subprocess",
                     "external_id": "ruby",
                     "encoding": "utf8",
-                    "cmd": {"windows": "not-yet",
+                    "cmd": {"windows": ["irb.bat", "--noreadline", "--inf-ruby-mode"],
                             "linux": ["irb", "--noreadline", "--inf-ruby-mode"],
                             "osx": ["irb", "--noreadline", "--inf-ruby-mode"]},
                     "cwd": "$file_path",
