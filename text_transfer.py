@@ -1,12 +1,13 @@
 from sublimerepl import find_repl
 import sublime_plugin
 import sublime
+import paragraph
 
 class ReplViewWrite(sublime_plugin.WindowCommand):
     def run(self, external_id, text):
         rv = find_repl(external_id)
         if not rv:
-            return 
+            return
         rv.append_input_text(text)
 
 
@@ -14,7 +15,7 @@ class ReplSend(sublime_plugin.WindowCommand):
     def run(self, external_id, text, with_auto_postfix=True):
         rv = find_repl(external_id)
         if not rv:
-            return 
+            return
         cmd = text
         if with_auto_postfix:
             cmd += rv.repl.cmd_postfix
@@ -34,6 +35,9 @@ class ReplTransferCurrent(sublime_plugin.TextCommand):
             text = self.selected_blocks()
         elif scope == "file":
             text = self.selected_file()
+        elif scope == "paragraph":
+            text = self.current_paragraph() + "\n"
+            print text
         cmd = "repl_" + action
         self.view.window().run_command(cmd, {"external_id": self.repl_external_id(), "text": text})
 
@@ -56,3 +60,10 @@ class ReplTransferCurrent(sublime_plugin.TextCommand):
     def selected_file(self):
         v = self.view
         return v.substr(sublime.Region(0, v.size()))
+
+    def current_paragraph(self):
+        v = self.view
+        for s in v.sel():
+            return v.substr(paragraph.expand_to_paragraph(v, s.begin()))
+
+
