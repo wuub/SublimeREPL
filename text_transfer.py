@@ -45,6 +45,20 @@ class ReplTransferCurrent(sublime_plugin.TextCommand):
         parts = [v.substr(region) for region in v.sel()]
         return "".join(parts)
 
+    def selected_blocks(self):
+        # TODO: Clojure only for now
+        v = self.view
+        strs = []
+        old_sel = list(v.sel()) 
+        v.run_command("expand_selection", {"to": "brackets"})
+        v.run_command("expand_selection", {"to": "brackets"})
+        for s in v.sel():
+            strs.append(v.substr(s))
+        v.sel().clear()
+        for s in old_sel:
+            v.sel().add(s)
+        return "\n\n".join(strs)
+
     def selected_lines(self):
         v = self.view
         parts = []
