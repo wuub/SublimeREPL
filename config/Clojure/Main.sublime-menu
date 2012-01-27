@@ -9,9 +9,11 @@
             "children":
             [
                 {"caption": "Clojure",
+                 
                  "children":[
                     {"command": "repl_open", 
                      "caption": "Clojure",
+                     "id": "repl_clojure",
                      "args": {
                         "type": "subprocess",
                         "encoding": "utf8",
@@ -27,6 +29,7 @@
                         }
                     },
                     {"command": "clojure_auto_telnet_repl", 
+                     "id": "repl_clojure_telnet",
                      "caption": "Clojure-Telnet"}]}
             ]   
         }]
