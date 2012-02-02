@@ -14,7 +14,7 @@
                  "args": {
                     "type": "subprocess",
                     "encoding": "utf8",
-                    "cmd": ["node", "${packages}/SublimeREPL/menus/NodeJS/repl.js"],
+                    "cmd": ["node", "${packages}/SublimeREPL/config/NodeJS/repl.js"],
                     "cwd": "$file_path",
                     "syntax": "Packages/JavaScript/JavaScript.tmLanguage",
                     "external_id": "node"
