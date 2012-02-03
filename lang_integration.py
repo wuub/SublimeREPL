@@ -40,8 +40,11 @@ class ClojureAutoTelnetRepl(sublime_plugin.WindowCommand):
 	def run(self):
 		from functools import partial
 		choices = self.choices()
-		on_done = partial(self.on_done, choices)
-		self.window.show_quick_panel(self.choices(), on_done)
+		if len(choices) == 1: #only custom telnet action
+			self.on_done(choices, 0)
+		else:
+			on_done = partial(self.on_done, choices)
+			self.window.show_quick_panel(self.choices(), on_done)
 
 	def on_done(self, choices, index):
 		if index == -1:
