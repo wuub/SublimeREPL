@@ -14,7 +14,7 @@
                  "args": {
                     "type": "subprocess",
                     "encoding": "utf8",
-                    "cmd": ["python", "-i"],
+                    "cmd": ["python", "-i", "-u"],
                     "cwd": "$file_path",
                     "syntax": "Packages/Python/Python.tmLanguage",
                     "external_id": "python"
