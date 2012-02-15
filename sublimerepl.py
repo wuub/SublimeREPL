@@ -8,10 +8,12 @@ import Queue
 import sublime
 import sublime_plugin
 import repl
+import os
 
 repl_views = {}
 
 PLATFORM = sublime.platform().lower()
+SUBLIMEREPL_DIR = os.getcwdu()
 
 def repl_view(view):
     id = view.settings().get("repl_id")
@@ -50,6 +52,7 @@ def subst_for_translate(window):
     filename = os.path.abspath(filename)
     res["file"] = filename
     res["file_path"] = os.path.dirname(filename)
+    res["file_basename"] = os.path.basename(filename)
 
     settings = sublime.load_settings('SublimeREPL.sublime-settings')
     for key in ["win_cmd_encoding"]:
