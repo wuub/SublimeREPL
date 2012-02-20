@@ -1,0 +1,29 @@
+[
+     {
+        "id": "tools",
+        "children":
+        [{
+            "caption": "SublimeREPL",
+            "mnemonic": "r",
+            "id": "SublimeREPL",
+            "children":
+            [
+                {"command": "repl_open",
+                 "caption": "R",
+                 "mnemonic": "r",
+                 "args": {
+                    "type": "subprocess",
+                    "encoding": "utf8",
+                    "cmd": ["r", "--interactive"],
+                    "cwd": "$file_path",
+                    "env": {}, // clean environment for subprocess repl
+                    "extend_env": {}, // variables to be added to standard env
+                    "cmd_postfix": "\n", // postfix that will be automatically added after a line in repl
+                    "suppress_echo": false, // try to remove remote echo
+                    "syntax": "Packages/R/R.tmLanguage"
+                    }
+                }
+            ]
+        }]
+    }
+]
