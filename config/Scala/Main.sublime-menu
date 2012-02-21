@@ -1,0 +1,30 @@
+[
+     {
+        "id": "tools",
+        "children":
+        [{
+            "caption": "SublimeREPL",
+            "mnemonic": "r",
+            "id": "SublimeREPL",
+            "children":
+            [
+                {"command": "repl_open",
+                 "caption": "Scala",
+                 "mnemonic": "s",
+                 "args": {
+                    "type": "subprocess",
+                    "encoding": "utf8",
+                    "cmd": {"linux": ["scala"],
+                            "osx": ["scala"],
+                            "windows": ["scala.bat", "-i"]},
+                    "cwd": "$file_path",
+                    "cmd_postfix": "\n", 
+                    "extend_env": {"EMACS": 1},
+                    "suppress_echo": false, 
+                    "syntax": "Packages/Scala/Scala.tmLanguage"
+                    }
+                }
+            ]
+        }]
+    }
+]
