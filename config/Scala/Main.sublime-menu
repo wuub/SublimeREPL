@@ -19,7 +19,9 @@
                             "windows": ["scala.bat", "-i"]},
                     "cwd": "$file_path",
                     "cmd_postfix": "\n", 
-                    "extend_env": {"EMACS": 1},
+                    "extend_env": {"osx": {"EMACS": "1", "PATH": "{PATH}:/usr/local/bin"},
+                                   "linux": {"EMACS": "1", "PATH": "{PATH}:/usr/local/bin"},
+                                   "windows": {"EMACS": "1"}},
                     "suppress_echo": false, 
                     "syntax": "Packages/Scala/Scala.tmLanguage"
                     }
