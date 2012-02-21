@@ -33,13 +33,21 @@ class SubprocessRepl(repl.Repl):
         import os
         updated_env = env if env else os.environ.copy()
         if extend_env:
-            updated_env.update(extend_env)
+            updated_env.update(self.interpolate_extend_env(updated_env, extend_env))
         bytes_env = {}
         for k,v in updated_env.items():
             enc_k = self.encoder(unicode(k))[0]
             enc_v = self.encoder(unicode(v))[0]
             bytes_env[enc_k] = enc_v
         return bytes_env
+
+    def interpolate_extend_env(self, env, extend_env):
+        """Interpolates (subst) values in extend_env.
+           Mostly for path manipulation"""
+        new_env = {}
+        for key, val in extend_env.items():
+            new_env[key] = val.format(**env)
+        return new_env
 
     def startupinfo(self):
         startupinfo = None
