@@ -14,12 +14,14 @@
                  "args": {
                     "type": "subprocess",
                     "encoding": "utf8",
-                    "cmd": ["r", "--interactive"],
+                    "cmd": {"linux": ["R", "--interactive"],
+                            "osx": ["R", "--interactive"],
+                            "windows": ["R.exe", "--no-save"]},
                     "cwd": "$file_path",
                     "env": {}, // clean environment for subprocess repl
                     "extend_env": {}, // variables to be added to standard env
                     "cmd_postfix": "\n", // postfix that will be automatically added after a line in repl
-                    "suppress_echo": false, // try to remove remote echo
+                    "suppress_echo": true, // try to remove remote echo
                     "syntax": "Packages/R/R.tmLanguage"
                     }
                 }
