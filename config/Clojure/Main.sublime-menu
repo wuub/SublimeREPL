@@ -25,7 +25,7 @@
                                 "osx": "$file_path"},
                         "syntax": "Packages/Clojure/Clojure.tmLanguage",
                         "external_id": "clojure",
-                        "extend_env": {"INSIDE_EMACS": 1}
+                        "extend_env": {"INSIDE_EMACS": "1"}
                         }
                     },
                     {"command": "clojure_auto_telnet_repl", 
