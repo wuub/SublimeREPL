@@ -46,7 +46,7 @@ class SubprocessRepl(repl.Repl):
            Mostly for path manipulation"""
         new_env = {}
         for key, val in extend_env.items():
-            new_env[key] = val.format(**env)
+            new_env[key] = str(val).format(**env)
         return new_env
 
     def startupinfo(self):
