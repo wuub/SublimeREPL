@@ -13,6 +13,7 @@
                  "mnemonic": "r",
                  "args": {
                     "type": "subprocess",
+                    "external_id": "r",
                     "encoding": "utf8",
                     "cmd": {"linux": ["R", "--interactive", "--no-readline"],
                             "osx": ["R", "--interactive", "--no-readline"],
