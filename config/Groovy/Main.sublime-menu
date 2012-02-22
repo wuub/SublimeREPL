@@ -14,7 +14,8 @@
                  "args": {
                     "type": "subprocess",
                     "encoding": "utf8",
-                    "cmd": {"linux": ["groobysh", "--terminal=none"],
+                    "external_id": "groovy",
+                    "cmd": {"linux": ["groovysh", "--terminal=none"],
                             "osx": ["groovysh", "--terminal=none"],
                             "windows": ["groovysh.bat", "--terminal=none"]},
                     "cwd": "$file_path",
