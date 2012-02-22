@@ -24,12 +24,24 @@
                         }
                     },
                     {"command": "repl_open", 
-                     "caption": "Python - PDB",
+                     "caption": "Python - PDB current file",
                      "mnemonic": "d",
                      "args": {
                         "type": "subprocess",
                         "encoding": "utf8",
                         "cmd": ["python", "-i", "-u", "-m", "pdb", "$file_basename"],
+                        "cwd": "$file_path",
+                        "syntax": "Packages/Python/Python.tmLanguage",
+                        "external_id": "python"
+                        }
+                    },
+                    {"command": "repl_open", 
+                     "caption": "Python - RUN current file",
+                     "mnemonic": "d",
+                     "args": {
+                        "type": "subprocess",
+                        "encoding": "utf8",
+                        "cmd": ["python", "-u", "$file_basename"],
                         "cwd": "$file_path",
                         "syntax": "Packages/Python/Python.tmLanguage",
                         "external_id": "python"
