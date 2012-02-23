@@ -10,6 +10,7 @@
             [
                 {"command": "repl_open", 
                  "caption": "Ruby",
+                 "id": "repl_ruby",
                  "mnemonic": "r",
                  "args": {
                     "type": "subprocess",

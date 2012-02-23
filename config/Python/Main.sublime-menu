@@ -13,6 +13,7 @@
                  "children":[
                     {"command": "repl_open", 
                      "caption": "Python",
+                     "id": "repl_python",
                      "mnemonic": "p",
                      "args": {
                         "type": "subprocess",
@@ -25,6 +26,7 @@
                     },
                     {"command": "repl_open", 
                      "caption": "Python - PDB current file",
+                     "id": "repl_python_pdb",
                      "mnemonic": "d",
                      "args": {
                         "type": "subprocess",
@@ -37,6 +39,7 @@
                     },
                     {"command": "repl_open", 
                      "caption": "Python - RUN current file",
+                     "id": "repl_python_run",
                      "mnemonic": "d",
                      "args": {
                         "type": "subprocess",

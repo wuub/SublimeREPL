@@ -11,6 +11,7 @@
                 {"command": "repl_open", 
                  "caption": "MozRepl",
                  "mnemonic": "m",
+                 "id": "repl_mozrepl",
                  "args": {
                     "type": "telnet",
                     "encoding": "utf8",

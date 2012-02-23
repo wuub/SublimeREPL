@@ -10,6 +10,7 @@
             [
                 {"command": "repl_open", 
                  "caption": "Lua",
+                 "id": "repl_lua",
                  "mnemonic": "l",
                  "args": {
                     "type": "subprocess",

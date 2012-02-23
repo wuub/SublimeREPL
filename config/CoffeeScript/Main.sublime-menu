@@ -9,6 +9,7 @@
             "children":
             [
                 {"command": "repl_open", 
+                "id": "repl_coffeescript",
                  "caption": "CoffeeScript",
                  "args": {
                     "type": "subprocess",

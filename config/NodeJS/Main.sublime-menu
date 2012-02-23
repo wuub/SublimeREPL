@@ -10,6 +10,7 @@
             [
                 {"command": "repl_open",
                  "caption": "Node",
+                 "id": "repl_node",
                  "mnemonic": "n",
                  "args": {
                     "type": "subprocess",

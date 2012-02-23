@@ -1,0 +1,10 @@
+[
+    {
+        "caption": "SublimeREPL: Ruby",
+        "command": "run_existing_window_command", "args":
+        {
+            "id": "repl_ruby",
+            "file": "config/Ruby/Main.sublime-menu"
+        }
+    }
+]

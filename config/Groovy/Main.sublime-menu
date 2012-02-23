@@ -9,6 +9,7 @@
             "children":
             [
                 {"command": "repl_open",
+                 "id": "repl_groovy",
                  "caption": "Groovy",
                  "mnemonic": "g",
                  "args": {
