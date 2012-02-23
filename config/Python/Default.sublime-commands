@@ -1,0 +1,24 @@
+[
+    {"caption": "SublimeREPL: Python",
+     "command": "repl_open", 
+     "args": {
+        "type": "subprocess",
+        "encoding": "utf8",
+        "cmd": ["python", "-i", "-u"],
+        "cwd": "$file_path",
+        "syntax": "Packages/Python/Python.tmLanguage",
+        "external_id": "python"
+        }
+    },
+    {"caption": "SublimeREPL: Python - RUN current file",
+     "command": "repl_open",
+     "args": {
+        "type": "subprocess",
+        "encoding": "utf8",
+        "cmd": ["python", "-u", "$file_basename"],
+        "cwd": "$file_path",
+        "syntax": "Packages/Python/Python.tmLanguage",
+        "external_id": "python"
+        }
+    }
+]
