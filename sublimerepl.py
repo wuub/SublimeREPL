@@ -280,7 +280,7 @@ class ReplOpenCommand(sublime_plugin.WindowCommand):
             view.set_name("*REPL* [%s]" % (r.name(),))
             return rv
         except Exception, e:
-            sublime.error_message(str(e))    
+            sublime.error_message(repr(e))    
 
 
 class ReplEnterCommand(sublime_plugin.TextCommand):
