@@ -10,9 +10,11 @@ import repl
 class SubprocessRepl(repl.Repl):
     TYPE = "subprocess"
 
-    def __init__(self, encoding, external_id=None, cmd_postfix="\n", suppress_echo=False, cmd=None, env=None, cwd=None, extend_env=None):
+    def __init__(self, encoding, external_id=None, cmd_postfix="\n", suppress_echo=False, cmd=None, 
+                 env=None, cwd=None, extend_env=None, soft_quit=""):
         super(SubprocessRepl, self).__init__(encoding, external_id, cmd_postfix, suppress_echo)
         self._cmd = cmd
+        self._soft_quit = soft_quit
         self.popen = subprocess.Popen(
                         cmd, 
                         startupinfo=self.startupinfo(),
@@ -83,6 +85,7 @@ class SubprocessRepl(repl.Repl):
         si.flush()
 
     def kill(self):
+        self.write(self._soft_quit)
         self.popen.kill()
 
     def available_signals(self):

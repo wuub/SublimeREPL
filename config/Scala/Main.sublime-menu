@@ -19,6 +19,7 @@
                     "cmd": {"linux": ["scala"],
                             "osx": ["scala"],
                             "windows": ["scala.bat", "-i"]},
+                    "soft_quit": "\nexit\n",
                     "cwd": "$file_path",
                     "cmd_postfix": "\n", 
                     "extend_env": {"osx": {"EMACS": "1", "PATH": "{PATH}:/usr/local/bin"},
