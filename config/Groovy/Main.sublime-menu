@@ -19,6 +19,7 @@
                     "cmd": {"linux": ["groovysh", "--terminal=none"],
                             "osx": ["groovysh", "--terminal=none"],
                             "windows": ["groovysh.bat", "--terminal=none"]},
+                    "soft_quit": "\nexit\n",
                     "cwd": "$file_path",
                     "cmd_postfix": "\n", 
                     "extend_env": {"osx": {"PATH": "{PATH}:/usr/local/bin"},

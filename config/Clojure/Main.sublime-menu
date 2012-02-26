@@ -20,6 +20,7 @@
                         "cmd": {"windows": ["lein.bat", "repl"],
                                 "linux": ["lein", "repl"],
                                 "osx":  ["lein", "repl"]},
+                        "soft_quit": "\n(. System exit 0)\n",
                         "cwd": {"windows":"c:/Clojure", // where the lein.bat lives!
                                 "linux": "$file_path",
                                 "osx": "$file_path"},
