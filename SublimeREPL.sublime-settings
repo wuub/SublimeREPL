@@ -1,3 +1,4 @@
 {
-	"win_cmd_encoding": "cp1250"
+	"win_cmd_encoding": "cp1250",
+	"default_extend_env": {}
 }

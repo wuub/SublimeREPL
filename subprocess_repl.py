@@ -31,7 +31,13 @@ class SubprocessRepl(repl.Repl):
 
     def env(self, env, extend_env):
         import os
+        from sublime import load_settings
         updated_env = env if env else os.environ.copy()
+
+        default_extend_env = load_settings('SublimeREPL.sublime-settings').get("default_extend_env")
+        if default_extend_env:
+            updated_env.update(self.interpolate_extend_env(updated_env, default_extend_env))
+
         if extend_env:
             updated_env.update(self.interpolate_extend_env(updated_env, extend_env))
         bytes_env = {}

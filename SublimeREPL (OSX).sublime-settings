@@ -1,0 +1,4 @@
+{
+
+	"default_extend_env": {"PATH": "{PATH}:/usr/local/bin"}
+}
