@@ -44,8 +44,11 @@ class SubprocessRepl(repl.Repl):
             updated_env.update(self.interpolate_extend_env(updated_env, extend_env))
         bytes_env = {}
         for k,v in updated_env.items():
-            enc_k = self.encoder(unicode(k))[0]
-            enc_v = self.encoder(unicode(v))[0]
+            try:
+                enc_k = self.encoder(unicode(k))[0]
+                enc_v = self.encoder(unicode(v))[0]
+            except UnicodeDecodeError:
+                continue #f*** it, we'll do it live
             bytes_env[enc_k] = enc_v
         return bytes_env
 
