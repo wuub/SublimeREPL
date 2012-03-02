@@ -277,6 +277,10 @@ class ReplView(object):
         else:
             self.write("\n***Repl Closed***\n""")
             self._view.set_read_only(True)
+            if sublime.load_settings(SETTINGS_FILE).get("view_auto_close"):
+                window = self._view.window()
+                window.focus_view(self._view)
+                window.run_command("close")
             
     def push_history(self, command):
         self._history.push(command)

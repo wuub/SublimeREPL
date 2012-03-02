@@ -1,4 +1,5 @@
 {
 	"default_extend_env": {},
-	"presistent_history_enabled": true
+	"presistent_history_enabled": true,
+	"view_auto_close": false
 }
