@@ -41,10 +41,13 @@ def _delete_repl(view):
 def subst_for_translate(window):
     """ Return all available substitutions"""
     import os.path
+    import locale
     res = {
         "packages": sublime.packages_path(),
         "installed_packages" : sublime.installed_packages_path()
         }
+    if sublime.platform() == "windows":
+        res["win_cmd_encoding"] = locale.getdefaultlocale()[1]
     av = window.active_view()
     if av is None:
         return res
@@ -55,10 +58,6 @@ def subst_for_translate(window):
     res["file"] = filename
     res["file_path"] = os.path.dirname(filename)
     res["file_basename"] = os.path.basename(filename)
-
-    settings = sublime.load_settings(SETTINGS_FILE)
-    for key in ["win_cmd_encoding"]:
-        res[key] = settings.get(key)
     return res
 
 
