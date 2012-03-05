@@ -186,14 +186,15 @@ class PersistentHistory(History):
 
 class ReplView(object):
     def __init__(self, view, repl, syntax):
-        view.settings().set("repl_id", repl.id)
-        view.settings().set("repl", True)
         self.repl = repl
         self._view = view
         if syntax:
             view.set_syntax_file(syntax)
-        
         self._output_end = view.size()
+        
+        view.settings().set("repl_id", repl.id)
+        view.settings().set("repl", True)
+        view.settings().set("translate_tabs_to_spaces", False)
         
         self._repl_reader = ReplReader(repl)
         self._repl_reader.start()
