@@ -14,10 +14,14 @@
                  "mnemonic": "f",
                  "args": {
                     "type": "subprocess",
+                    "external_id": "fsharp",
                     "encoding": "utf8",
-                    "cmd": ["fsi.exe", "--utf8output", "--gui-"],
+                    "cmd": {
+                            "windows": ["fsi.exe", "--utf8output", "--gui-"],
+                            "osx": ["fsi", "--utf8output", "--readline-"],
+                            "linux": ["fsi", "--utf8output", "--readline-"]},
                     "cwd": "$file_path",
-                    "syntax": "Packages/Text/Plain text.tmLanguage"
+                    "syntax": "Packages/F#/F#.tmLanguage" // http://code.google.com/p/fsharp-tmbundle/downloads/list
                     }
                 }
             ]   
