@@ -6,7 +6,23 @@
 import subprocess
 import os
 import repl
+import signal
+
 from sublime import load_settings
+
+
+def win_find_executable(executable, env):
+    """Explicetely looks for executable in env["PATH"]"""
+    if os.path.dirname(executable):
+        return executable # executable is already absolute filepath
+    path = env.get("PATH", "")
+    dirs = path.split(os.path.pathsep)    
+    for dir in dirs:
+        filepath = os.path.join(dir, executable)
+        if os.path.exists(filepath):
+            return filepath
+    return None
+
 
 class SubprocessRepl(repl.Repl):
     TYPE = "subprocess"
@@ -16,11 +32,11 @@ class SubprocessRepl(repl.Repl):
         super(SubprocessRepl, self).__init__(encoding, external_id, cmd_postfix, suppress_echo)        
         settings = load_settings('SublimeREPL.sublime-settings')
 
-        self._cmd = cmd
-        self._soft_quit = soft_quit
         env = self.env(env, extend_env, settings)
+        self._cmd = self.cmd(cmd, env)
+        self._soft_quit = soft_quit
         self.popen = subprocess.Popen(
-                        cmd, 
+                        self._cmd, 
                         startupinfo=self.startupinfo(settings),
                         creationflags=self.creationflags(settings),
                         bufsize=1, 
@@ -30,21 +46,30 @@ class SubprocessRepl(repl.Repl):
                         stdin=subprocess.PIPE,
                         stdout=subprocess.PIPE)
 
+    def cmd(self, cmd, env):
+        """On Linux and OSX just returns cmd, on windows it has to find 
+           executable in env because of this: http://bugs.python.org/issue8557"""
+        if os.name != "nt":
+            return cmd
+        if isinstance(cmd, basestring):
+            _cmd = [cmd]
+        else:
+            _cmd = cmd
+        executable = win_find_executable(_cmd[0], env)
+        if executable:
+            _cmd[0] = executable
+        return _cmd
+        
     def cwd(self, cwd, settings):
-        import os.path
         if cwd and os.path.exists(cwd):
             return cwd
         return None
 
     def env(self, env, extend_env, settings):
-        import os
-        
         updated_env = env if env else os.environ.copy()
-
         default_extend_env = settings.get("default_extend_env")
         if default_extend_env:
             updated_env.update(self.interpolate_extend_env(updated_env, default_extend_env))
-
         if extend_env:
             updated_env.update(self.interpolate_extend_env(updated_env, extend_env))
         bytes_env = {}
@@ -104,7 +129,6 @@ class SubprocessRepl(repl.Repl):
         self.popen.kill()
 
     def available_signals(self):
-        import signal
         signals = {}
         for k, v in signal.__dict__.items():
             if not k.startswith("SIG"):
