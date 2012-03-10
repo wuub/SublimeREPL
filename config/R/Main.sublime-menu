@@ -18,13 +18,15 @@
                     "encoding": "utf8",
                     "cmd": {"linux": ["R", "--interactive", "--no-readline"],
                             "osx": ["R", "--interactive", "--no-readline"],
-                            "windows": ["R.exe", "--no-save"]},
+                            "windows": ["Rterm.exe", "--ess"]},
                     "cwd": "$file_path",
                     "extend_env": {"osx": {"PATH": "{PATH}:/usr/local/bin"},
                                    "linux": {"PATH": "{PATH}:/usr/local/bin"},
                                    "windows": {}},
                     "cmd_postfix": "\n", // postfix that will be automatically added after a line in repl
-                    "suppress_echo": true, // try to remove remote echo
+                    "suppress_echo": {"osx": true,
+                                      "linux": true,
+                                      "windows": false},
                     "syntax": "Packages/R/R.tmLanguage"
                     }
                 }
