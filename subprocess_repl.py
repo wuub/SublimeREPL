@@ -7,8 +7,10 @@ import subprocess
 import os
 import repl
 import signal
-
+import killableprocess
 from sublime import load_settings
+
+
 
 
 def win_find_executable(executable, env):
@@ -35,7 +37,7 @@ class SubprocessRepl(repl.Repl):
         env = self.env(env, extend_env, settings)
         self._cmd = self.cmd(cmd, env)
         self._soft_quit = soft_quit
-        self.popen = subprocess.Popen(
+        self.popen = killableprocess.Popen(
                         self._cmd, 
                         startupinfo=self.startupinfo(settings),
                         creationflags=self.creationflags(settings),
@@ -93,8 +95,8 @@ class SubprocessRepl(repl.Repl):
     def startupinfo(self, settings):
         startupinfo = None
         if os.name == 'nt':
-            startupinfo = subprocess.STARTUPINFO()
-            startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW 
+            startupinfo = killableprocess.STARTUPINFO()
+            startupinfo.dwFlags |= killableprocess.STARTF_USESHOWWINDOW 
             startupinfo.wShowWindow |= 1 # SW_SHOWNORMAL
         return startupinfo
 
