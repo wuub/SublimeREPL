@@ -16,6 +16,7 @@
                     "type": "subprocess",
                     "external_id": "r",
                     "encoding": "utf8",
+                    "soft_quit": "\nquit(save=\"no\")\n",
                     "cmd": {"linux": ["R", "--interactive", "--no-readline"],
                             "osx": ["R", "--interactive", "--no-readline"],
                             "windows": ["Rterm.exe", "--ess"]},

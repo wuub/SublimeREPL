@@ -27,7 +27,10 @@ It is also periodically tested on OSX 10.6.8 and Debian 6.0.2.
 
 == Installation
 
-Drop SublimeREPL into your Packages directory and you're set. 
+Use Package Control. 
+
+*DON'T* install directly from Github unless you want to do some development.
+However if you wish to manually place SublimeREPL inside your Packages, please use one of the tagged versions instead of most recent code. 
 
 == Documentation
 

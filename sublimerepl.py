@@ -225,8 +225,10 @@ class ReplView(object):
     def adjust_end(self):
         if self.repl.suppress_echo:
             v = self._view
+            vsize = v.size()
+            self._output_end = min(vsize, self._output_end)
             edit = v.begin_edit()
-            v.erase(edit, sublime.Region(self._output_end, v.size()))
+            v.erase(edit, sublime.Region(self._output_end, vsize))
             v.end_edit(edit)
         else:
             self._output_end = self._view.size()

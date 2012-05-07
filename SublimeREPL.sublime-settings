@@ -1,5 +1,17 @@
 {
+	// default_extend_env are used to augment any environment variables 
+	// that should be visible for all subporcess repls launched within
+	// SublimeREPL. This is a very good place to add PATH extension
+	// once "PATH": "{PATH}:/home/username/mylocalinstalls/bin" or whatever 
 	"default_extend_env": {},
+
+	// Persistent history is stored per REPL external_id, it means that all python
+	// REPLS will share history. If you wish you can disable history altogether
 	"presistent_history_enabled": true,
+
+	// By default SublimeREPL leaves REPL view open once the underlying subprocess
+	// dies or closes connection. This is useful when the process dies for an unexpected
+	// reason as it allows you to inspect it output. If you want. Setting this
+	// to true will cause SublimreREPL to close view once the process died. 
 	"view_auto_close": false
 }
