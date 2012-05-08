@@ -16,14 +16,14 @@
 		[
 			{ "key": "setting.repl", "operator": "equal", "operand": true }
 		]
-	},
+	}
 
-	{ "keys": ["f2", "s"], "command": "repl_transfer_current", "args": {"scope": "selection"}},
-	{ "keys": ["shift+f2", "s"], "command": "repl_transfer_current", "args": {"scope": "selection", "action":"view_write"}},
-	{ "keys": ["f2", "f"], "command": "repl_transfer_current", "args": {"scope": "file"}},
-	{ "keys": ["shift+f2", "f"], "command": "repl_transfer_current", "args": {"scope": "file", "action":"view_write"}},
-	{ "keys": ["f2", "l"], "command": "repl_transfer_current", "args": {"scope": "lines"}},
-	{ "keys": ["shift+f2", "l"], "command": "repl_transfer_current", "args": {"scope": "lines", "action":"view_write"}},
-	{ "keys": ["f2", "b"], "command": "repl_transfer_current", "args": {"scope": "block"}},
-	{ "keys": ["shift+f2", "b"], "command": "repl_transfer_current", "args": {"scope": "block", "action":"view_write"}}
+	//{ "keys": ["f2", "s"], "command": "repl_transfer_current", "args": {"scope": "selection"}},
+	//{ "keys": ["shift+f2", "s"], "command": "repl_transfer_current", "args": {"scope": "selection", "action":"view_write"}},
+	//{ "keys": ["f2", "f"], "command": "repl_transfer_current", "args": {"scope": "file"}},
+	//{ "keys": ["shift+f2", "f"], "command": "repl_transfer_current", "args": {"scope": "file", "action":"view_write"}},
+	//{ "keys": ["f2", "l"], "command": "repl_transfer_current", "args": {"scope": "lines"}},
+	//{ "keys": ["shift+f2", "l"], "command": "repl_transfer_current", "args": {"scope": "lines", "action":"view_write"}},
+	//{ "keys": ["f2", "b"], "command": "repl_transfer_current", "args": {"scope": "block"}},
+	//{ "keys": ["shift+f2", "b"], "command": "repl_transfer_current", "args": {"scope": "block", "action":"view_write"}}
 ]

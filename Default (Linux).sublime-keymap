@@ -16,7 +16,7 @@
 		[
 			{ "key": "setting.repl", "operator": "equal", "operand": true }
 		]
-	},
+	}
 
 	//{ "keys": ["f2", "s"], "command": "repl_transfer_current", "args": {"scope": "selection"}},
 	//{ "keys": ["shift+f2", "s"], "command": "repl_transfer_current", "args": {"scope": "selection", "action":"view_write"}},
