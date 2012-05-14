@@ -9,6 +9,10 @@
 # <benjamin@smedbergs.us> are Copyright (c) 2006 by the Mozilla Foundation
 # <http://www.mozilla.org/>
 #
+# More Modifications
+# Copyright (c) 2006-2007 by Mike Taylor <bear@code-bear.com>
+# Copyright (c) 2007-2008 by Mikeal Rogers <mikeal@mozilla.com>
+#
 # By obtaining, using, and/or copying this software and/or its
 # associated documentation, you agree that you have read, understood,
 # and will comply with the following terms and conditions:
@@ -30,7 +34,7 @@
 # NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION
 # WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-r"""killableprocess - Subprocesses which can be reliably killed
+"""killableprocess - Subprocesses which can be reliably killed
 
 This module is a subclass of the builtin "subprocess" module. It allows
 processes that launch subprocesses to be reliably killed on Windows (via the Popen.kill() method.
@@ -47,7 +51,9 @@ import subprocess
 import sys
 import os
 import time
+import datetime
 import types
+import exceptions
 
 try:
     from subprocess import CalledProcessError
@@ -93,22 +99,7 @@ if not mswindows:
         pass
 
 class Popen(subprocess.Popen):
-    if not mswindows:
-        # Override __init__ to set a preexec_fn
-        def __init__(self, *args, **kwargs):
-            if len(args) >= 7:
-                raise Exception("Arguments preexec_fn and after must be passed by keyword.")
-
-            real_preexec_fn = kwargs.pop("preexec_fn", None)
-            def setpgid_preexec_fn():
-                os.setpgid(0, 0)
-                if real_preexec_fn:
-                    apply(real_preexec_fn)
-
-            kwargs['preexec_fn'] = setpgid_preexec_fn
-
-            subprocess.Popen.__init__(self, *args, **kwargs)
-
+    kill_called = False
     if mswindows:
         def _execute_child(self, args, executable, preexec_fn, close_fds,
                            cwd, env, universal_newlines, startupinfo,
@@ -118,6 +109,9 @@ class Popen(subprocess.Popen):
                            errread, errwrite):
             if not isinstance(args, types.StringTypes):
                 args = subprocess.list2cmdline(args)
+            
+            # Always or in the create new process group
+            creationflags |= winprocess.CREATE_NEW_PROCESS_GROUP
 
             if startupinfo is None:
                 startupinfo = winprocess.STARTUPINFO()
@@ -134,13 +128,16 @@ class Popen(subprocess.Popen):
                 comspec = os.environ.get("COMSPEC", "cmd.exe")
                 args = comspec + " /c " + args
 
-            # We create a new job for this process, so that we can kill
-            # the process and any sub-processes 
-            self._job = winprocess.CreateJobObject()
+            # determine if we can create create a job
+            canCreateJob = winprocess.CanCreateJobObject()
 
+            # set process creation flags
             creationflags |= winprocess.CREATE_SUSPENDED
             creationflags |= winprocess.CREATE_UNICODE_ENVIRONMENT
+            if canCreateJob:
+                creationflags |= winprocess.CREATE_BREAKAWAY_FROM_JOB
 
+            # create the process
             hp, ht, pid, tid = winprocess.CreateProcess(
                 executable, args,
                 None, None, # No special security
@@ -148,14 +145,22 @@ class Popen(subprocess.Popen):
                 creationflags,
                 winprocess.EnvironmentBlock(env),
                 cwd, startupinfo)
-            
             self._child_created = True
             self._handle = hp
             self._thread = ht
             self.pid = pid
+            self.tid = tid
 
-            winprocess.AssignProcessToJobObject(self._job, hp)
-            winprocess.ResumeThread(ht)
+            if canCreateJob:
+                # We create a new job for this process, so that we can kill
+                # the process and any sub-processes 
+                self._job = winprocess.CreateJobObject()
+                winprocess.AssignProcessToJobObject(self._job, int(hp))
+            else:
+                self._job = None
+                    
+            winprocess.ResumeThread(int(ht))
+            ht.Close()
 
             if p2cread is not None:
                 p2cread.Close()
@@ -163,62 +168,125 @@ class Popen(subprocess.Popen):
                 c2pwrite.Close()
             if errwrite is not None:
                 errwrite.Close()
+            time.sleep(.1)
 
     def kill(self, group=True):
         """Kill the process. If group=True, all sub-processes will also be killed."""
+        self.kill_called = True
         if mswindows:
-            if group:
+            if group and self._job:
                 winprocess.TerminateJobObject(self._job, 127)
             else:
-                winprocess.TerminateProcess(self._handle, 127)
+                try:
+                    winprocess.TerminateProcess(self._handle, 127)
+                except:
+                    # TODO: better error handling here
+                    pass
             self.returncode = 127    
         else:
             if group:
-                os.killpg(self.pid, signal.SIGKILL)
+                try:
+                    os.killpg(self.pid, signal.SIGKILL)
+                except: pass
             else:
                 os.kill(self.pid, signal.SIGKILL)
             self.returncode = -9
 
-    def wait(self, timeout=-1, group=True):
+    def wait(self, timeout=None, group=True):
         """Wait for the process to terminate. Returns returncode attribute.
         If timeout seconds are reached and the process has not terminated,
         it will be forcefully killed. If timeout is -1, wait will not
         time out."""
+        
+        if timeout is not None:
+            # timeout is now in milliseconds
+            timeout = timeout * 1000
 
         if self.returncode is not None:
             return self.returncode
 
+        starttime = datetime.datetime.now()
+
         if mswindows:
-            if timeout != -1:
-                timeout = timeout * 1000
+            if timeout is None:
+                timeout = -1
             rc = winprocess.WaitForSingleObject(self._handle, timeout)
-            if rc == winprocess.WAIT_TIMEOUT:
+            
+            if rc != winprocess.WAIT_TIMEOUT:
+                def check():
+                    now = datetime.datetime.now()
+                    diff = now - starttime
+                    if (diff.seconds * 1000 * 1000 + diff.microseconds) < (timeout * 1000):
+                        if self._job:
+                            if (winprocess.QueryInformationJobObject(self._job, 8)['BasicInfo']['ActiveProcesses'] > 0):
+                                return True
+                        else:
+                            return True
+                    return False
+                while check():
+                    time.sleep(.5)
+            
+            now = datetime.datetime.now()
+            diff = now - starttime
+            if (diff.seconds * 1000 * 1000 + diff.microseconds) > (timeout * 1000):
                 self.kill(group)
             else:
                 self.returncode = winprocess.GetExitCodeProcess(self._handle)
         else:
-            if timeout == -1:
-                subprocess.Popen.wait(self)
-                return self.returncode
-            
-            starttime = time.time()
-
-            # Make sure there is a signal handler for SIGCHLD installed
-            oldsignal = signal.signal(signal.SIGCHLD, DoNothing)
-
-            while time.time() < starttime + timeout - 0.01:
-                pid, sts = os.waitpid(self.pid, os.WNOHANG)
-                if pid != 0:
-                    self._handle_exitstatus(sts)
-                    signal.signal(signal.SIGCHLD, oldsignal)
+            if (sys.platform == 'linux2') or (sys.platform in ('sunos5', 'solaris')):
+                def group_wait(timeout):
+                    try:
+                        os.waitpid(self.pid, 0)
+                    except OSError, e:
+                        pass # If wait has already been called on this pid, bad things happen
                     return self.returncode
+            elif sys.platform == 'darwin':
+                def group_wait(timeout):
+                    try:
+                        count = 0
+                        if timeout is None and self.kill_called:
+                            timeout = 10 # Have to set some kind of timeout or else this could go on forever
+                        if timeout is None:
+                            while 1:
+                                os.killpg(self.pid, signal.SIG_DFL)
+                        while ((count * 2) <= timeout):
+                            os.killpg(self.pid, signal.SIG_DFL)
+                            # count is increased by 500ms for every 0.5s of sleep
+                            time.sleep(.5); count += 500
+                    except exceptions.OSError:
+                        return self.returncode
+                        
+            if timeout is None:
+                if group is True:
+                    return group_wait(timeout)
+                else:
+                    subprocess.Popen.wait(self)
+                    return self.returncode
+
+            returncode = False
+
+            now = datetime.datetime.now()
+            diff = now - starttime
+            while (diff.seconds * 1000 * 1000 + diff.microseconds) < (timeout * 1000) and ( returncode is False ):
+                if group is True:
+                    return group_wait(timeout)
+                else:
+                    if subprocess.poll() is not None:
+                        returncode = self.returncode
+                time.sleep(.5)
+                now = datetime.datetime.now()
+                diff = now - starttime
+            return self.returncode
                 
-                # time.sleep is interrupted by signals (good!)
-                newtimeout = timeout - time.time() + starttime
-                time.sleep(newtimeout)
-
-            self.kill(group)
-            signal.signal(signal.SIGCHLD, oldsignal)
-            subprocess.Popen.wait(self)
-
         return self.returncode
+    # We get random maxint errors from subprocesses __del__
+    __del__ = lambda self: None        
+        
+def setpgid_preexec_fn():
+    os.setpgid(0, 0)
+        
+def runCommand(cmd, **kwargs):
+    if sys.platform != "win32":
+        return Popen(cmd, preexec_fn=setpgid_preexec_fn, **kwargs)
+    else:
+        return Popen(cmd, **kwargs)
