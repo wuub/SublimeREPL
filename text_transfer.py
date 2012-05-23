@@ -1,9 +1,50 @@
 from sublimerepl import find_repl
 import sublime_plugin
 import sublime
+from collections import defaultdict
+import tempfile
+
+
+"""This is a bit stupid, but it's really difficult to create a temporary file with
+a persistent name that can be passed to external process using this name, and then 
+delete it reliably..."""
+TEMP_FILE = None
+
+def temp_file():
+    global TEMP_FILE
+    if not TEMP_FILE:
+        TEMP_FILE = tempfile.NamedTemporaryFile(delete=False, prefix="SublimeREPL_")
+        TEMP_FILE.close()
+    return TEMP_FILE
+
+
+def unload_handler():
+    import os.path
+    if not TEMP_FILE or not os.path.isfile(TEMP_FILE.name):
+        return
+    os.unlink(TEMP_FILE.name)
+
+
+"""Senders is a dict of functions used to transfer text to repl as a repl
+   specific load_file action"""
+SENDERS = defaultdict(lambda (repl, text): repl.write(text))
+
+def sender(external_id,):
+    def wrap(func):
+        SENDERS[external_id] = func
+    return wrap
+
+@sender("python")
+def python_sender(repl, text, file_name=None):    
+    import codecs
+    tfile = temp_file()
+    with codecs.open(tfile.name, "w", "utf-8") as tmp:
+        tmp.write(text)
+    repl.write('execfile(r"{0}")\n'.format(codecs.encode(tfile.name, "utf8")))
+
 
 class ReplViewWrite(sublime_plugin.WindowCommand):
-    def run(self, external_id, text):
+    def run(self, external_id, text, file_name=None):
         rv = find_repl(external_id)
         if not rv:
             return 
@@ -11,14 +52,14 @@ class ReplViewWrite(sublime_plugin.WindowCommand):
 
 
 class ReplSend(sublime_plugin.WindowCommand):
-    def run(self, external_id, text, with_auto_postfix=True):
+    def run(self, external_id, text, with_auto_postfix=True, file_name=None):
         rv = find_repl(external_id)
         if not rv:
             return 
         cmd = text
         if with_auto_postfix:
             cmd += rv.repl.cmd_postfix
-        rv.repl.write(cmd)
+        SENDERS[external_id](rv.repl, cmd, file_name)
 
 
 class ReplTransferCurrent(sublime_plugin.TextCommand):
@@ -35,7 +76,7 @@ class ReplTransferCurrent(sublime_plugin.TextCommand):
         elif scope == "file":
             text = self.selected_file()
         cmd = "repl_" + action
-        self.view.window().run_command(cmd, {"external_id": self.repl_external_id(), "text": text})
+        self.view.window().run_command(cmd, {"external_id": self.repl_external_id(), "text": text, "file_name": self.view.file_name()})
 
     def repl_external_id(self):
         return self.view.scope_name(0).split(" ")[0].split(".")[1]
