@@ -7,7 +7,7 @@ import threading
 import Queue
 import sublime
 import sublime_plugin
-import repl
+import repls
 import os
 import buzhug
 
@@ -320,7 +320,7 @@ class ReplOpenCommand(sublime_plugin.WindowCommand):
             window = self.window
             kwds = translate(window, kwds)
             encoding = translate(window, encoding)
-            r = repl.Repl.subclass(type)(encoding, **kwds)
+            r = repls.Repl.subclass(type)(encoding, **kwds)
             view = window.new_file()
             rv = ReplView(view, r, syntax)
             repl_views[r.id] = rv
