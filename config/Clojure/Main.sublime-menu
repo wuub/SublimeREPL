@@ -9,7 +9,7 @@
             "children":
             [
                 {"caption": "Clojure",
-                 
+                 "id": "Clojure",
                  "children":[
                     {"command": "repl_open", 
                      "caption": "Clojure",

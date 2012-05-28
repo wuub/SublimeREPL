@@ -9,6 +9,7 @@
             "children":
             [
                 {"caption": "Python",
+                "id": "Python",
                  
                  "children":[
                     {"command": "repl_open", 
