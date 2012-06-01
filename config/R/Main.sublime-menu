@@ -28,7 +28,7 @@
                     "suppress_echo": {"osx": true,
                                       "linux": true,
                                       "windows": false},
-                    "syntax": "Packages/R/R.tmLanguage"
+                    "syntax": "Packages/R/R Console.tmLanguage"
                     }
                 }
             ]
