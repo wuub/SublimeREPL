@@ -192,6 +192,7 @@ class ReplView(object):
             view.set_syntax_file(syntax)
         self._output_end = view.size()
         
+        view.settings().set("repl_external_id", repl.external_id)
         view.settings().set("repl_id", repl.id)
         view.settings().set("repl", True)
         view.settings().set("translate_tabs_to_spaces", False)
@@ -272,6 +273,8 @@ class ReplView(object):
             return data, True
 
     def update_view_loop(self):
+        if hasattr(self, "killed") and self.killed:
+            return
         (data, is_still_working) = self.new_output()
         if data:
             self.write(data)
@@ -306,6 +309,11 @@ class ReplView(object):
         self.ensure_history_match()
         self.replace_current_with_history(edit, self._history_match.next_command())
 
+    def view_kill(self):
+        self.killed = True
+        self.write("\n***Repl Killed***\n""")
+        self.repl.kill()
+        
     def replace_current_with_history(self, edit, cmd):
         if not cmd:
             return #don't replace if no match
@@ -315,13 +323,17 @@ class ReplView(object):
 
 
 class ReplOpenCommand(sublime_plugin.WindowCommand):
-    def run(self, encoding, type, syntax=None, **kwds):
+    def run(self, encoding, type, syntax=None, view_id=None, **kwds):
         try:
             window = self.window
             kwds = translate(window, kwds)
             encoding = translate(window, encoding)
             r = repl.Repl.subclass(type)(encoding, **kwds)
-            view = window.new_file()
+            found = None
+            for view in self.window.views():
+                if view.id() == view_id:
+                    found = view
+            view = found or window.new_file()
             rv = ReplView(view, r, syntax)
             repl_views[r.id] = rv
             view.set_scratch(True)
@@ -334,25 +346,123 @@ class ReplOpenCommand(sublime_plugin.WindowCommand):
 class ReplEnterCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         v = self.view
-        if v.sel()[0].begin() != v.size():
+        rv = repl_view(v)
+        delta = v.sel()[0].begin() - rv._output_end
+        if delta < 0:
             v.run_command("insert", {"characters": "\n"})
             return
-        rv = repl_view(v)
+        if v.sel()[0].begin() != v.size():
+            v.sel().clear()
+            v.sel().add(sublime.Region(v.size()))
         rv.push_history(rv.user_input()) # don't include cmd_postfix in history
         v.run_command("insert", {"characters": rv.repl.cmd_postfix})
         command = rv.user_input()
-        rv.adjust_end()
-        rv.repl.write(command)
+        if command == "cls\n":
+            v.run_command("repl_escape")
+            bol = v.line(v.sel()[0]).begin()
+            v.replace(edit, sublime.Region(0, bol), "")
+            rv._output_end = v.sel()[0].begin()
+        else:
+            rv.adjust_end()
+            rv.repl.write(command)
+
+
+class ReplEscapeCommand(sublime_plugin.TextCommand):
+    def run(self, edit):
+        v = self.view
+        w = v.window()
+        w.run_command("move_to", {"to": "eof", "extend": False})
+        w.run_command("repl_shift_home")
+        w.run_command("right_delete")
+
+
+class ReplBackspaceCommand(sublime_plugin.TextCommand):
+    def run(self, edit):
+        v = self.view
+        w = v.window()
+        rv = repl_view(v)
+        delta = v.sel()[0].begin() - rv._output_end
+        if delta < 0:
+            w.run_command("left_delete")
+        elif delta == 0:
+            return
+        else:
+            w.run_command("left_delete")
+
+
+class ReplLeftCommand(sublime_plugin.TextCommand):
+    def run(self, edit):
+        v = self.view
+        w = v.window()
+        rv = repl_view(v)
+        delta = v.sel()[0].begin() - rv._output_end
+        if delta < 0:
+            w.run_command("move", {"by": "characters", "forward": False, "extend": False})
+        elif delta == 0:
+            return
+        else:
+            w.run_command("move", {"by": "characters", "forward": False, "extend": False})
+
+
+class ReplShiftLeftCommand(sublime_plugin.TextCommand):
+    def run(self, edit):
+        v = self.view
+        w = v.window()
+        rv = repl_view(v)
+        delta = v.sel()[0].begin() - rv._output_end
+        if delta < 0:
+            w.run_command("move", {"by": "characters", "forward": False, "extend": True})
+        elif delta == 0:
+            return
+        else:
+            w.run_command("move", {"by": "characters", "forward": False, "extend": True})
+
+
+class ReplHomeCommand(sublime_plugin.TextCommand):
+    def run(self, edit):
+        v = self.view
+        w = v.window()
+        rv = repl_view(v)
+        delta = v.sel()[0].begin() - rv._output_end
+        if delta < 0:
+            w.run_command("move_to", {"to": "bol", "extend": False})
+        else:
+            for i in range(1, delta + 1):
+                w.run_command("move", {"by": "characters", "forward": False, "extend": False})
+
+
+class ReplShiftHomeCommand(sublime_plugin.TextCommand):
+    def run(self, edit):
+        v = self.view
+        w = v.window()
+        rv = repl_view(v)
+        delta = v.sel()[0].begin() - rv._output_end
+        if delta < 0:
+            w.run_command("move_to", {"to": "bol", "extend": True})
+        else:
+            for i in range(1, delta + 1):
+                w.run_command("move", {"by": "characters", "forward": False, "extend": True})
 
 
 class ReplViewPreviousCommand(sublime_plugin.TextCommand):
     def run(self, edit):
+        rv = repl_view(self.view)
+        rv.scroll_to_end()
         repl_view(self.view).view_previous_command(edit)
 
 
 class ReplViewNextCommand(sublime_plugin.TextCommand):
     def run(self, edit):
+        rv = repl_view(self.view)
+        rv.scroll_to_end()
         repl_view(self.view).view_next_command(edit)
+
+
+class ReplKillCommand(sublime_plugin.TextCommand):
+    def run(self, edit):
+        repl = repl_view(self.view)
+        if repl:
+            repl.view_kill()
 
 
 class SublimeReplListener(sublime_plugin.EventListener):        
