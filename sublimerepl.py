@@ -348,17 +348,25 @@ class ReplEnterCommand(sublime_plugin.TextCommand):
             v.sel().clear()
             v.sel().add(sublime.Region(v.size()))
         rv = repl_view(v)
+        if not rv:
+            return 
         rv.push_history(rv.user_input()) # don't include cmd_postfix in history
         v.run_command("insert", {"characters": rv.repl.cmd_postfix})
         command = rv.user_input()
-        if command == "cls\n":
-            v.run_command("repl_escape")
-            bol = v.line(v.sel()[0]).begin()
-            v.replace(edit, sublime.Region(0, bol), "")
-            rv._output_end = v.sel()[0].begin()
-        else:
-            rv.adjust_end()
-            rv.repl.write(command)
+        rv.adjust_end()
+        rv.repl.write(command)
+
+
+class ReplClearCommand(sublime_plugin.TextCommand):
+    def run(self, edit):
+        v = self.view
+        rv = repl_view(v)
+        if not rv:
+            return
+        v.run_command("repl_escape")
+        bol = v.line(v.sel()[0]).begin()
+        v.replace(edit, sublime.Region(0, bol), "")
+        rv._output_end = v.sel()[0].begin()
 
 
 class ReplEscapeCommand(sublime_plugin.TextCommand):
