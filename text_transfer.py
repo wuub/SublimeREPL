@@ -24,10 +24,12 @@ def unload_handler():
         return
     os.unlink(TEMP_FILE.name)
 
+def default_sender(repl, text, file_name=None):
+    repl.write(text)
 
 """Senders is a dict of functions used to transfer text to repl as a repl
    specific load_file action"""
-SENDERS = defaultdict(lambda (repl, text): repl.write(text))
+SENDERS = defaultdict(lambda: default_sender)
 
 def sender(external_id,):
     def wrap(func):
