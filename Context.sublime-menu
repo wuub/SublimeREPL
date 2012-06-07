@@ -1,5 +1,5 @@
 [
 	{"caption": "-"},
-	{"command": "subprocess_repl_send_signal", "caption": "Kill (send SIGTERM)", "args": {"signal": "SIGTERM"}},
+	{"command": "repl_kill", "caption": "Kill"},
 	{"command": "subprocess_repl_send_signal", "caption": "Send other SIGNAL"}
 ]
