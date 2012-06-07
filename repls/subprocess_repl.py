@@ -11,18 +11,23 @@ import killableprocess
 from sublime import load_settings
 
 
-
-
 def win_find_executable(executable, env):
     """Explicetely looks for executable in env["PATH"]"""
     if os.path.dirname(executable):
         return executable # executable is already absolute filepath
     path = env.get("PATH", "")
-    dirs = path.split(os.path.pathsep)    
+    pathext = env.get("PATHEXT") or ".EXE"
+    dirs = path.split(os.path.pathsep)
+    (base, ext) = os.path.splitext(executable)
+    if ext:
+        extensions = [ext]
+    else:
+        extensions = pathext.split(os.path.pathsep)
     for dir in dirs:
-        filepath = os.path.join(dir, executable)
-        if os.path.exists(filepath):
-            return filepath
+        for extension in extensions:
+            filepath = os.path.join(dir, base + extension)
+            if os.path.exists(filepath):
+                return filepath
     return None
 
 
