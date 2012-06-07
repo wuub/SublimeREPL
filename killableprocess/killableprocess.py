@@ -190,6 +190,7 @@ class Popen(subprocess.Popen):
                 except: pass
             else:
                 os.kill(self.pid, signal.SIGKILL)
+            super(Popen, self).kill()
             self.returncode = -9
 
     def wait(self, timeout=None, group=True):
