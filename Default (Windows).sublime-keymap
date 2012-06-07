@@ -14,6 +14,43 @@
 	{ "keys": ["enter"], "command": "repl_enter", "args": {},
 	"context":
 		[
+			{ "key": "setting.repl", "operator": "equal", "operand": true },
+			{ "key": "auto_complete_visible", "operator": "equal", "operand": false }
+		]
+	},
+	{ "keys": ["escape"], "command": "repl_escape", "args": {},
+	"context":
+		[
+			{ "key": "setting.repl", "operator": "equal", "operand": true }
+		]
+	},
+	{ "keys": ["backspace"], "command": "repl_backspace", "args": {},
+	"context":
+		[
+			{ "key": "setting.repl", "operator": "equal", "operand": true }
+		]
+	},
+	{ "keys": ["left"], "command": "repl_left", "args": {},
+	"context":
+		[
+			{ "key": "setting.repl", "operator": "equal", "operand": true }
+		]
+	},
+	{ "keys": ["home"], "command": "repl_home", "args": {},
+	"context":
+		[
+			{ "key": "setting.repl", "operator": "equal", "operand": true }
+		]
+	},
+	{ "keys": ["shift+left"], "command": "repl_shift_left", "args": {},
+	"context":
+		[
+			{ "key": "setting.repl", "operator": "equal", "operand": true }
+		]
+	},
+	{ "keys": ["shift+home"], "command": "repl_shift_home", "args": {},
+	"context":
+		[
 			{ "key": "setting.repl", "operator": "equal", "operand": true }
 		]
 	}

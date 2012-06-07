@@ -192,9 +192,14 @@ class ReplView(object):
             view.set_syntax_file(syntax)
         self._output_end = view.size()
         
+        view.settings().set("repl_external_id", repl.external_id)
         view.settings().set("repl_id", repl.id)
         view.settings().set("repl", True)
         view.settings().set("translate_tabs_to_spaces", False)
+        view.settings().set("auto_indent", False)
+        view.settings().set("smart_indent", False)
+        view.settings().set("indent_subsequent_lines", False)
+        view.settings().set("detect_indentation", False)
         
         self._repl_reader = ReplReader(repl)
         self._repl_reader.start()
@@ -278,7 +283,7 @@ class ReplView(object):
         if is_still_working:
             sublime.set_timeout(self.update_view_loop, 100)
         else:
-            self.write("\n***Repl Closed***\n""")
+            self.write("\n***Repl Killed***\n""" if self.repl._killed else "\n***Repl Closed***\n""")
             self._view.set_read_only(True)
             if sublime.load_settings(SETTINGS_FILE).get("view_auto_close"):
                 window = self._view.window()
@@ -305,7 +310,7 @@ class ReplView(object):
     def view_next_command(self, edit):
         self.ensure_history_match()
         self.replace_current_with_history(edit, self._history_match.next_command())
-
+        
     def replace_current_with_history(self, edit, cmd):
         if not cmd:
             return #don't replace if no match
@@ -315,13 +320,18 @@ class ReplView(object):
 
 
 class ReplOpenCommand(sublime_plugin.WindowCommand):
-    def run(self, encoding, type, syntax=None, **kwds):
+    def run(self, encoding, type, syntax=None, view_id=None, **kwds):
         try:
             window = self.window
             kwds = translate(window, kwds)
             encoding = translate(window, encoding)
             r = repls.Repl.subclass(type)(encoding, **kwds)
-            view = window.new_file()
+            found = None
+            for view in self.window.views():
+                if view.id() == view_id:
+                    found = view
+                    break
+            view = found or window.new_file()
             rv = ReplView(view, r, syntax)
             repl_views[r.id] = rv
             view.set_scratch(True)
@@ -335,33 +345,132 @@ class ReplEnterCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         v = self.view
         if v.sel()[0].begin() != v.size():
-            v.run_command("insert", {"characters": "\n"})
-            return
+            v.sel().clear()
+            v.sel().add(sublime.Region(v.size()))
         rv = repl_view(v)
         rv.push_history(rv.user_input()) # don't include cmd_postfix in history
         v.run_command("insert", {"characters": rv.repl.cmd_postfix})
         command = rv.user_input()
-        rv.adjust_end()
-        rv.repl.write(command)
+        if command == "cls\n":
+            v.run_command("repl_escape")
+            bol = v.line(v.sel()[0]).begin()
+            v.replace(edit, sublime.Region(0, bol), "")
+            rv._output_end = v.sel()[0].begin()
+        else:
+            rv.adjust_end()
+            rv.repl.write(command)
+
+
+class ReplEscapeCommand(sublime_plugin.TextCommand):
+    def run(self, edit):
+        v = self.view
+        w = v.window()
+        w.run_command("move_to", {"to": "eof", "extend": False})
+        w.run_command("repl_shift_home")
+        w.run_command("right_delete")
+
+
+def repl_view_delta(sublime_view):
+    """Return a repl_view and number of characters from current selection 
+    to then beggingin of user_input (otherwise known as _output_end)""" 
+    rv = repl_view(sublime_view)
+    if not rv:
+        return None, -1
+    delta = rv._output_end - sublime_view.sel()[0].begin()
+    return rv, delta
+
+class ReplBackspaceCommand(sublime_plugin.TextCommand):
+    def run(self, edit):
+        v = self.view
+        w = v.window()
+        rv, delta = repl_view_delta(v)
+        if delta > 0:
+            w.run_command("left_delete")
+        elif delta == 0:
+            return
+        else:
+            w.run_command("left_delete")
+
+
+class ReplLeftCommand(sublime_plugin.TextCommand):
+    def run(self, edit):
+        v = self.view
+        w = v.window()
+        rv, delta = repl_view_delta(v)
+        if delta > 0:
+            w.run_command("move", {"by": "characters", "forward": False, "extend": False})
+        elif delta == 0:
+            return
+        else:
+            w.run_command("move", {"by": "characters", "forward": False, "extend": False})
+
+
+class ReplShiftLeftCommand(sublime_plugin.TextCommand):
+    def run(self, edit):
+        v = self.view
+        w = v.window()
+        rv, delta = repl_view_delta(v)
+        if delta > 0:
+            w.run_command("move", {"by": "characters", "forward": False, "extend": True})
+        elif delta == 0:
+            return
+        else:
+            w.run_command("move", {"by": "characters", "forward": False, "extend": True})
+
+
+class ReplHomeCommand(sublime_plugin.TextCommand):
+    def run(self, edit):
+        v = self.view
+        w = v.window()
+        rv, delta = repl_view_delta(v)
+        if delta > 0:
+            w.run_command("move_to", {"to": "bol", "extend": False})
+        else:
+            for i in range(1, delta + 1):
+                w.run_command("move", {"by": "characters", "forward": False, "extend": False})
+
+
+class ReplShiftHomeCommand(sublime_plugin.TextCommand):
+    def run(self, edit):
+        v = self.view
+        w = v.window()
+        rv, delta = repl_view_delta(v)
+        if delta > 0:
+            w.run_command("move_to", {"to": "bol", "extend": True})
+        else:
+            for i in range(abs(delta)):
+                w.run_command("move", {"by": "characters", "forward": False, "extend": True})
 
 
 class ReplViewPreviousCommand(sublime_plugin.TextCommand):
     def run(self, edit):
-        repl_view(self.view).view_previous_command(edit)
+        rv = repl_view(self.view)
+        if rv:
+            rv.scroll_to_end()
+            repl_view(self.view).view_previous_command(edit)
 
 
 class ReplViewNextCommand(sublime_plugin.TextCommand):
     def run(self, edit):
-        repl_view(self.view).view_next_command(edit)
+        rv = repl_view(self.view)
+        if rv:
+            rv.scroll_to_end()
+            repl_view(self.view).view_next_command(edit)
+
+
+class ReplKillCommand(sublime_plugin.TextCommand):
+    def run(self, edit):
+        rv = repl_view(self.view)
+        if rv:
+            rv.repl.kill()
 
 
 class SublimeReplListener(sublime_plugin.EventListener):        
     def on_close(self, view):
         rv = repl_view(view)
-        if not rv:
-            return
-        rv.repl.close()
-        _delete_repl(view)
+        if rv:
+            rv.repl.close()
+            _delete_repl(view)
 
 
 class SubprocessReplSendSignal(sublime_plugin.TextCommand):

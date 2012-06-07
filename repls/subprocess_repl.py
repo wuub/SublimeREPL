@@ -37,6 +37,7 @@ class SubprocessRepl(repl.Repl):
         env = self.env(env, extend_env, settings)
         self._cmd = self.cmd(cmd, env)
         self._soft_quit = soft_quit
+        self._killed = False
         self.popen = killableprocess.Popen(
                         self._cmd, 
                         startupinfo=self.startupinfo(settings),
@@ -127,6 +128,7 @@ class SubprocessRepl(repl.Repl):
         si.flush()
 
     def kill(self):
+        self._killed = True
         self.write(self._soft_quit)
         self.popen.kill()
 
@@ -138,7 +140,9 @@ class SubprocessRepl(repl.Repl):
             signals[k] = v
         return signals
 
-    def send_signal(self, signal):
+    def send_signal(self, sig):
+        if sig==signal.SIGTERM:
+            self._killed = True
         if self.is_alive():
-            self.popen.send_signal(signal)
+            self.popen.send_signal(sig)
 

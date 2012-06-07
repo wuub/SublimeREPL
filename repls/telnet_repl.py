@@ -23,6 +23,7 @@ class TelnetRepl(repl.Repl):
         # as long as it can be turned into an INT
         self._telnet.open(host, int(port)) 
         self._alive = True
+        self._killed = False
 
     def name(self):
         return "%s:%s" % (self._telnet.host, self._telnet.port)
@@ -37,5 +38,6 @@ class TelnetRepl(repl.Repl):
         self._telnet.write(bytes)
 
     def kill(self):
+        self._killed = True
         self._telnet.close()
         self._alive = False
