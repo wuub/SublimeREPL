@@ -1,12 +1,13 @@
-(function(){
-	var options = {
-		prompt:     null, //'> ',
-		source:     null, //process.stdin,
-		eval:       null, //require('vm').runInThisContext,
-		useGlobal:  true  //false
-	};
+(function () {
 
-	var repl = require('repl');
-	repl.disableColors = true;
-	repl.start(options.prompt, options.source, options.eval, options.useGlobal);
+    var repl = require('repl');
+    
+    repl.start({
+        prompt:    null, //'> ',
+        source:    null, //process.stdin,
+        eval:      null, //require('vm').runInThisContext,
+        useGlobal: true, //false
+        useColors: false
+    });
+
 })();
