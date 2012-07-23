@@ -1,0 +1,23 @@
+[
+     {
+        "id": "tools",
+        "children":
+        [{
+            "caption": "SublimeREPL",
+            "mnemonic": "r",
+            "id": "SublimeREPL",
+            "children":
+            [
+                {"command": "repl_open", 
+                "id": "repl_sublime_execnet",
+                "caption": "Execnet",
+                "args": {
+                        "type": "execnet_repl",
+                        "encoding": "utf8",
+                        "syntax": "Packages/Python/Python.tmLanguage"
+                        }
+                    }
+            ]   
+        }]
+    }
+]
