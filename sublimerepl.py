@@ -10,6 +10,7 @@ import sublime_plugin
 import repls
 import os
 import buzhug
+import re
 
 repl_views = {}
 
@@ -204,11 +205,15 @@ class ReplView(object):
         self._repl_reader = ReplReader(repl)
         self._repl_reader.start()
 
-        if self.external_id and sublime.load_settings(SETTINGS_FILE).get("presistent_history_enabled"):
+        settings = sublime.load_settings(SETTINGS_FILE)
+
+        if self.external_id and settings.get("presistent_history_enabled"):
             self._history = PersistentHistory(self.external_id)
         else:
             self._history = MemHistory()
         self._history_match = None
+
+        self._filter_color_codes = settings.get("filter_ascii_color_codes")
         
         # begin refreshing attached view
         self.update_view_loop()
@@ -240,6 +245,11 @@ class ReplView(object):
 
     def write(self, unistr):
         """Writes output from Repl into this view."""
+
+        # remove color codes
+        if self._filter_color_codes:
+            unistr = re.sub(r'\033\[\d*\w', '', unistr)
+
         # string is assumet to be already correctly encoded
         v = self._view
         edit = v.begin_edit()
