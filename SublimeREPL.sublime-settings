@@ -13,5 +13,9 @@
 	// dies or closes connection. This is useful when the process dies for an unexpected
 	// reason as it allows you to inspect it output. If you want. Setting this
 	// to true will cause SublimreREPL to close view once the process died. 
-	"view_auto_close": false
+	"view_auto_close": false,
+
+	// Some terminals output ascii color codes which are not curreclty supported
+	// enable this option to filter them out.
+	"filter_ascii_color_codes": false
 }
