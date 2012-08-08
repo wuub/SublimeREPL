@@ -12,87 +12,35 @@ import os
 import buzhug
 import re
 
-repl_views = {}
-
 PLATFORM = sublime.platform().lower()
-SUBLIMEREPL_DIR = os.getcwdu()
 SETTINGS_FILE = 'SublimeREPL.sublime-settings'
 
-def repl_view(view):
-    id = view.settings().get("repl_id")
-    if not repl_views.has_key(id):
-        return None
-    rv = repl_views[id]
-    rv.update_view(view)
-    return rv
+class Event:
+    def __init__(self):
+        self.handlers = set()
 
-def find_repl(external_id):
-    for rv in repl_views.values():
-        if rv.external_id == external_id:
-            return rv
-    return None
+    def handle(self, handler):
+        self.handlers.add(handler)
+        return self
 
-def _delete_repl(view):
-    id = view.settings().get("repl_id")
-    if not repl_views.has_key(id):
-        return None
-    del repl_views[id]
+    def unhandle(self, handler):
+        try:
+            self.handlers.remove(handler)
+        except:
+            raise ValueError("Handler is not handling this event, so cannot unhandle it.")
+        return self
 
+    def fire(self, *args, **kargs):
+        for handler in self.handlers:
+            handler(*args, **kargs)
 
-def subst_for_translate(window):
-    """ Return all available substitutions"""
-    import os.path
-    import locale
-    res = {
-        "packages": sublime.packages_path(),
-        "installed_packages" : sublime.installed_packages_path()
-        }
-    if sublime.platform() == "windows":
-        res["win_cmd_encoding"] = locale.getdefaultlocale()[1]
-    av = window.active_view()
-    if av is None:
-        return res
-    filename = av.file_name()
-    if not filename:
-        return res
-    filename = os.path.abspath(filename)
-    res["file"] = filename
-    res["file_path"] = os.path.dirname(filename)
-    res["file_basename"] = os.path.basename(filename)
-    return res
+    def getHandlerCount(self):
+        return len(self.handlers)
 
-
-def translate_string(window, string, subst=None):
-    #$file, $file_path, $packages
-    from string import Template
-    if subst is None:
-        subst = subst_for_translate(window)
-    return Template(string).safe_substitute(**subst)
-
-def translate_list(window, list, subst=None):
-    if subst is None:
-        subst = subst_for_translate(window)
-    return [translate(window, x, subst) for x in list]
-
-def translate_dict(window, dictionary, subst=None):
-    if subst is None:
-        subst = subst_for_translate(window)
-    if PLATFORM in dictionary:
-        return translate(window, dictionary[PLATFORM], subst)
-    for k, v in dictionary.items():
-        dictionary[k] = translate(window, v, subst)
-    return dictionary
-
-def translate(window, obj, subst=None):
-    if subst is None:
-        subst = subst_for_translate(window)
-    if isinstance(obj, dict):
-        return translate_dict(window, obj, subst)
-    if isinstance(obj, basestring):
-        return translate_string(window, obj, subst)
-    if isinstance(obj, list):
-        return translate_list(window, obj, subst)
-    return obj
+    __iadd__ = handle
+    __isub__ = unhandle
+    __call__ = fire
+    __len__  = getHandlerCount
 
 class ReplReader(threading.Thread):
     def __init__(self, repl):
@@ -189,6 +137,10 @@ class ReplView(object):
     def __init__(self, view, repl, syntax):
         self.repl = repl
         self._view = view
+        self._window = view.window()
+
+        self.closed = Event()
+
         if syntax:
             view.set_syntax_file(syntax)
         self._output_end = view.size()
@@ -223,15 +175,77 @@ class ReplView(object):
     def external_id(self):
         return self.repl.external_id
 
+    def on_backspace(self):
+        if self.delta < 0:
+            self._view.run_command("left_delete")
+
+    def on_left(self):
+        if self.delta != 0:
+            self._window.run_command("move", {"by": "characters", "forward": False, "extend": False})
+
+    def on_shift_left(self):
+        if self.delta != 0:
+            self._window.run_command("move", {"by": "characters", "forward": False, "extend": True})
+
+    def on_home(self):
+        if self.delta > 0:
+            self._window.run_command("move_to", {"to": "bol", "extend": False})
+        else:
+            for i in range(1, self.delta + 1):
+                self._window.run_command("move", {"by": "characters", "forward": False, "extend": False})
+
+    def on_shift_home(self):
+        if self.delta > 0:
+            self._window.run_command("move_to", {"to": "bol", "extend": True})
+        else:
+            for i in range(abs(self.delta)):
+                self._window.run_command("move", {"by": "characters", "forward": False, "extend": True})
+
+    def on_selection_modified(self):
+        self._view.set_read_only(self.delta > 0)
+
+    def on_close(self):
+        self.repl.close()
+        self.closed(self.repl.id)
+
+    def clear(self, edit):
+        self.escape(edit)
+        self._view.erase(edit, self.output_region)
+        self._output_end = self._view.sel()[0].begin()
+
+    def escape(self, edit):
+        self._view.set_read_only(False)
+        self._view.erase(edit, self.input_region)
+        self._view.show(self.input_region)
+
+    def enter(self):
+        v = self._view
+        if v.sel()[0].begin() != v.size():
+            v.sel().clear()
+            v.sel().add(sublime.Region(v.size()))
+
+        self.push_history(self.user_input) # don't include cmd_postfix in history
+        v.run_command("insert", {"characters": self.repl.cmd_postfix})
+        command = self.user_input
+        self.adjust_end()
+        self.repl.write(command)
+
+    def previous_command(self, edit):
+        self._view.set_read_only(False)
+        self.ensure_history_match()
+        self.replace_current_input(edit, self._history_match.prev_command())
+        self._view.show(self.input_region)
+
+    def next_command(self, edit):
+        self._view.set_read_only(False)
+        self.ensure_history_match()
+        self.replace_current_input(edit, self._history_match.next_command())
+        self._view.show(self.input_region)
+
     def update_view(self, view):
         """If projects were switched, a view could be a new instance"""
         if self._view is not view:
             self._view = view
-
-    def user_input(self):
-        """Returns text entered by the user"""
-        region = sublime.Region(self._output_end, self._view.size())
-        return self._view.substr(region)
 
     def adjust_end(self):
         if self.repl.suppress_echo:
@@ -260,11 +274,7 @@ class ReplView(object):
             self._output_end += len(unistr)
         finally:
             v.end_edit(edit)
-        self.scroll_to_end()
-
-    def scroll_to_end(self):
-        v = self._view
-        v.show(v.line(v.size()).begin())
+        v.show(self.input_region)
 
     def append_input_text(self, text, edit=None):
         e = edit
@@ -307,13 +317,23 @@ class ReplView(object):
         self._history_match = None
 
     def ensure_history_match(self):
-        user_input = self.user_input()
+        user_input = self.user_input
         if self._history_match is not None:
             if user_input != self._history_match.current_command():
                 # user did something! reset
                 self._history_match = None
         if self._history_match is None:
             self._history_match = self._history.match(user_input)
+
+    def replace_current_input(self, edit, cmd):
+        if cmd:
+            self._view.replace(edit, self.input_region, cmd)
+
+    def run(self, edit, code):
+        self.replace_current_input(edit, code)
+        self.enter()
+        self._view.show(self.input_region)
+        self._window.focus_view(self._view)
 
     def view_previous_command(self, edit):
         self.ensure_history_match()
@@ -330,64 +350,186 @@ class ReplView(object):
         self._view.erase(edit, user_region)
         self._view.insert(edit, user_region.begin(), cmd)
 
+    def run(self, edit, code):
+        self.replace_current_input(edit, code + ";;")
+        self.enter()
+        self._view.show(self.input_region)
+        self._window.focus_view(self._view)
 
-class ReplOpenCommand(sublime_plugin.WindowCommand):
-    def run(self, encoding, type, syntax=None, view_id=None, **kwds):
+    @property
+    def input_region(self):
+        return sublime.Region(self._output_end, self._view.size())
+
+    @property
+    def output_region(self):
+        return sublime.Region(0, self._output_end - 2)
+
+    @property
+    def user_input(self):
+        """Returns text entered by the user"""
+        return self._view.substr(self.input_region)
+
+    @property
+    def delta(self):
+        """Return a repl_view and number of characters from current selection
+        to then begging of user_input (otherwise known as _output_end)"""
+        return self._output_end - self._view.sel()[0].begin()
+
+
+class ReplManager(object):
+
+    def __init__(self):
+        self.repl_views = {}
+
+    def repl_view(self, view):
+        id = view.settings().get("repl_id")
+        if not self.repl_views.has_key(id):
+            return None
+        rv = self.repl_views[id]
+        rv.update_view(view)
+        return rv
+
+    def find_repl(self, external_id):
+        for rv in self.repl_views.values():
+            if rv.external_id == external_id:
+                return rv
+        return None
+
+    def find_repl_by_syntax(self, syntax):
+        for rv in self.repl_views.values():
+            print rv._view.settings().get('syntax')
+            if rv._view.settings().get('syntax') == syntax:
+                return rv
+        return None
+
+    def open(self, window, encoding, type, syntax=None, view_id=None, **kwds):
         try:
-            window = self.window
-            kwds = translate(window, kwds)
-            encoding = translate(window, encoding)
+            kwds = ReplManager.translate(window, kwds)
+            encoding = ReplManager.translate(window, encoding)
             r = repls.Repl.subclass(type)(encoding, **kwds)
             found = None
-            for view in self.window.views():
+            for view in window.views():
                 if view.id() == view_id:
                     found = view
                     break
             view = found or window.new_file()
+
             rv = ReplView(view, r, syntax)
-            repl_views[r.id] = rv
+            rv.closed += self._delete_repl
+            self.repl_views[r.id] = rv
             view.set_scratch(True)
             view.set_name("*REPL* [%s]" % (r.name(),))
             return rv
         except Exception, e:
             sublime.error_message(repr(e))
 
+    def _delete_repl(self, repl_id):
+        if not self.repl_views.has_key(repl_id):
+            return None
+        del self.repl_views[repl_id]
 
+    @staticmethod
+    def translate(window, obj, subst=None):
+        if subst is None:
+            subst = ReplManager._subst_for_translate(window)
+        if isinstance(obj, dict):
+            return ReplManager._translate_dict(window, obj, subst)
+        if isinstance(obj, basestring):
+            return ReplManager._translate_string(window, obj, subst)
+        if isinstance(obj, list):
+            return ReplManager._translate_list(window, obj, subst)
+        return obj
+
+    @staticmethod
+    def _subst_for_translate(window):
+        """ Return all available substitutions"""
+        import os.path
+        import locale
+        res = {
+            "packages": sublime.packages_path(),
+            "installed_packages" : sublime.installed_packages_path()
+            }
+        if sublime.platform() == "windows":
+            res["win_cmd_encoding"] = locale.getdefaultlocale()[1]
+        av = window.active_view()
+        if av is None:
+            return res
+        filename = av.file_name()
+        if not filename:
+            return res
+        filename = os.path.abspath(filename)
+        res["file"] = filename
+        res["file_path"] = os.path.dirname(filename)
+        res["file_basename"] = os.path.basename(filename)
+        return res
+
+    @staticmethod
+    def _translate_string(window, string, subst=None):
+        #$file, $file_path, $packages
+        from string import Template
+        if subst is None:
+            subst = ReplManager._subst_for_translate(window)
+        return Template(string).safe_substitute(**subst)
+
+    @staticmethod
+    def _translate_list(window, list, subst=None):
+        if subst is None:
+            subst = ReplManager._subst_for_translate(window)
+        return [ReplManager.translate(window, x, subst) for x in list]
+
+    @staticmethod
+    def _translate_dict(window, dictionary, subst=None):
+        if subst is None:
+            subst = ReplManager._subst_for_translate(window)
+        if PLATFORM in dictionary:
+            return ReplManager.translate(window, dictionary[PLATFORM], subst)
+        for k, v in dictionary.items():
+            dictionary[k] = ReplManager.translate(window, v, subst)
+        return dictionary
+
+manager = ReplManager()
+
+# Window Commands #########################################
+
+# Opens a new REPL
+class ReplOpenCommand(sublime_plugin.WindowCommand):
+    def run(self, encoding, type, syntax=None, view_id=None, **kwds):
+        manager.open(self.window, encoding, type, syntax, view_id, **kwds)
+
+# View Commands ###########################################
+
+# Send selection/line to REPL
+class ReplSendCommand(sublime_plugin.TextCommand):
+    def run(self, edit):
+        syntax = self.view.settings().get('syntax')
+        rv = manager.find_repl_by_syntax(syntax)
+        if not rv: return
+        print "here"
+        lines = [   self.view.substr(region) if not region.empty() else self.view.substr(self.view.line(region))
+                    for region in self.view.sel()   ]
+        cmd = '\n'.join(lines)
+        print cmd
+        rv.run(edit, cmd)
+
+# REPL Comands ############################################
+
+# Submits the Command to the REPL
 class ReplEnterCommand(sublime_plugin.TextCommand):
     def run(self, edit):
-        v = self.view
-        if v.sel()[0].begin() != v.size():
-            v.sel().clear()
-            v.sel().add(sublime.Region(v.size()))
-        rv = repl_view(v)
-        if not rv:
-            return
-        rv.push_history(rv.user_input()) # don't include cmd_postfix in history
-        v.run_command("insert", {"characters": rv.repl.cmd_postfix})
-        command = rv.user_input()
-        rv.adjust_end()
-        rv.repl.write(command)
+        rv = manager.repl_view(self.view)
+        if rv: rv.enter()
 
 
 class ReplClearCommand(sublime_plugin.TextCommand):
     def run(self, edit):
-        v = self.view
-        rv = repl_view(v)
-        if not rv:
-            return
-        v.run_command("repl_escape")
-        bol = v.line(v.sel()[0]).begin()
-        v.replace(edit, sublime.Region(0, bol), "")
-        rv._output_end = v.sel()[0].begin()
+        rv = manager.repl_view(self.view)
+        if rv: rv.clear(edit)
 
-
+# Resets Repl Command Line
 class ReplEscapeCommand(sublime_plugin.TextCommand):
     def run(self, edit):
-        v = self.view
-        w = v.window()
-        w.run_command("move_to", {"to": "eof", "extend": False})
-        w.run_command("repl_shift_home")
-        w.run_command("right_delete")
+        rv = manager.repl_view(self.view)
+        if rv: rv.escape(edit)
 
 
 def repl_view_delta(sublime_view):
@@ -401,101 +543,65 @@ def repl_view_delta(sublime_view):
 
 class ReplBackspaceCommand(sublime_plugin.TextCommand):
     def run(self, edit):
-        v = self.view
-        w = v.window()
-        rv, delta = repl_view_delta(v)
-        if delta > 0:
-            w.run_command("left_delete")
-        elif delta == 0:
-            return
-        else:
-            w.run_command("left_delete")
+        rv = manager.repl_view(self.view)
+        if rv: rv.on_backspace()
 
 
 class ReplLeftCommand(sublime_plugin.TextCommand):
     def run(self, edit):
-        v = self.view
-        w = v.window()
-        rv, delta = repl_view_delta(v)
-        if delta > 0:
-            w.run_command("move", {"by": "characters", "forward": False, "extend": False})
-        elif delta == 0:
-            return
-        else:
-            w.run_command("move", {"by": "characters", "forward": False, "extend": False})
+        rv = manager.repl_view(self.view)
+        if rv: rv.on_left()
 
 
 class ReplShiftLeftCommand(sublime_plugin.TextCommand):
     def run(self, edit):
-        v = self.view
-        w = v.window()
-        rv, delta = repl_view_delta(v)
-        if delta > 0:
-            w.run_command("move", {"by": "characters", "forward": False, "extend": True})
-        elif delta == 0:
-            return
-        else:
-            w.run_command("move", {"by": "characters", "forward": False, "extend": True})
+        rv = manager.repl_view(self.view)
+        if rv: rv.on_shift_left()
 
 
 class ReplHomeCommand(sublime_plugin.TextCommand):
     def run(self, edit):
-        v = self.view
-        w = v.window()
-        rv, delta = repl_view_delta(v)
-        if delta > 0:
-            w.run_command("move_to", {"to": "bol", "extend": False})
-        else:
-            for i in range(abs(delta)):
-                w.run_command("move", {"by": "characters", "forward": False, "extend": False})
+        rv = manager.repl_view(self.view)
+        if rv: rv.on_home()
 
 
 class ReplShiftHomeCommand(sublime_plugin.TextCommand):
     def run(self, edit):
-        v = self.view
-        w = v.window()
-        rv, delta = repl_view_delta(v)
-        if delta > 0:
-            w.run_command("move_to", {"to": "bol", "extend": True})
-        else:
-            for i in range(abs(delta)):
-                w.run_command("move", {"by": "characters", "forward": False, "extend": True})
+        rv = manager.repl_view(self.view)
+        if rv: rv.on_shift_home()
 
 
 class ReplViewPreviousCommand(sublime_plugin.TextCommand):
     def run(self, edit):
-        rv = repl_view(self.view)
-        if rv:
-            rv.scroll_to_end()
-            repl_view(self.view).view_previous_command(edit)
+        rv = manager.repl_view(self.view)
+        if rv: rv.previous_command(edit)
 
 
 class ReplViewNextCommand(sublime_plugin.TextCommand):
     def run(self, edit):
-        rv = repl_view(self.view)
-        if rv:
-            rv.scroll_to_end()
-            repl_view(self.view).view_next_command(edit)
+        rv = manager.repl_view(self.view)
+        if rv: rv.next_command(edit)
 
 
 class ReplKillCommand(sublime_plugin.TextCommand):
     def run(self, edit):
-        rv = repl_view(self.view)
-        if rv:
-            rv.repl.kill()
+        rv = manager.repl_view(self.view)
+        if rv: rv.repl.kill()
 
 
 class SublimeReplListener(sublime_plugin.EventListener):
+    def on_selection_modified(self, view):
+        rv = manager.repl_view(view)
+        if rv: rv.on_selection_modified()
+
     def on_close(self, view):
-        rv = repl_view(view)
-        if rv:
-            rv.repl.close()
-            _delete_repl(view)
+        rv = manager.repl_view(view)
+        if rv: rv.on_close()
 
 
 class SubprocessReplSendSignal(sublime_plugin.TextCommand):
     def run(self, edit, signal=None):
-        rv = repl_view(self.view)
+        rv = manager.repl_view(self.view)
         subrepl = rv.repl
         signals = subrepl.available_signals()
         sorted_names = sorted(signals.keys())
