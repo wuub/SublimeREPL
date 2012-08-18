@@ -1,0 +1,10 @@
+[
+    {
+        "caption": "SublimeREPL: Execnet Python",
+        "command": "run_existing_window_command", "args":
+        {
+            "id": "repl_sublime_execnet",
+            "file": "config/Execnet/Main.sublime-menu"
+        }
+    }
+]
