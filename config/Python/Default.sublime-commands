@@ -25,6 +25,6 @@
     },
     {
         "command": "python_virtualenv_repl",
-        "caption": "SublimeREPL: Python - Virtualenv"
+        "caption": "SublimeREPL: Python - virtualenv"
     }
 ]

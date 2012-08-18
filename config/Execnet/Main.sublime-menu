@@ -6,14 +6,16 @@
             "caption": "SublimeREPL",
             "mnemonic": "r",
             "id": "SublimeREPL",
-            "children":
-            [
-                {
-                    "command": "execnet_virtualenv_repl",
-                    "id": "repl_sublime_execnet",
-                    "caption": "SublimeREPL: Python Execnet"
-                }
-            ]
-        }]
-    }
-]
+            "children": [
+                {"caption": "Python",
+                "id": "Python",
+                "children": [
+                    {
+                        "command": "execnet_virtualenv_repl",
+                        "id": "repl_sublime_execnet",
+                        "caption": "Python - execnet"
+                    }
+                ]}
+        ]}
+    ]
+}]

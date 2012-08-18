@@ -1,6 +1,6 @@
 [
     {
-        "caption": "SublimeREPL: Sublime Python",
+        "caption": "SublimeREPL: Python - Sublime Text 2",
         "command": "run_existing_window_command", "args":
         {
             "id": "repl_sublime_python",

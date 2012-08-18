@@ -27,7 +27,7 @@
                     },
                     {"command": "python_virtualenv_repl",
                      "id": "python_virtualenv_repl",
-                     "caption": "Virtualenv Python"},
+                     "caption": "Python - virtualenv"},
                     {"command": "repl_open",
                      "caption": "Python - PDB current file",
                      "id": "repl_python_pdb",
