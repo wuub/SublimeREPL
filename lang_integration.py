@@ -5,6 +5,7 @@ import re
 import os.path
 import socket
 from functools import partial
+from contextlib import closing
 
 SETTINGS_FILE = "SublimeREPL.sublime-settings"
 
@@ -69,16 +70,20 @@ class ClojureAutoTelnetRepl(sublime_plugin.WindowCommand):
                                 "external_id":"clojure", "syntax":"Packages/Clojure/Clojure.tmLanguage"})
 
 
+def scan_for_virtualenvs(venv_paths):
+    import os.path
+    found_dirs = set()
+    for venv_path in venv_paths:
+        for (directory, _, filenames) in os.walk(os.path.expanduser(venv_path)) :
+            if "activate_this.py" in filenames:
+                found_dirs.add(directory)
+    return sorted(found_dirs)
+
+
 class PythonVirtualenvRepl(sublime_plugin.WindowCommand):
     def _scan(self):
-        import os.path
         venv_paths = sublime.load_settings(SETTINGS_FILE).get("python_virtualenv_paths", [])
-        found_dirs = set()
-        for venv_path in venv_paths:
-            for (directory, _, filenames) in os.walk(os.path.expanduser(venv_path)) :
-                if "activate_this.py" in filenames:
-                    found_dirs.add(directory)
-        return sorted(found_dirs)
+        return scan_for_virtualenvs(venv_paths)
 
     def run_virtualenv(self, choices, index):
         if index == -1:
@@ -104,3 +109,67 @@ class PythonVirtualenvRepl(sublime_plugin.WindowCommand):
         choices = self._scan()
         nice_choices = [[path.split(os.path.sep)[-2], path] for path in choices]
         self.window.show_quick_panel(nice_choices, partial(self.run_virtualenv, nice_choices))
+
+
+VENV_SCAN_CODE = """
+import os.path
+
+venv_paths = channel.receive()
+found_dirs = set()
+for venv_path in venv_paths:
+    for (directory, _, filenames) in os.walk(os.path.expanduser(venv_path)) :
+        if "activate_this.py" in filenames:
+            found_dirs.add(directory)
+
+channel.send(found_dirs)
+"""
+
+class ExecnetVirtualenvRepl(sublime_plugin.WindowCommand):
+    def run(self):
+        self.window.show_input_panel("SSH connection (eg. user@host)", "", self.on_ssh_select, None, None)
+
+    def on_ssh_select(self, host_string):
+        import execnet
+        venv_paths = sublime.load_settings(SETTINGS_FILE).get("python_virtualenv_paths", [])
+        gw = execnet.makegateway("ssh=" + host_string)
+        ch = gw.remote_exec(VENV_SCAN_CODE)
+        with closing(ch):
+            ch.send(venv_paths)
+            directories = ch.receive(10)
+
+        choices = [[host_string + ":" + path.split(os.path.sep)[-2], path] for path in sorted(directories)]
+        nice_choices = [["w/o venv", "n/a"]] + choices
+        self.window.show_quick_panel(nice_choices, partial(self.run_virtualenv, host_string, nice_choices))
+
+    def run_virtualenv(self, host_string, nice_choices, index):
+        if index == -1:
+            return
+        if index == 0:
+            connection_string = "ssh={host}".format(host=host_string)
+            ps1 = "({host}@) >>> ".format(host=host_string)
+            activate_file = ""
+        else:
+            (name, directory) = nice_choices[index]
+            activate_file = os.path.join(directory, "activate_this.py")
+            python_file = os.path.join(directory, "python")
+            ps1 = "({name}) >>> ".format(name=name, host=host_string)
+            connection_string = "ssh={host}//env:PATH={dir}//python={python}".format(
+                host=host_string,
+                dir=directory,
+                python=python_file
+            )
+
+        self.window.run_command("repl_open",
+                 {
+                  "type": "execnet_repl",
+                  "encoding": "utf8",
+                  "syntax": "Packages/Python/Python.tmLanguage",
+                  "connection_string": connection_string,
+                  "activate_file": activate_file,
+                  "ps1": ps1
+                 })
+
+
+
+
+

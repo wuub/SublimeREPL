@@ -8,16 +8,12 @@
             "id": "SublimeREPL",
             "children":
             [
-                {"command": "repl_open", 
-                "id": "repl_sublime_execnet",
-                "caption": "Execnet",
-                "args": {
-                        "type": "execnet_repl",
-                        "encoding": "utf8",
-                        "syntax": "Packages/Python/Python.tmLanguage"
-                        }
-                    }
-            ]   
+                {
+                    "command": "execnet_virtualenv_repl",
+                    "id": "repl_sublime_execnet",
+                    "caption": "SublimeREPL: Python Execnet"
+                }
+            ]
         }]
     }
 ]

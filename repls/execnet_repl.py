@@ -4,22 +4,37 @@ from Queue import Queue
 import sys
 import execnet
 
-remote = """
+REMOTE_CODE = """
+#if '{activate_file}':
+#    execfile('{activate_file}', dict(__file__='{activate_file}'))
+
 import code
 import sys
+import time
 import contextlib
+import threading
+try:
+    from Queue import Queue
+except ImportError:
+    from queue import Queue  # py3
+
+class ChannelOut(object):
+   def write(self, data):
+        channel.send(data)
+
 @contextlib.contextmanager
-def redirect_stdio(sio):
+def redirect_stdio():
     orig = (sys.stdout, sys.stderr)
-    sys.stdout = sys.stderr = sio
+    sys.stdout = sys.stderr = ChannelOut()
     yield
     (sys.stdout, sys.stderr) = orig
 
 class InterceptingConsole(code.InteractiveConsole):
-    PS1 = ">>> "
+    PS1 = "{ps1}"
     PS2 = "... "
     def __init__(self, *args, **kwds):
         code.InteractiveConsole.__init__(self, *args, **kwds)
+        self.input = Queue()
         self.output = channel
         self.output.send(self.PS1)
 
@@ -27,35 +42,46 @@ class InterceptingConsole(code.InteractiveConsole):
         self.output.send(data)
 
     def push(self, line):
-        from StringIO import StringIO
-        s = StringIO()
-        with redirect_stdio(s):
+        with redirect_stdio():
             more = code.InteractiveConsole.push(self, line)
-        if s.len:
-            self.output.send(s.getvalue())
         self.output.send(self.PS2 if more else self.PS1)
         return more
 
+    def run(self):
+        while True:
+            line = self.input.get()
+            if line is None:
+                break
+            self.push(line)
+
+
 ic = InterceptingConsole()
+_thread = threading.Thread(target=ic.run)
+_thread.start()
+
+channel.setcallback(ic.input.put, endmarker=None)
+
 while not channel.isclosed():
-    param = channel.receive()
-    ic.push(param)
+    time.sleep(1.0)
 """
 
 class ExecnetRepl(repl.Repl):
     TYPE = "execnet_repl"
 
-    def __init__(self, encoding):
+    def __init__(self, encoding, connection_string=None, activate_file="", ps1=">>> "):
         super(ExecnetRepl, self).__init__(encoding, u"python", "\n", False)
-        self._gw = execnet.makegateway("popen//python=C:\\Python27\\pythonw.exe")
-        self._channel = self._gw.remote_exec(remote)
+        self._connections_string = connection_string
+        self._ps1 = ps1
+        self._gw = execnet.makegateway(connection_string)
+        remote_code = REMOTE_CODE.format(ps1=ps1, activate_file=activate_file)
+        self._channel = self._gw.remote_exec(remote_code)
         self.output = Queue()
         self._channel.setcallback(self.output.put, endmarker=None)
         self._alive = True
         self._killed = False
 
     def name(self):
-        return "execnet"
+        return "execnet " + self._ps1.split()[0]
 
     def is_alive(self):
         return self._alive
@@ -65,7 +91,7 @@ class ExecnetRepl(repl.Repl):
             self._alive = False
         else:
             self._channel.send(bytes)
-        
+
     def read_bytes(self):
         bytes = self.output.get()
         if bytes is None:
@@ -75,4 +101,5 @@ class ExecnetRepl(repl.Repl):
 
     def kill(self):
         self._killed = True
+        self._channel.close()
         self._gw.exit()
