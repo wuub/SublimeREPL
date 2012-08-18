@@ -17,5 +17,11 @@
 
 	// Some terminals output ascii color codes which are not curreclty supported
 	// enable this option to filter them out.
-	"filter_ascii_color_codes": true
+	"filter_ascii_color_codes": true,
+
+	// Where to look for python virtualenvs
+	"python_virtualenv_paths": [
+		"~/.virtualenvs",  // virtualenvwrapper
+		"~/.venv"  // venv.bash https://github.com/wuub/venv
+	]
 }
