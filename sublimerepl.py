@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-# Copyright (c) 2011, Wojciech Bederski (wuub.net) 
-# All rights reserved. 
+# Copyright (c) 2011, Wojciech Bederski (wuub.net)
+# All rights reserved.
 # See LICENSE.txt for details.
 
 import threading
@@ -192,7 +192,7 @@ class ReplView(object):
         if syntax:
             view.set_syntax_file(syntax)
         self._output_end = view.size()
-        
+
         view.settings().set("repl_external_id", repl.external_id)
         view.settings().set("repl_id", repl.id)
         view.settings().set("repl", True)
@@ -201,7 +201,7 @@ class ReplView(object):
         view.settings().set("smart_indent", False)
         view.settings().set("indent_subsequent_lines", False)
         view.settings().set("detect_indentation", False)
-        
+
         self._repl_reader = ReplReader(repl)
         self._repl_reader.start()
 
@@ -214,7 +214,7 @@ class ReplView(object):
         self._history_match = None
 
         self._filter_color_codes = settings.get("filter_ascii_color_codes")
-        
+
         # begin refreshing attached view
         self.update_view_loop()
 
@@ -273,7 +273,7 @@ class ReplView(object):
             self._view.end_edit(e)
 
     def new_output(self):
-        """Returns new data from Repl and bool indicating if Repl is still 
+        """Returns new data from Repl and bool indicating if Repl is still
            working"""
         q = self._repl_reader.queue
         data = ""
@@ -299,7 +299,7 @@ class ReplView(object):
                 window = self._view.window()
                 window.focus_view(self._view)
                 window.run_command("close")
-            
+
     def push_history(self, command):
         self._history.push(command)
         self._history_match = None
@@ -312,15 +312,15 @@ class ReplView(object):
                 self._history_match = None
         if self._history_match is None:
             self._history_match = self._history.match(user_input)
-        
+
     def view_previous_command(self, edit):
         self.ensure_history_match()
         self.replace_current_with_history(edit, self._history_match.prev_command())
-        
+
     def view_next_command(self, edit):
         self.ensure_history_match()
         self.replace_current_with_history(edit, self._history_match.next_command())
-        
+
     def replace_current_with_history(self, edit, cmd):
         if not cmd:
             return #don't replace if no match
@@ -348,7 +348,7 @@ class ReplOpenCommand(sublime_plugin.WindowCommand):
             view.set_name("*REPL* [%s]" % (r.name(),))
             return rv
         except Exception, e:
-            sublime.error_message(repr(e))    
+            sublime.error_message(repr(e))
 
 
 class ReplEnterCommand(sublime_plugin.TextCommand):
@@ -359,7 +359,7 @@ class ReplEnterCommand(sublime_plugin.TextCommand):
             v.sel().add(sublime.Region(v.size()))
         rv = repl_view(v)
         if not rv:
-            return 
+            return
         rv.push_history(rv.user_input()) # don't include cmd_postfix in history
         v.run_command("insert", {"characters": rv.repl.cmd_postfix})
         command = rv.user_input()
@@ -389,8 +389,8 @@ class ReplEscapeCommand(sublime_plugin.TextCommand):
 
 
 def repl_view_delta(sublime_view):
-    """Return a repl_view and number of characters from current selection 
-    to then beggingin of user_input (otherwise known as _output_end)""" 
+    """Return a repl_view and number of characters from current selection
+    to then beggingin of user_input (otherwise known as _output_end)"""
     rv = repl_view(sublime_view)
     if not rv:
         return None, -1
@@ -444,7 +444,7 @@ class ReplHomeCommand(sublime_plugin.TextCommand):
         if delta > 0:
             w.run_command("move_to", {"to": "bol", "extend": False})
         else:
-            for i in range(1, delta + 1):
+            for i in range(abs(delta)):
                 w.run_command("move", {"by": "characters", "forward": False, "extend": False})
 
 
@@ -483,7 +483,7 @@ class ReplKillCommand(sublime_plugin.TextCommand):
             rv.repl.kill()
 
 
-class SublimeReplListener(sublime_plugin.EventListener):        
+class SublimeReplListener(sublime_plugin.EventListener):
     def on_close(self, view):
         rv = repl_view(view)
         if rv:
@@ -496,7 +496,7 @@ class SubprocessReplSendSignal(sublime_plugin.TextCommand):
         rv = repl_view(self.view)
         subrepl = rv.repl
         signals = subrepl.available_signals()
-        sorted_names = sorted(signals.keys())              
+        sorted_names = sorted(signals.keys())
         if signals.has_key(signal):
             #signal given by name
             self.safe_send_signal(subrepl, signals[signal])
@@ -513,7 +513,7 @@ class SubprocessReplSendSignal(sublime_plugin.TextCommand):
             sigcode = signals[signame]
             self.safe_send_signal(subrepl, sigcode)
         self.view.window().show_quick_panel(sorted_names, signal_selected)
-                
+
     def safe_send_signal(self, subrepl, sigcode):
         try:
             subrepl.send_signal(sigcode)
