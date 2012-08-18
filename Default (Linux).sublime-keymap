@@ -28,7 +28,8 @@
 	{ "keys": ["backspace"], "command": "repl_backspace", "args": {},
 	"context":
 		[
-			{ "key": "setting.repl", "operator": "equal", "operand": true }
+			{ "key": "setting.repl", "operator": "equal", "operand": true },
+			{ "key": "selection_empty", "operator": "equal", "operand": true, "match_all": true }
 		]
 	},
 	{ "keys": ["left"], "command": "repl_left", "args": {},
