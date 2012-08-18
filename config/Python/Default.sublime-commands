@@ -22,5 +22,9 @@
             "id": "repl_python_run",
             "file": "config/Python/Main.sublime-menu"
         }
+    },
+    {
+        "command": "python_virtualenv_repl",
+        "caption": "SublimeREPL: Python - Virtualenv"
     }
 ]
