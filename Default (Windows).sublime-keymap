@@ -21,6 +21,7 @@
 	{ "keys": ["escape"], "command": "repl_escape", "args": {},
 	"context":
 		[
+			{ "key": "auto_complete_visible", "operator": "equal", "operand": false },
 			{ "key": "setting.repl", "operator": "equal", "operand": true }
 		]
 	},
