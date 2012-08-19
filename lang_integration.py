@@ -122,6 +122,8 @@ for venv_path in venv_paths:
             found_dirs.add(directory)
 
 channel.send(found_dirs)
+channel.close()
+
 """
 
 class ExecnetVirtualenvRepl(sublime_plugin.WindowCommand):
@@ -136,6 +138,7 @@ class ExecnetVirtualenvRepl(sublime_plugin.WindowCommand):
         with closing(ch):
             ch.send(venv_paths)
             directories = ch.receive(10)
+        gw.exit()
 
         choices = [[host_string + ":" + path.split(os.path.sep)[-2], path] for path in sorted(directories)]
         nice_choices = [["w/o venv", "n/a"]] + choices
