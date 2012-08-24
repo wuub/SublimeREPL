@@ -91,7 +91,7 @@ class PythonVirtualenvRepl(sublime_plugin.WindowCommand):
         (name, directory) = choices[index]
         activate_file = os.path.join(directory, "activate_this.py")
 
-        init_cmd = "execfile('{activate_file}', dict(__file__='{activate_file}')); import site; import sys; sys.ps1 = '({name}) >>> '; del sys;".format(name=name, activate_file=activate_file)
+        init_cmd = "execfile(r'{activate_file}', dict(__file__=r'{activate_file}')); import site; import sys; sys.ps1 = '({name}) >>> '; del sys;".format(name=name, activate_file=activate_file)
         self.window.run_command("repl_open",
             {
                 "type":"telnet",
