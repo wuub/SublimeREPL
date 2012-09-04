@@ -12,7 +12,7 @@
                 "id": "repl_tower",
                  "caption": "Tower Console",
                  "args": {
-                    "cwd": "$project_path",               
+                    "cwd": "$file_path",               
                     "type": "subprocess",
                     "encoding": "utf8",
                     "cmd": ["tower", "console", "-c"],    
