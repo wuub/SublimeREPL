@@ -248,6 +248,7 @@ class ReplView(object):
 
         # remove color codes
         if self._filter_color_codes:
+            unistr = re.sub(r'\033\[\d*;\d*\w', '', unistr)
             unistr = re.sub(r'\033\[\d*\w', '', unistr)
 
         # string is assumet to be already correctly encoded
