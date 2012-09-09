@@ -201,6 +201,7 @@ class ReplView(object):
         view.settings().set("smart_indent", False)
         view.settings().set("indent_subsequent_lines", False)
         view.settings().set("detect_indentation", False)
+        view.settings().set("auto_complete", False)
 
         self._repl_reader = ReplReader(repl)
         self._repl_reader.start()
@@ -248,8 +249,8 @@ class ReplView(object):
 
         # remove color codes
         if self._filter_color_codes:
-            unistr = re.sub(r'\033\[\d*;\d*\w', '', unistr)
-            unistr = re.sub(r'\033\[\d*\w', '', unistr)
+            unistr = re.sub(r'\033\[\d*(;\d*)?\w', '', unistr)
+            unistr = re.sub(r'_\x08', '', unistr)
 
         # string is assumet to be already correctly encoded
         v = self._view
