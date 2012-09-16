@@ -179,6 +179,15 @@ class ReplView(object):
         if self.delta < 0:
             self._view.run_command("left_delete")
 
+    def on_ctrl_backspace(self):
+        if self.delta < 0:
+            self._view.run_command("delete_word", { "forward": False, "sub_words": True })
+
+    def on_super_backspace(self):
+        if self.delta < 0:
+            for i in range(abs(self.delta)):
+                self._view.run_command("left_delete") # Hack to delete to BOL
+
     def on_left(self):
         if self.delta != 0:
             self._window.run_command("move", {"by": "characters", "forward": False, "extend": False})
@@ -191,7 +200,7 @@ class ReplView(object):
         if self.delta > 0:
             self._window.run_command("move_to", {"to": "bol", "extend": False})
         else:
-            for i in range(1, self.delta + 1):
+            for i in range(abs(self.delta)):
                 self._window.run_command("move", {"by": "characters", "forward": False, "extend": False})
 
     def on_shift_home(self):
@@ -546,48 +555,50 @@ class ReplBackspaceCommand(sublime_plugin.TextCommand):
         rv = manager.repl_view(self.view)
         if rv: rv.on_backspace()
 
+class ReplCtrlBackspaceCommand(sublime_plugin.TextCommand):
+    def run(self,edit):
+        rv = manager.repl_view(self.view)
+        if rv: rv.on_ctrl_backspace()
+
+class ReplSuperBackspaceCommand(sublime_plugin.TextCommand):
+    def run(self,edit):
+        rv = manager.repl_view(self.view)
+        if rv: rv.on_super_backspace()
 
 class ReplLeftCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         rv = manager.repl_view(self.view)
         if rv: rv.on_left()
 
-
 class ReplShiftLeftCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         rv = manager.repl_view(self.view)
         if rv: rv.on_shift_left()
-
 
 class ReplHomeCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         rv = manager.repl_view(self.view)
         if rv: rv.on_home()
 
-
 class ReplShiftHomeCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         rv = manager.repl_view(self.view)
         if rv: rv.on_shift_home()
-
 
 class ReplViewPreviousCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         rv = manager.repl_view(self.view)
         if rv: rv.previous_command(edit)
 
-
 class ReplViewNextCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         rv = manager.repl_view(self.view)
         if rv: rv.next_command(edit)
 
-
 class ReplKillCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         rv = manager.repl_view(self.view)
         if rv: rv.repl.kill()
-
 
 class SublimeReplListener(sublime_plugin.EventListener):
     def on_selection_modified(self, view):
