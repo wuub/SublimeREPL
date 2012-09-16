@@ -23,5 +23,8 @@
 	"python_virtualenv_paths": [
 		"~/.virtualenvs",  // virtualenvwrapper
 		"~/.venv"  // venv.bash https://github.com/wuub/venv
-	]
+	],
+
+	// Use arrows for history navigation instead of Alt+[P|N]/Ctrl+[P|N]
+	"history_arrows": true
 }

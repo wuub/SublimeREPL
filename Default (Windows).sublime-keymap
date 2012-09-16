@@ -2,12 +2,28 @@
 	{ "keys": ["up"], "command": "repl_view_previous",
 	"context":
 		[
+			{ "key": "setting.history_arrows", "operator": "equal", "operand": true },
+			{ "key": "setting.repl", "operator": "equal", "operand": true }
+		]
+	},
+	{ "keys": ["alt+p"], "command": "repl_view_previous",
+	"context":
+		[
+			{ "key": "setting.history_arrows", "operator": "equal", "operand": false },
 			{ "key": "setting.repl", "operator": "equal", "operand": true }
 		]
 	},
 	{ "keys": ["down"], "command": "repl_view_next",
 	"context":
 		[
+			{ "key": "setting.history_arrows", "operator": "equal", "operand": true },
+			{ "key": "setting.repl", "operator": "equal", "operand": true }
+		]
+	},
+	{ "keys": ["alt+n"], "command": "repl_view_next",
+	"context":
+		[
+			{ "key": "setting.history_arrows", "operator": "equal", "operand": false },
 			{ "key": "setting.repl", "operator": "equal", "operand": true }
 		]
 	},
