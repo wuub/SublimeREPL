@@ -137,7 +137,7 @@ class ExecnetVirtualenvRepl(sublime_plugin.WindowCommand):
         ch = gw.remote_exec(VENV_SCAN_CODE)
         with closing(ch):
             ch.send(venv_paths)
-            directories = ch.receive(10)
+            directories = ch.receive(60)
         gw.exit()
 
         choices = [[host_string + ":" + path.split(os.path.sep)[-2], path] for path in sorted(directories)]

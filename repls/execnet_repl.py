@@ -5,6 +5,9 @@ import sys
 import execnet
 
 REMOTE_CODE = """
+from __future__ import with_statement
+from __future__ import division
+from __future__ import absolute_import
 #if '{activate_file}':
 #    execfile('{activate_file}', dict(__file__='{activate_file}'))
 
