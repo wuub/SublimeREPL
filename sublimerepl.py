@@ -341,27 +341,14 @@ class ReplView(object):
     def replace_current_input(self, edit, cmd):
         if cmd:
             self._view.replace(edit, self.input_region, cmd)
+            self._view.sel().clear()
+            self._view.sel().add(sublime.Region(self._view.size()))
 
     def run(self, edit, code):
         self.replace_current_input(edit, code)
         self.enter()
         self._view.show(self.input_region)
         self._window.focus_view(self._view)
-
-    def view_previous_command(self, edit):
-        self.ensure_history_match()
-        self.replace_current_with_history(edit, self._history_match.prev_command())
-
-    def view_next_command(self, edit):
-        self.ensure_history_match()
-        self.replace_current_with_history(edit, self._history_match.next_command())
-
-    def replace_current_with_history(self, edit, cmd):
-        if not cmd:
-            return  # don't replace if no match
-        user_region = sublime.Region(self._output_end, self._view.size())
-        self._view.erase(edit, user_region)
-        self._view.insert(edit, user_region.begin(), cmd)
 
     @property
     def input_region(self):

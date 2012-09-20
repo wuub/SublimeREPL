@@ -1,4 +1,4 @@
-from sublimerepl import find_repl
+from sublimerepl import manager
 import sublime_plugin
 import sublime
 from collections import defaultdict
@@ -6,7 +6,7 @@ import tempfile
 
 
 """This is a bit stupid, but it's really difficult to create a temporary file with
-a persistent name that can be passed to external process using this name, and then 
+a persistent name that can be passed to external process using this name, and then
 delete it reliably..."""
 TEMP_FILE = None
 
@@ -37,7 +37,7 @@ def sender(external_id,):
     return wrap
 
 @sender("python")
-def python_sender(repl, text, file_name=None):    
+def python_sender(repl, text, file_name=None):
     import codecs
     tfile = temp_file()
     with codecs.open(tfile.name, "w", "utf-8") as tmp:
@@ -47,17 +47,17 @@ def python_sender(repl, text, file_name=None):
 
 class ReplViewWrite(sublime_plugin.WindowCommand):
     def run(self, external_id, text, file_name=None):
-        rv = find_repl(external_id)
+        rv = manager.find_repl(external_id)
         if not rv:
-            return 
+            return
         rv.append_input_text(text)
 
 
 class ReplSend(sublime_plugin.WindowCommand):
     def run(self, external_id, text, with_auto_postfix=True, file_name=None):
-        rv = find_repl(external_id)
+        rv = manager.find_repl(external_id)
         if not rv:
-            return 
+            return
         cmd = text
         if with_auto_postfix:
             cmd += rv.repl.cmd_postfix
@@ -92,7 +92,7 @@ class ReplTransferCurrent(sublime_plugin.TextCommand):
         # TODO: Clojure only for now
         v = self.view
         strs = []
-        old_sel = list(v.sel()) 
+        old_sel = list(v.sel())
         v.run_command("expand_selection", {"to": "brackets"})
         v.run_command("expand_selection", {"to": "brackets"})
         for s in v.sel():
