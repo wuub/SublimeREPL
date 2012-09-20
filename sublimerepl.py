@@ -494,7 +494,7 @@ class ReplOpenCommand(sublime_plugin.WindowCommand):
 # View Commands ###########################################
 
 # Send selection/line to REPL
-class ReplSendCommand(sublime_plugin.TextCommand):
+class ReplSendNewCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         ## TODO: see text_transfer.py!
         syntax = self.view.settings().get('syntax')
