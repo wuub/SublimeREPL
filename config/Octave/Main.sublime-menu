@@ -17,7 +17,7 @@
                     "encoding": "utf8",
                     "cmd": ["octave", "-i"],
                     "cwd": "$file_path",
-                    "external_id": "matlab",
+                    "external_id": "octave",
                     "syntax": "Packages/Matlab/Matlab.tmLanguage"
                     }
                 }
