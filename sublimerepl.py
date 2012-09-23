@@ -454,6 +454,10 @@ class ReplManager(object):
         res["file"] = filename
         res["file_path"] = os.path.dirname(filename)
         res["file_basename"] = os.path.basename(filename)
+        if window.folders():
+            res["folder"] = window.folders()[0]
+        else:
+            res["folder"] = res["file_path"]
         return res
 
     @staticmethod
