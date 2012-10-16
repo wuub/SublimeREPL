@@ -35,8 +35,8 @@ def redirect_stdio():
 class InterceptingConsole(code.InteractiveConsole):
     PS1 = "{ps1}"
     PS2 = "... "
-    def __init__(self, *args, **kwds):
-        code.InteractiveConsole.__init__(self, *args, **kwds)
+    def __init__(self):
+        code.InteractiveConsole.__init__(self, locals={"__name__": "__main__"})
         self.input = Queue()
         self.output = channel
         self.output.send(self.PS1)
@@ -67,6 +67,7 @@ channel.setcallback(ic.input.put, endmarker=None)
 while not channel.isclosed():
     time.sleep(1.0)
 """
+
 
 class ExecnetRepl(repl.Repl):
     TYPE = "execnet_repl"

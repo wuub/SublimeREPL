@@ -6,10 +6,12 @@ from Queue import Queue
 import sys
 import threading
 
+
 class QueueOut(object):
-   def __init__(self, queue):
+    def __init__(self, queue):
         self.queue = queue
-   def write(self, data):
+
+    def write(self, data):
         self.queue.put(data)
 
 
@@ -20,11 +22,13 @@ def redirect_stdio(queue):
     yield
     (sys.stdout, sys.stderr) = orig
 
+
 class InterceptingConsole(code.InteractiveConsole):
     PS1 = ">>> "
     PS2 = "... "
-    def __init__(self, *args, **kwds):
-        code.InteractiveConsole.__init__(self, *args, **kwds)
+
+    def __init__(self):
+        code.InteractiveConsole.__init__(self, locals={"__name__": "__main__"})
         self.input = Queue()
         self.output = Queue()
         self.output.put(self.PS1)
