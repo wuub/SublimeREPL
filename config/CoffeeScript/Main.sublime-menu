@@ -8,7 +8,7 @@
             "id": "SublimeREPL",
             "children":
             [
-                {"command": "repl_open", 
+                {"command": "repl_open",
                 "id": "repl_coffeescript",
                  "caption": "CoffeeScript",
                  "args": {
@@ -16,12 +16,12 @@
                     "encoding": "utf8",
                     "cmd": ["coffee", "-i"],
                     "cwd": "$file_path",
-                    "syntax": "Packages/CoffeeScript/Syntaxes/CoffeeScript.tmLanguage",
+                    "syntax": "Packages/CoffeeScript/CoffeeScript.tmLanguage",
                     "external_id": "coffeescript",
                     "extend_env": {"NODE_DISABLE_COLORS": "1"}
                     }
                 }
-            ]   
+            ]
         }]
     }
 ]
