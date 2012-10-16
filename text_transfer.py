@@ -10,6 +10,7 @@ a persistent name that can be passed to external process using this name, and th
 delete it reliably..."""
 TEMP_FILE = None
 
+
 def temp_file():
     global TEMP_FILE
     if not TEMP_FILE:
@@ -24,6 +25,7 @@ def unload_handler():
         return
     os.unlink(TEMP_FILE.name)
 
+
 def default_sender(repl, text, file_name=None):
     repl.write(text)
 
@@ -31,18 +33,18 @@ def default_sender(repl, text, file_name=None):
    specific load_file action"""
 SENDERS = defaultdict(lambda: default_sender)
 
+
 def sender(external_id,):
     def wrap(func):
         SENDERS[external_id] = func
     return wrap
 
+
 @sender("python")
 def python_sender(repl, text, file_name=None):
-    import codecs
-    tfile = temp_file()
-    with codecs.open(tfile.name, "w", "utf-8") as tmp:
-        tmp.write(text)
-    repl.write('execfile(r"{0}")\n'.format(codecs.encode(tfile.name, "utf8")))
+    code = text.encode("hex")
+    execute = 'exec compile(\'%s\'.decode("hex"), "<string>", "exec")\n' % (code,)
+    return default_sender(repl, execute, file_name)
 
 
 class ReplViewWrite(sublime_plugin.WindowCommand):
