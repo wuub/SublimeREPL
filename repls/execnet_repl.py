@@ -36,7 +36,7 @@ class InterceptingConsole(code.InteractiveConsole):
     PS1 = "{ps1}"
     PS2 = "... "
     def __init__(self):
-        code.InteractiveConsole.__init__(self, locals={"__name__": "__main__"})
+        code.InteractiveConsole.__init__(self)
         self.input = Queue()
         self.output = channel
         self.output.send(self.PS1)
