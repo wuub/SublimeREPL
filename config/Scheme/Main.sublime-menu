@@ -1,0 +1,34 @@
+[
+     {
+        "id": "tools",
+        "children":
+        [{
+            "caption": "SublimeREPL",
+            "mnemonic": "r",
+            "id": "SublimeREPL",
+            "children":
+            [
+
+                {"command": "repl_open",
+                 "caption": "Scheme",
+                 "id": "repl_scheme",
+                 "mnemonic": "r",
+                 "args": {
+                    "type": "subprocess",
+                    "encoding": "utf8",
+                    "external_id": "scheme",
+                    "cmd": {"linux": ["scheme"],
+                            "osx": ["scheme"],
+                            "windows": ["scheme"]},
+                    "soft_quit": "\nexit\n",
+                    "cwd": "$folder",
+                    "cmd_postfix": "\n",
+                    "extend_env": {"INSIDE_EMACS": "1"},
+                    "syntax": "Packages/sublime-scheme-syntax/Scheme.tmLanguage"
+                    }
+                }
+
+            ]
+        }]
+    }
+]
