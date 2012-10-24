@@ -22,7 +22,8 @@
                         "cmd": ["python", "-i", "-u"],
                         "cwd": "$file_path",
                         "syntax": "Packages/Python/Python.tmLanguage",
-                        "external_id": "python"
+                        "external_id": "python",
+                        "extend_env": {"PYTHONIOENCODING": "utf-8"}
                         }
                     },
                     {"command": "python_virtualenv_repl",
@@ -38,7 +39,8 @@
                         "cmd": ["python", "-i", "-u", "-m", "pdb", "$file_basename"],
                         "cwd": "$file_path",
                         "syntax": "Packages/Python/Python.tmLanguage",
-                        "external_id": "python"
+                        "external_id": "python",
+                        "extend_env": {"PYTHONIOENCODING": "utf-8"}
                         }
                     },
                     {"command": "repl_open",
@@ -51,7 +53,8 @@
                         "cmd": ["python", "-u", "$file_basename"],
                         "cwd": "$file_path",
                         "syntax": "Packages/Python/Python.tmLanguage",
-                        "external_id": "python"
+                        "external_id": "python",
+                        "extend_env": {"PYTHONIOENCODING": "utf-8"}
                         }
                     }
                 ]}

@@ -102,7 +102,8 @@ class PythonVirtualenvRepl(sublime_plugin.WindowCommand):
                 "cwd": "$file_path",
                 "encoding": "utf8",
                 "syntax": "Packages/Python/Python.tmLanguage",
-                "external_id": "python"
+                "external_id": "python",
+                "extend_env": {"PYTHONIOENCODING": "utf-8"}
              })
 
     def run(self):
