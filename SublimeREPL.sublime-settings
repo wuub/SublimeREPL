@@ -15,7 +15,7 @@
 	// to true will cause SublimreREPL to close view once the process died.
 	"view_auto_close": false,
 
-	// Some terminals output ascii color codes which are not curreclty supported
+	// Some terminals output ascii color codes which are not currently supported
 	// enable this option to filter them out.
 	"filter_ascii_color_codes": true,
 
@@ -26,5 +26,16 @@
 	],
 
 	// Use arrows for history navigation instead of Alt+[P|N]/Ctrl+[P|N]
-	"history_arrows": true
+	"history_arrows": true,
+
+	// standard sublime view settings that will be overwritten on each repl view
+	// this has to be customized as a whole dictionary
+	"repl_view_settings": {
+		"translate_tabs_to_spaces": false,
+		"auto_indent": false,
+		"smart_indent": false,
+		"indent_subsequent_lines": false,
+		"detect_indentation": false,
+		"auto_complete": false
+	}
 }
