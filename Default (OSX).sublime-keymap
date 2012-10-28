@@ -3,7 +3,8 @@
 	"context":
 		[
 			{ "key": "setting.history_arrows", "operator": "equal", "operand": true },
-			{ "key": "setting.repl", "operator": "equal", "operand": true }
+			{ "key": "setting.repl", "operator": "equal", "operand": true },
+			{ "key": "auto_complete_visible", "operator": "equal", "operand": false }
 		]
 	},
 	{ "keys": ["ctrl+p"], "command": "repl_view_previous",
@@ -17,7 +18,8 @@
 	"context":
 		[
 			{ "key": "setting.history_arrows", "operator": "equal", "operand": true },
-			{ "key": "setting.repl", "operator": "equal", "operand": true }
+			{ "key": "setting.repl", "operator": "equal", "operand": true },
+			{ "key": "auto_complete_visible", "operator": "equal", "operand": false }
 		]
 	},
 	{ "keys": ["ctrl+n"], "command": "repl_view_next",
