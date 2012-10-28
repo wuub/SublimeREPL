@@ -159,7 +159,6 @@ class ReplView(object):
 
         rv_settings = settings.get("repl_view_settings", {})
         for setting, value in rv_settings.items():
-            print "setting %s -> %s" % (setting, value)
             view.settings().set(setting, value)
 
         view.settings().set("history_arrows", settings.get("history_arrows", True))
