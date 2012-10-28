@@ -12,6 +12,7 @@ import os
 import os.path
 import buzhug
 import re
+import sublimerepl_build_system_hack
 
 PLATFORM = sublime.platform().lower()
 SETTINGS_FILE = 'SublimeREPL.sublime-settings'
@@ -457,6 +458,11 @@ class ReplManager(object):
             res["folder"] = window.folders()[0]
         else:
             res["folder"] = res["file_path"]
+
+        if sublime.load_settings(SETTINGS_FILE).get("use_build_system_hack", False):
+            project_settings = sublimerepl_build_system_hack.get_project_settings(window)
+            res.update(project_settings)
+
         return res
 
     @staticmethod
