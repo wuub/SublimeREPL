@@ -36,6 +36,8 @@
 		"smart_indent": false,
 		"indent_subsequent_lines": false,
 		"detect_indentation": false,
-		"auto_complete": false
+		"auto_complete": false,
+		"line_numbers": false,
+		"gutter": false
 	}
 }
