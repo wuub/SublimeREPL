@@ -8,7 +8,7 @@
             "id": "SublimeREPL",
             "children":
             [
-                {"command": "repl_open", 
+                {"command": "repl_open",
                  "caption": "Ruby",
                  "id": "repl_ruby",
                  "mnemonic": "r",
@@ -16,17 +16,18 @@
                     "type": "subprocess",
                     "external_id": "ruby",
                     "encoding": "utf8",
-                    "cmd": {"windows": ["irb.bat", "--noreadline", "--inf-ruby-mode"],
-                            "linux": ["irb", "--noreadline", "--inf-ruby-mode"],
-                            "osx": ["irb", "--noreadline", "--inf-ruby-mode"]},
+                    "cmd": {
+                        "windows": ["ruby.exe", "${packages}/SublimeREPL/config/Ruby/pry_repl.rb", "$editor"],
+                        "linux": ["ruby", "${packages}/SublimeREPL/config/Ruby/pry_repl.rb", "$editor"],
+                        "osx": ["ruby", "${packages}/SublimeREPL/config/Ruby/pry_repl.rb", "$editor"]
+                    },
                     "soft_quit": "\nexit\n",
                     "cwd": "$file_path",
-                    "cmd_postfix": "\n", // postfix 
-                    "suppress_echo": true,
+                    "cmd_postfix": "\n", // postfix
                     "syntax": "Packages/Ruby/Ruby.tmLanguage"
                     }
                 }
-            ]   
+            ]
         }]
     }
 ]
