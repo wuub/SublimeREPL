@@ -5,6 +5,7 @@ require 'pry'
 class PryInput
 	def readline(prompt)
 		$stdout.print prompt
+		$stdout.flush
 		$stdin.readline
 	end
 end
@@ -12,6 +13,7 @@ end
 class PryOutput
 	def puts(data="")
 		$stdout.puts(data.gsub('`', "'"))
+		$stdout.flush
 	end
 end
 
