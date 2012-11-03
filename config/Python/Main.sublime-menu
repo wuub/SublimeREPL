@@ -64,6 +64,7 @@
                      "args": {
                         "type": "subprocess",
                         "encoding": "utf8",
+                        "autocomplete_server": true,
                         "cmd": ["python", "-u", "${packages}/SublimeREPL/config/Python/ipy_repl.py", "$editor"],
                         "cwd": "$file_path",
                         "syntax": "Packages/Python/Python.tmLanguage",

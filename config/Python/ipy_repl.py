@@ -2,6 +2,7 @@ import sys
 import json
 import socket
 import threading
+import os
 
 from IPython.frontend.terminal.embed import InteractiveShellEmbed
 from IPython.config.loader import Config
@@ -20,19 +21,40 @@ cfg.InteractiveShell.editor = editor
 embedded_shell = InteractiveShellEmbed(config=cfg, user_ns={})
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-s.bind(("localhost", 9999))
-s.listen(3)
+
+ac_port = int(os.environ["SUBLIMEREPL_AC_PORT"])
+s.connect(("localhost", ac_port))
+
+def read_netstring(s):
+    size = 0
+    while True:
+        ch = s.recv(1)
+        if ch == ':':
+            break
+        size = size * 10 + int(ch)
+    msg = ""
+    while size != 0:
+        msg += s.recv(size)
+        size -= len(msg)
+    ch = s.recv(1)
+    assert ch == ','
+    return msg
+
+def send_netstring(s, msg):
+    payload = "".join([str(len(msg)), ':', msg, ','])
+    s.sendall(payload)
 
 def handle():
     while True:
-        clisock = s.accept()[0].makefile()
-        req = json.loads(clisock.readline())
+        msg = read_netstring(s)
+        req = json.loads(msg)
         completions = embedded_shell.complete(**req)
-        clisock.write(json.dumps(completions) + "\n")
-        clisock.close()
+        res = json.dumps(completions)
+        send_netstring(s, res)
 
 t = threading.Thread(target=handle)
 t.start()
 
 embedded_shell()
+
+s.close()

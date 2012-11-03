@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
-# Copyright (c) 2011, Wojciech Bederski (wuub.net) 
-# All rights reserved. 
+# Copyright (c) 2011, Wojciech Bederski (wuub.net)
+# All rights reserved.
 # See LICENSE.txt for details.
 
-from uuid import uuid4  
+from autocomplete_server import AutocompleteServer
+from uuid import uuid4
 from codecs import getincrementaldecoder, getencoder
 
 
@@ -32,13 +33,29 @@ class Repl(object):
                 return cur
             todo.extend(cur.__subclasses__())
 
-    def __init__(self, encoding, external_id=None, cmd_postfix="\n", suppress_echo=False):
+    def __init__(self, encoding, external_id=None, cmd_postfix="\n", suppress_echo=False, autocomplete_server=False):
         self.id = uuid4().hex
         self.decoder = getincrementaldecoder(encoding)()
         self.encoder = getencoder(encoding)
         self.external_id = external_id
         self.cmd_postfix = cmd_postfix
         self.suppress_echo = suppress_echo
+
+        self._autocomplete_server = None
+        if autocomplete_server:
+            self._autocomplete_server = AutocompleteServer(self)
+            self._autocomplete_server.start()
+
+    def autocomplete_server_port(self):
+        if not self._autocomplete_server:
+            return None
+        return self._autocomplete_server.port()
+
+    def autocomplete_available(self):
+        return self._autocomplete_server.connected()
+
+    def autocomplete_completions(self, prefix, whole_prefix, locations):
+        return self._autocomplete_server.complete(prefix=prefix, whole_prefix=whole_prefix, locations=locations)
 
     def close(self):
         if self.is_alive():
@@ -47,13 +64,13 @@ class Repl(object):
     def name(self):
         """Returns name of this repl that should be used as a filename"""
         return NotImplementedError
-    
+
     def is_alive(self):
         """ Returns true if the undelying process is stil working"""
         raise NotImplementedError
-    
+
     def write_bytes(self, bytes):
-        raise NotImplementedError        
+        raise NotImplementedError
 
     def read_bytes(self):
         """Reads at lest one byte of Repl output. Returns None if output died.
