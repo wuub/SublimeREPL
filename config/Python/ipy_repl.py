@@ -17,12 +17,12 @@ cfg.InteractiveShell.autoindent = False
 cfg.InteractiveShell.colors = "NoColor"
 cfg.InteractiveShell.editor = editor
 
-embedded_shell = InteractiveShellEmbed(config=cfg)
+embedded_shell = InteractiveShellEmbed(config=cfg, user_ns={})
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 s.bind(("localhost", 9999))
-s.listen(1)
+s.listen(3)
 
 def handle():
     while True:
