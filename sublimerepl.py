@@ -443,7 +443,7 @@ class ReplManager(object):
             "packages": sublime.packages_path(),
             "installed_packages": sublime.installed_packages_path()
         }
-        res["editor"] = "subl"
+        res["editor"] = "subl -w"
         if sublime.platform() == "windows":
             res["win_cmd_encoding"] = locale.getdefaultlocale()[1]
             res["editor"] = '"%s"' % (sys.executable,)
