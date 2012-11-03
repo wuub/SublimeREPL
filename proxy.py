@@ -31,7 +31,7 @@ def main():
     (cli, addr) = s.accept()
 
     p = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    p.connect(("localhost", 53852))
+    p.connect(("localhost", 10001))
 
     fwd = Fwd(cli, p, "req")
     back = Fwd(p, cli, "res")
@@ -40,7 +40,10 @@ def main():
     back.start()
 
     while True:
-        time.sleep(1)
+        try:
+            time.sleep(1)
+        except KeyboardInterrupt:
+            break
 
 
 if __name__ == '__main__':

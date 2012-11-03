@@ -96,6 +96,16 @@ def decode_one(wrapper):
         return decode_dict(wrapper)
 
 
+def loads(s):
+    sio = StringIO.StringIO(s)
+    buf = Peekaboo(sio)
+    return decode_one(buf)
+
+def load(f):
+    buf = Peekaboo(f)
+    return decode_one(buf)
+
+
 if __name__ == '__main__':
     import bencode
     import StringIO
