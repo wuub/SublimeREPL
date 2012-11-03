@@ -56,6 +56,20 @@
                         "external_id": "python",
                         "extend_env": {"PYTHONIOENCODING": "utf-8"}
                         }
+                    },
+                    {"command": "repl_open",
+                     "caption": "Python - IPython",
+                     "id": "repl_python_ipython",
+                     "mnemonic": "p",
+                     "args": {
+                        "type": "subprocess",
+                        "encoding": "utf8",
+                        "cmd": ["python", "-u", "${packages}/SublimeREPL/config/Python/ipy_repl.py", "$editor"],
+                        "cwd": "$file_path",
+                        "syntax": "Packages/Python/Python.tmLanguage",
+                        "external_id": "python",
+                        "extend_env": {"PYTHONIOENCODING": "utf-8"}
+                        }
                     }
                 ]}
             ]
