@@ -18,8 +18,11 @@ class SublimeREPLCompletions(sublime_plugin.EventListener):
         s.settimeout(5.0)
         s.connect(("localhost", 9999))
         try:
-            text_parts = whole_prefix.rsplit(' ', 1)
-            text = text_parts.pop()
+            ## TODO: split
+            text = whole_prefix
+            for ch in [' ', '(', ',']:
+                text_parts = text.rsplit(ch, 1)
+                text = text_parts.pop()
             s.sendall(json.dumps({"line": whole_prefix, "text": text, "cursor_pos": len(whole_prefix)}) + "\n")
             res = json.loads(s.recv(65535))
         finally:
