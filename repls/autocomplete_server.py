@@ -49,13 +49,15 @@ class AutocompleteServer(object):
     def connected(self):
         return bool(self._cli_sock)
 
-    def complete(self, prefix, whole_prefix, locations):
+    def complete(self, whole_line, pos_in_line, prefix, whole_prefix, locations):
         text = whole_prefix
         for ch in [' ', '(', ',']:
             text_parts = text.rsplit(ch, 1)
             text = text_parts.pop()
 
-        send_netstring(self._cli_sock, json.dumps({"line": whole_prefix, "text": text, "cursor_pos": len(whole_prefix)}))
+        req = json.dumps({"text": "", "line": whole_line, "cursor_pos": pos_in_line})
+        # req = json.dumps({"text": text, "line": whole_line})
+        send_netstring(self._cli_sock, req)
         msg = read_netstring(self._cli_sock)
         res = json.loads(msg)
         return [(x, x) for x in res[1]]

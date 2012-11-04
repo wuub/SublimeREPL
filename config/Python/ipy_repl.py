@@ -18,12 +18,14 @@ cfg.InteractiveShell.autoindent = False
 cfg.InteractiveShell.colors = "NoColor"
 cfg.InteractiveShell.editor = editor
 
+
 embedded_shell = InteractiveShellEmbed(config=cfg, user_ns={})
 
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+ac_port = int(os.environ.get("SUBLIMEREPL_AC_PORT", "0"))
+if ac_port:
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.connect(("localhost", ac_port))
 
-ac_port = int(os.environ["SUBLIMEREPL_AC_PORT"])
-s.connect(("localhost", ac_port))
 
 def read_netstring(s):
     size = 0
@@ -40,21 +42,28 @@ def read_netstring(s):
     assert ch == ','
     return msg
 
+
 def send_netstring(s, msg):
     payload = "".join([str(len(msg)), ':', msg, ','])
     s.sendall(payload)
 
+
 def handle():
     while True:
         msg = read_netstring(s)
-        req = json.loads(msg)
-        completions = embedded_shell.complete(**req)
-        res = json.dumps(completions)
-        send_netstring(s, res)
+        try:
+            req = json.loads(msg)
+            completions = embedded_shell.complete(**req)
+            res = json.dumps(completions)
+            send_netstring(s, res)
+        except:
+            send_netstring(s, "[]")
 
-t = threading.Thread(target=handle)
-t.start()
+if ac_port:
+    t = threading.Thread(target=handle)
+    t.start()
 
 embedded_shell()
 
-s.close()
+if ac_port:
+    s.close()

@@ -16,7 +16,19 @@ class SublimeREPLCompletions(sublime_plugin.EventListener):
         if not repl.autocomplete_available():
             return []
 
-        whole_prefix = view.substr(sublime.Region(rv._output_end, locations[0]))
+        line = view.line(locations[0])
 
-        completions = repl.autocomplete_completions(prefix=prefix, whole_prefix=whole_prefix, locations=locations)
+        start = max(line.begin(), rv._output_end)
+        end = line.end()
+
+        whole_line = view.substr(sublime.Region(start, end))
+        pos_in_line = locations[0] - start
+        whole_prefix = whole_line[:pos_in_line]
+
+        completions = repl.autocomplete_completions(
+            whole_line=whole_line,
+            pos_in_line=pos_in_line,
+            prefix=prefix,
+            whole_prefix=whole_prefix,
+            locations=locations)
         return completions, sublime.INHIBIT_WORD_COMPLETIONS | sublime.INHIBIT_EXPLICIT_COMPLETIONS

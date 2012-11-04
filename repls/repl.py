@@ -54,8 +54,14 @@ class Repl(object):
     def autocomplete_available(self):
         return self._autocomplete_server.connected()
 
-    def autocomplete_completions(self, prefix, whole_prefix, locations):
-        return self._autocomplete_server.complete(prefix=prefix, whole_prefix=whole_prefix, locations=locations)
+    def autocomplete_completions(self, whole_line, pos_in_line, prefix, whole_prefix, locations):
+        return self._autocomplete_server.complete(
+            whole_line=whole_line,
+            pos_in_line=pos_in_line,
+            prefix=prefix,
+            whole_prefix=whole_prefix,
+            locations=locations,
+        )
 
     def close(self):
         if self.is_alive():
