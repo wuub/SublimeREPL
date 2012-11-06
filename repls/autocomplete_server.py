@@ -48,38 +48,8 @@ class AutocompleteServer(object):
         return bool(self._cli_sock)
 
     def complete(self, whole_line, pos_in_line, prefix, whole_prefix, locations):
-        text = whole_prefix
-        for ch in [' ', '(', ',']:
-            text_parts = text.rsplit(ch, 1)
-            text = text_parts.pop()
-
         req = json.dumps({"text": "", "line": whole_line, "cursor_pos": pos_in_line})
-        # req = json.dumps({"text": text, "line": whole_line})
         send_netstring(self._cli_sock, req)
         msg = read_netstring(self._cli_sock)
         res = json.loads(msg)
         return [(x, x) for x in res[1]]
-
-    def __del__(self):
-        print "on del"
-
-
-        #
-        # print view, prefix, locations, whole_prefix
-        # s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        # s.settimeout(5.0)
-        # s.connect(("localhost", 9999))
-        # try:
-            # TODO: split
-            # text = whole_prefix
-            # for ch in [' ', '(', ',']:
-                # text_parts = text.rsplit(ch, 1)
-                # text = text_parts.pop()
-            # s.sendall(json.dumps({"line": whole_prefix, "text": text, "cursor_pos": len(whole_prefix)}) + "\n")
-            # res = json.loads(s.recv(65535))
-        # finally:
-            # s.close()
-#
-        # comp = [(x,x) for x in res[1]]
-        # return (comp, flags)
-#
