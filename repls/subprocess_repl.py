@@ -9,6 +9,7 @@ import repl
 import signal
 import killableprocess
 from sublime import load_settings
+from autocomplete_server import AutocompleteServer
 
 
 def win_find_executable(executable, env):
@@ -36,8 +37,13 @@ class SubprocessRepl(repl.Repl):
 
     def __init__(self, encoding, external_id=None, cmd_postfix="\n", suppress_echo=False, cmd=None,
                  env=None, cwd=None, extend_env=None, soft_quit="", autocomplete_server=False):
-        super(SubprocessRepl, self).__init__(encoding, external_id, cmd_postfix, suppress_echo, autocomplete_server)
+        super(SubprocessRepl, self).__init__(encoding, external_id, cmd_postfix, suppress_echo)
         settings = load_settings('SublimeREPL.sublime-settings')
+
+        self._autocomplete_server = None
+        if autocomplete_server:
+            self._autocomplete_server = AutocompleteServer(self)
+            self._autocomplete_server.start()
 
         env = self.env(env, extend_env, settings)
         env["SUBLIMEREPL_AC_PORT"] = str(self.autocomplete_server_port())
@@ -55,6 +61,25 @@ class SubprocessRepl(repl.Repl):
                         stderr=subprocess.STDOUT,
                         stdin=subprocess.PIPE,
                         stdout=subprocess.PIPE)
+
+    def autocomplete_server_port(self):
+        if not self._autocomplete_server:
+            return None
+        return self._autocomplete_server.port()
+
+    def autocomplete_available(self):
+        if not self._autocomplete_server:
+            return False
+        return self._autocomplete_server.connected()
+
+    def autocomplete_completions(self, whole_line, pos_in_line, prefix, whole_prefix, locations):
+        return self._autocomplete_server.complete(
+            whole_line=whole_line,
+            pos_in_line=pos_in_line,
+            prefix=prefix,
+            whole_prefix=whole_prefix,
+            locations=locations,
+        )
 
     def cmd(self, cmd, env):
         """On Linux and OSX just returns cmd, on windows it has to find

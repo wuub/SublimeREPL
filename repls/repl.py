@@ -3,7 +3,6 @@
 # All rights reserved.
 # See LICENSE.txt for details.
 
-from autocomplete_server import AutocompleteServer
 from uuid import uuid4
 from codecs import getincrementaldecoder, getencoder
 
@@ -33,7 +32,7 @@ class Repl(object):
                 return cur
             todo.extend(cur.__subclasses__())
 
-    def __init__(self, encoding, external_id=None, cmd_postfix="\n", suppress_echo=False, autocomplete_server=False):
+    def __init__(self, encoding, external_id=None, cmd_postfix="\n", suppress_echo=False):
         self.id = uuid4().hex
         self.decoder = getincrementaldecoder(encoding)()
         self.encoder = getencoder(encoding)
@@ -41,27 +40,11 @@ class Repl(object):
         self.cmd_postfix = cmd_postfix
         self.suppress_echo = suppress_echo
 
-        self._autocomplete_server = None
-        if autocomplete_server:
-            self._autocomplete_server = AutocompleteServer(self)
-            self._autocomplete_server.start()
-
-    def autocomplete_server_port(self):
-        if not self._autocomplete_server:
-            return None
-        return self._autocomplete_server.port()
-
     def autocomplete_available(self):
-        return self._autocomplete_server.connected()
+        return False
 
     def autocomplete_completions(self, whole_line, pos_in_line, prefix, whole_prefix, locations):
-        return self._autocomplete_server.complete(
-            whole_line=whole_line,
-            pos_in_line=pos_in_line,
-            prefix=prefix,
-            whole_prefix=whole_prefix,
-            locations=locations,
-        )
+        raise NotImplementedError
 
     def close(self):
         if self.is_alive():

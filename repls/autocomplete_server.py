@@ -39,9 +39,7 @@ class AutocompleteServer(object):
     def _wait(self):
         self._sock.listen(1)
         s, address = self._sock.accept()
-        print "accepted", address
         self._cli_sock = s
-        print "thread end"
 
     def port(self):
         return self._sock.getsockname()[1]
