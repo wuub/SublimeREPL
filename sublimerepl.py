@@ -8,6 +8,7 @@ import Queue
 import sublime
 import sublime_plugin
 import repls
+import sys
 import os
 import os.path
 import buzhug
@@ -442,8 +443,10 @@ class ReplManager(object):
             "packages": sublime.packages_path(),
             "installed_packages": sublime.installed_packages_path()
         }
+        res["editor"] = "subl -w"
         if sublime.platform() == "windows":
             res["win_cmd_encoding"] = locale.getdefaultlocale()[1]
+            res["editor"] = '"%s"' % (sys.executable,)
         av = window.active_view()
         if av is None:
             return res

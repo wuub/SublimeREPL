@@ -47,6 +47,14 @@ def python_sender(repl, text, file_name=None):
     return default_sender(repl, execute, file_name)
 
 
+@sender("ruby")
+def ruby_sender(repl, text, file_name=None):
+    import binascii
+    code = binascii.b2a_base64(text)
+    payload = "begin require 'base64'; eval(Base64.decode64('%s')) end\n" % (code,)
+    return default_sender(repl, payload, file_name)
+
+
 class ReplViewWrite(sublime_plugin.WindowCommand):
     def run(self, external_id, text, file_name=None):
         rv = manager.find_repl(external_id)
