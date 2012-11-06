@@ -12,6 +12,15 @@ from sublime import load_settings
 from autocomplete_server import AutocompleteServer
 
 
+class Unsupported(Exception):
+    def __init__(self, msgs):
+        super(Unsupported, self).__init__()
+        self.msgs = msgs
+
+    def __repr__(self):
+        return "\n".join(self.msgs)
+
+
 def win_find_executable(executable, env):
     """Explicetely looks for executable in env["PATH"]"""
     if os.path.dirname(executable):
@@ -39,6 +48,9 @@ class SubprocessRepl(repl.Repl):
                  env=None, cwd=None, extend_env=None, soft_quit="", autocomplete_server=False):
         super(SubprocessRepl, self).__init__(encoding, external_id, cmd_postfix, suppress_echo)
         settings = load_settings('SublimeREPL.sublime-settings')
+
+        if cmd[0] == "[unsupported]":
+            raise Unsupported(cmd[1:])
 
         self._autocomplete_server = None
         if autocomplete_server:
