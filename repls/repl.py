@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright (c) 2011, Wojciech Bederski (wuub.net) 
-# All rights reserved. 
+# Copyright (c) 2011, Wojciech Bederski (wuub.net)
+# All rights reserved.
 # See LICENSE.txt for details.
 
-from uuid import uuid4  
+from uuid import uuid4
 from codecs import getincrementaldecoder, getencoder
 
 
@@ -40,6 +40,12 @@ class Repl(object):
         self.cmd_postfix = cmd_postfix
         self.suppress_echo = suppress_echo
 
+    def autocomplete_available(self):
+        return False
+
+    def autocomplete_completions(self, whole_line, pos_in_line, prefix, whole_prefix, locations):
+        raise NotImplementedError
+
     def close(self):
         if self.is_alive():
             self.kill()
@@ -47,13 +53,13 @@ class Repl(object):
     def name(self):
         """Returns name of this repl that should be used as a filename"""
         return NotImplementedError
-    
+
     def is_alive(self):
         """ Returns true if the undelying process is stil working"""
         raise NotImplementedError
-    
+
     def write_bytes(self, bytes):
-        raise NotImplementedError        
+        raise NotImplementedError
 
     def read_bytes(self):
         """Reads at lest one byte of Repl output. Returns None if output died.

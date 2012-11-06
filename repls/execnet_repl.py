@@ -22,8 +22,10 @@ except ImportError:
     from queue import Queue  # py3
 
 class ChannelOut(object):
-   def write(self, data):
+    def write(self, data):
         channel.send(data)
+    def flush(self):
+        pass
 
 @contextlib.contextmanager
 def redirect_stdio():

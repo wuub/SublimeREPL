@@ -2,6 +2,8 @@ import sublime
 import sublime_plugin
 
 import re
+import os
+import glob
 import os.path
 import socket
 from functools import partial
@@ -71,12 +73,12 @@ class ClojureAutoTelnetRepl(sublime_plugin.WindowCommand):
 
 
 def scan_for_virtualenvs(venv_paths):
-    import os.path
+    bin_dir = "Scripts" if os.name == "nt" else "bin"
     found_dirs = set()
     for venv_path in venv_paths:
-        for (directory, _, filenames) in os.walk(os.path.expanduser(venv_path)) :
-            if "activate_this.py" in filenames:
-                found_dirs.add(directory)
+        p = os.path.expanduser(venv_path)
+        pattern = os.path.join(p, "*", bin_dir, "activate_this.py")
+        found_dirs.update(map(os.path.dirname, glob.glob(pattern)))
     return sorted(found_dirs)
 
 
@@ -113,14 +115,17 @@ class PythonVirtualenvRepl(sublime_plugin.WindowCommand):
 
 
 VENV_SCAN_CODE = """
+import os
+import glob
 import os.path
 
 venv_paths = channel.receive()
+bin_dir = "Scripts" if os.name == "nt" else "bin"
 found_dirs = set()
 for venv_path in venv_paths:
-    for (directory, _, filenames) in os.walk(os.path.expanduser(venv_path)) :
-        if "activate_this.py" in filenames:
-            found_dirs.add(directory)
+    p = os.path.expanduser(venv_path)
+    pattern = os.path.join(p, "*", bin_dir, "activate_this.py")
+    found_dirs.update(map(os.path.dirname, glob.glob(pattern)))
 
 channel.send(found_dirs)
 channel.close()
@@ -134,8 +139,13 @@ class ExecnetVirtualenvRepl(sublime_plugin.WindowCommand):
     def on_ssh_select(self, host_string):
         import execnet
         venv_paths = sublime.load_settings(SETTINGS_FILE).get("python_virtualenv_paths", [])
-        gw = execnet.makegateway("ssh=" + host_string)
-        ch = gw.remote_exec(VENV_SCAN_CODE)
+        try:
+            gw = execnet.makegateway("ssh=" + host_string)
+            ch = gw.remote_exec(VENV_SCAN_CODE)
+        except Exception, e:
+            sublime.error_message(repr(e))
+            return
+
         with closing(ch):
             ch.send(venv_paths)
             directories = ch.receive(60)

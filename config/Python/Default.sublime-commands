@@ -26,5 +26,13 @@
     {
         "command": "python_virtualenv_repl",
         "caption": "SublimeREPL: Python - virtualenv"
+    },
+    {
+        "caption": "SublimeREPL: Python - IPython",
+        "command": "run_existing_window_command", "args":
+        {
+            "id": "repl_python_ipython",
+            "file": "config/Python/Main.sublime-menu"
+        }
     }
 ]

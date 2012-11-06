@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-# Copyright (c) 2011, Wojciech Bederski (wuub.net) 
-# All rights reserved. 
+# Copyright (c) 2011, Wojciech Bederski (wuub.net)
+# All rights reserved.
 # See LICENSE.txt for details.
 
 import subprocess
@@ -9,6 +9,16 @@ import repl
 import signal
 import killableprocess
 from sublime import load_settings
+from autocomplete_server import AutocompleteServer
+
+
+class Unsupported(Exception):
+    def __init__(self, msgs):
+        super(Unsupported, self).__init__()
+        self.msgs = msgs
+
+    def __repr__(self):
+        return "\n".join(self.msgs)
 
 
 def win_find_executable(executable, env):
@@ -34,28 +44,57 @@ def win_find_executable(executable, env):
 class SubprocessRepl(repl.Repl):
     TYPE = "subprocess"
 
-    def __init__(self, encoding, external_id=None, cmd_postfix="\n", suppress_echo=False, cmd=None, 
-                 env=None, cwd=None, extend_env=None, soft_quit=""):
-        super(SubprocessRepl, self).__init__(encoding, external_id, cmd_postfix, suppress_echo)        
+    def __init__(self, encoding, external_id=None, cmd_postfix="\n", suppress_echo=False, cmd=None,
+                 env=None, cwd=None, extend_env=None, soft_quit="", autocomplete_server=False):
+        super(SubprocessRepl, self).__init__(encoding, external_id, cmd_postfix, suppress_echo)
         settings = load_settings('SublimeREPL.sublime-settings')
 
+        if cmd[0] == "[unsupported]":
+            raise Unsupported(cmd[1:])
+
+        self._autocomplete_server = None
+        if autocomplete_server:
+            self._autocomplete_server = AutocompleteServer(self)
+            self._autocomplete_server.start()
+
         env = self.env(env, extend_env, settings)
+        env["SUBLIMEREPL_AC_PORT"] = str(self.autocomplete_server_port())
+
         self._cmd = self.cmd(cmd, env)
         self._soft_quit = soft_quit
         self._killed = False
         self.popen = killableprocess.Popen(
-                        self._cmd, 
+                        self._cmd,
                         startupinfo=self.startupinfo(settings),
                         creationflags=self.creationflags(settings),
-                        bufsize=1, 
+                        bufsize=1,
                         cwd=self.cwd(cwd, settings),
                         env=env,
                         stderr=subprocess.STDOUT,
                         stdin=subprocess.PIPE,
                         stdout=subprocess.PIPE)
 
+    def autocomplete_server_port(self):
+        if not self._autocomplete_server:
+            return None
+        return self._autocomplete_server.port()
+
+    def autocomplete_available(self):
+        if not self._autocomplete_server:
+            return False
+        return self._autocomplete_server.connected()
+
+    def autocomplete_completions(self, whole_line, pos_in_line, prefix, whole_prefix, locations):
+        return self._autocomplete_server.complete(
+            whole_line=whole_line,
+            pos_in_line=pos_in_line,
+            prefix=prefix,
+            whole_prefix=whole_prefix,
+            locations=locations,
+        )
+
     def cmd(self, cmd, env):
-        """On Linux and OSX just returns cmd, on windows it has to find 
+        """On Linux and OSX just returns cmd, on windows it has to find
            executable in env because of this: http://bugs.python.org/issue8557"""
         if os.name != "nt":
             return cmd
@@ -67,7 +106,7 @@ class SubprocessRepl(repl.Repl):
         if executable:
             _cmd[0] = executable
         return _cmd
-        
+
     def cwd(self, cwd, settings):
         if cwd and os.path.exists(cwd):
             return cwd
@@ -102,14 +141,14 @@ class SubprocessRepl(repl.Repl):
         startupinfo = None
         if os.name == 'nt':
             startupinfo = killableprocess.STARTUPINFO()
-            startupinfo.dwFlags |= killableprocess.STARTF_USESHOWWINDOW 
+            startupinfo.dwFlags |= killableprocess.STARTF_USESHOWWINDOW
             startupinfo.wShowWindow |= 1 # SW_SHOWNORMAL
         return startupinfo
 
     def creationflags(self, settings):
         creationflags = 0
         if os.name =="nt":
-            creationflags = 0x8000000 # CREATE_NO_WINDOW 
+            creationflags = 0x8000000 # CREATE_NO_WINDOW
         return creationflags
 
     def name(self):
@@ -123,12 +162,12 @@ class SubprocessRepl(repl.Repl):
         return self.popen.poll() is None
 
     def read_bytes(self):
-        # this is windows specific problem, that you cannot tell if there 
+        # this is windows specific problem, that you cannot tell if there
         # are more bytes ready, so we read only 1 at a times
         return self.popen.stdout.read(1)
 
     def write_bytes(self, bytes):
-        si = self.popen.stdin 
+        si = self.popen.stdin
         si.write(bytes)
         si.flush()
 

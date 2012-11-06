@@ -56,6 +56,25 @@
                         "external_id": "python",
                         "extend_env": {"PYTHONIOENCODING": "utf-8"}
                         }
+                    },
+                    {"command": "repl_open",
+                     "caption": "Python - IPython",
+                     "id": "repl_python_ipython",
+                     "mnemonic": "p",
+                     "args": {
+                        "type": "subprocess",
+                        "encoding": "utf8",
+                        "autocomplete_server": true,
+                        "cmd": {
+                            "osx": ["python", "-u", "${packages}/SublimeREPL/config/Python/ipy_repl.py", "$editor"],
+                            "linux": ["python", "-u", "${packages}/SublimeREPL/config/Python/ipy_repl.py", "$editor"],
+                            "windows": ["[unsupported]", "Sorry, IPython doesn't work under SublimeREPL on Windows. If you can help with this integration, please get in touch.", "github@wuub.net"]
+                        },
+                        "cwd": "$file_path",
+                        "syntax": "Packages/Python/Python.tmLanguage",
+                        "external_id": "python",
+                        "extend_env": {"PYTHONIOENCODING": "utf-8"}
+                        }
                     }
                 ]}
             ]
