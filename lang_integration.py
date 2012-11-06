@@ -139,8 +139,13 @@ class ExecnetVirtualenvRepl(sublime_plugin.WindowCommand):
     def on_ssh_select(self, host_string):
         import execnet
         venv_paths = sublime.load_settings(SETTINGS_FILE).get("python_virtualenv_paths", [])
-        gw = execnet.makegateway("ssh=" + host_string)
-        ch = gw.remote_exec(VENV_SCAN_CODE)
+        try:
+            gw = execnet.makegateway("ssh=" + host_string)
+            ch = gw.remote_exec(VENV_SCAN_CODE)
+        except Exception, e:
+            sublime.error_message(repr(e))
+            return
+
         with closing(ch):
             ch.send(venv_paths)
             directories = ch.receive(60)
