@@ -34,7 +34,8 @@ class Repl(object):
 
     def __init__(self, encoding, external_id=None, cmd_postfix="\n", suppress_echo=False):
         self.id = uuid4().hex
-        self.decoder = getincrementaldecoder(encoding)()
+        self._encoding = encoding
+        self.decoder = getincrementaldecoder(self._encoding)()
         self.encoder = getencoder(encoding)
         self.external_id = external_id
         self.cmd_postfix = cmd_postfix
@@ -75,6 +76,9 @@ class Repl(object):
         (bytes, how_many) = self.encoder(command)
         return self.write_bytes(bytes)
 
+    def reset_decoder(self):
+        self.decoder = getincrementaldecoder(self._encoding)()
+
     def read(self):
         """Reads at least one decoded char of output"""
         while True:
@@ -85,5 +89,6 @@ class Repl(object):
                 output = self.decoder.decode(bs)
             except Exception, e:
                 output = "[SublimeRepl: decode error]\n"
+                self.reset_decoder()
             if output:
                 return output
