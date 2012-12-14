@@ -50,6 +50,8 @@ class AutocompleteServer(object):
     def complete(self, whole_line, pos_in_line, prefix, whole_prefix, locations):
         req = json.dumps({"text": "", "line": whole_line, "cursor_pos": pos_in_line})
         send_netstring(self._cli_sock, req)
+        self._cli_sock.settimeout(4)
         msg = read_netstring(self._cli_sock)
+        self._cli_sock.settimeout(None)
         res = json.loads(msg)
         return [(x, x) for x in res[1]]
