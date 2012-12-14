@@ -45,7 +45,7 @@
                         "cwd": "$folder",
                         "cmd_postfix": "\n",
                         "extend_env": {"INSIDE_EMACS": "1"},
-                        "syntax": "Packages/Sublime-Gauche-Syntax/Gauche.tmLanguage"
+                        "syntax": "Packages/Gauche/Gauche.tmLanguage"
                         }
                     }
                 ]}
