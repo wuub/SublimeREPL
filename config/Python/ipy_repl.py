@@ -1,22 +1,37 @@
+import os
+activate_this = os.environ.get("SUBLIMEREPL_ACTIVATE_THIS", None)
+
+if activate_this:
+    with open(activate_this, "r") as f:
+        exec(f.read(), {"__file__": activate_this})
+
+try:
+    import IPython
+    IPYTHON = True
+except ImportError:
+    IPYTHON = False
+
+## compatibility if no ipython available or running on windows
+if not IPYTHON or os.name == "nt":
+    import code
+    code.InteractiveConsole().interact()
+
 import sys
 import json
 import socket
 import threading
-import os
 
 from IPython.frontend.terminal.embed import InteractiveShellEmbed
 from IPython.config.loader import Config
 
 
 editor = "subl -w"
-if len(sys.argv) > 1:
-    editor = sys.argv[1]
 
 cfg = Config()
 cfg.InteractiveShell.use_readline = False
 cfg.InteractiveShell.autoindent = False
 cfg.InteractiveShell.colors = "NoColor"
-cfg.InteractiveShell.editor = editor
+cfg.InteractiveShell.editor = os.environ.get("SUBLIMEREPL_EDITOR", editor)
 
 
 embedded_shell = InteractiveShellEmbed(config=cfg, user_ns={})
@@ -31,33 +46,33 @@ def read_netstring(s):
     size = 0
     while True:
         ch = s.recv(1)
-        if ch == ':':
+        if ch == b':':
             break
         size = size * 10 + int(ch)
-    msg = ""
+    msg = b""
     while size != 0:
         msg += s.recv(size)
         size -= len(msg)
     ch = s.recv(1)
-    assert ch == ','
+    assert ch == b','
     return msg
 
 
 def send_netstring(s, msg):
-    payload = "".join([str(len(msg)), ':', msg, ','])
+    payload = b"".join([str(len(msg)).encode("ascii"), b':', msg.encode("utf-8"), b','])
     s.sendall(payload)
 
 
 def handle():
     while True:
-        msg = read_netstring(s)
+        msg = read_netstring(s).decode("utf-8")
         try:
             req = json.loads(msg)
             completions = embedded_shell.complete(**req)
             res = json.dumps(completions)
             send_netstring(s, res)
         except:
-            send_netstring(s, "[]")
+            send_netstring(s, b"[]")
 
 if ac_port:
     t = threading.Thread(target=handle)

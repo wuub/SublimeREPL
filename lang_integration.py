@@ -96,13 +96,16 @@ class PythonVirtualenvRepl(sublime_plugin.WindowCommand):
         if os.name == "nt":
             python_executable += ".exe"  # ;-)
 
-        init_cmd = "f = open(r'{activate_file}', 'r'); data = f.read(); f.close(); exec(data, dict(__file__=r'{activate_file}')); import site; import sys; sys.ps1 = '({name}) >>> '; del sys;".format(name=name, activate_file=activate_file)
         self.window.run_command("repl_open",
             {
                 "encoding":"utf8",
                 "type": "subprocess",
-                "extend_env": {"PATH": directory},
-                "cmd": [python_executable, "-i", "-u", "-c", init_cmd],
+                "autocomplete_server": True,
+                "extend_env": {
+                    "PATH": directory,
+                    "SUBLIMEREPL_ACTIVATE_THIS": activate_file
+                },
+                "cmd": [python_executable, "-u", "${packages}/SublimeREPL/config/Python/ipy_repl.py"],
                 "cwd": "$file_path",
                 "encoding": "utf8",
                 "syntax": "Packages/Python/Python.tmLanguage",
