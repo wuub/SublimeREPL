@@ -444,6 +444,7 @@ class ReplManager(object):
             "installed_packages": sublime.installed_packages_path()
         }
         res["editor"] = "subl -w"
+        res["win_cmd_encoding"] = "utf8"
         if sublime.platform() == "windows":
             res["win_cmd_encoding"] = locale.getdefaultlocale()[1]
             res["editor"] = '"%s"' % (sys.executable,)

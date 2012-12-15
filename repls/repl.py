@@ -88,7 +88,7 @@ class Repl(object):
             try:
                 output = self.decoder.decode(bs)
             except Exception, e:
-                output = "[SublimeRepl: decode error]\n"
+                output = u"■"
                 self.reset_decoder()
             if output:
                 return output
