@@ -26,7 +26,6 @@ class Repl(object):
             if not todo:
                 raise NoReplError
             cur = todo.pop()
-            print("CURRENT: " + cur.TYPE)
             if cur in seen:
                 continue
             if cur.TYPE == type:
