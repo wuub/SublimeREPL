@@ -107,6 +107,12 @@
 			{ "key": "setting.repl", "operator": "equal", "operand": true }
 		]
 	},
+	{ "keys": ["ctrl+c"], "command": "subprocess_repl_send_signal", "args": {"signal": 2},  // sigint
+	"context":
+		[
+			{ "key": "setting.repl", "operator": "equal", "operand": true }
+		]
+	},
 
 
 	{ "keys": ["ctrl+,", "s"], "command": "repl_transfer_current", "args": {"scope": "selection"}},
