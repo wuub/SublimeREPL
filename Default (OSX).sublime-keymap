@@ -107,7 +107,7 @@
 			{ "key": "setting.repl", "operator": "equal", "operand": true }
 		]
 	},
-	{ "keys": ["ctrl+c"], "command": "subprocess_repl_send_signal", "args": {"signal": 2},  // sigint
+	{ "keys": ["shift+ctrl+c"], "command": "subprocess_repl_send_signal", "args": {"signal": 2},  // sigint
 	"context":
 		[
 			{ "key": "setting.repl", "operator": "equal", "operand": true }

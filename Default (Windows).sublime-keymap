@@ -81,7 +81,7 @@
 			{ "key": "setting.repl", "operator": "equal", "operand": true }
 		]
 	},
-	{ "keys": ["ctrl+l"], "command": "repl_clear",
+	{ "keys": ["shift+ctrl+c"], "command": "repl_clear",
 	"context":
 		[
 			{ "key": "setting.repl", "operator": "equal", "operand": true }
