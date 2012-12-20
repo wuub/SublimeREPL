@@ -7,7 +7,7 @@
 
 	// Persistent history is stored per REPL external_id, it means that all python
 	// REPLS will share history. If you wish you can disable history altogether
-	"presistent_history_enabled": true,
+	"persistent_history_enabled": true,
 
 	// By default SublimeREPL leaves REPL view open once the underlying subprocess
 	// dies or closes connection. This is useful when the process dies for an unexpected
