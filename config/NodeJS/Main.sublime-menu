@@ -20,10 +20,11 @@
                             "windows": ["node.exe", "${packages}/SublimeREPL/config/NodeJS/repl.js"]},
                     "cwd": "$file_path",
                     "syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-                    "external_id": "node"
+                    "external_id": "js",
+                    "extend_env": {"NODE_NO_READLINE": 1}
                     }
                 }
-            ]   
+            ]
         }]
     }
 ]
