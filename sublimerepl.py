@@ -165,7 +165,9 @@ class ReplView(object):
 
         view.settings().set("history_arrows", settings.get("history_arrows", True))
 
-        if self.external_id and settings.get("presistent_history_enabled"):
+        # for hysterical rasins ;)
+        persistent_history_enabled = settings.get("persistent_history_enabled") or settings.get("presistent_history_enabled")
+        if self.external_id and persistent_history_enabled:
             self._history = PersistentHistory(self.external_id)
         else:
             self._history = MemHistory()
