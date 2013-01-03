@@ -55,4 +55,6 @@ class AutocompleteServer(object):
         msg = read_netstring(self._cli_sock)
         self._cli_sock.settimeout(None)
         res = json.loads(msg)
+        if not res:
+            return []
         return [(x, x) for x in res[1]]
