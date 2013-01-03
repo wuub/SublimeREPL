@@ -26,14 +26,15 @@ def send_netstring(s, msg):
 
 
 class AutocompleteServer(object):
-    def __init__(self, repl):
+    def __init__(self, repl, server_ip="127.0.0.1"):
         self._repl = repl
         self._sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self._sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self._cli_sock = None
+        self._server_ip = server_ip
 
     def start(self):
-        self._sock.bind(("localhost", 0))
+        self._sock.bind((self._server_ip, 0))
         threading.Thread(target=self._wait).start()
 
     def _wait(self):
