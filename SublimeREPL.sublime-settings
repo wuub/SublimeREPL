@@ -7,7 +7,7 @@
 
 	// Persistent history is stored per REPL external_id, it means that all python
 	// REPLS will share history. If you wish you can disable history altogether
-	"presistent_history_enabled": true,
+	"persistent_history_enabled": true,
 
 	// By default SublimeREPL leaves REPL view open once the underlying subprocess
 	// dies or closes connection. This is useful when the process dies for an unexpected
@@ -45,5 +45,10 @@
 	// those related to sublime projects that are not available through standard API
 	// WARNING: this will switch your build system back to Automatic each time a REPL
 	// is started so beware!
-	"use_build_system_hack": false
+	"use_build_system_hack": false,
+
+	// IP address used to setup autocomplete server in sublimerepl.
+	// changing this is usefull when you want to exclude one address
+	// from proxychains/tsocks routing
+	"autocomplete_server_ip": "127.0.0.1"
 }

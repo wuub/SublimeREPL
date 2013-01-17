@@ -54,11 +54,12 @@ class SubprocessRepl(repl.Repl):
 
         self._autocomplete_server = None
         if autocomplete_server:
-            self._autocomplete_server = AutocompleteServer(self)
+            self._autocomplete_server = AutocompleteServer(self, settings.get("autocomplete_server_ip"))
             self._autocomplete_server.start()
 
         env = self.env(env, extend_env, settings)
         env["SUBLIMEREPL_AC_PORT"] = str(self.autocomplete_server_port())
+        env["SUBLIMEREPL_AC_IP"] = settings.get("autocomplete_server_ip")
 
         self._cmd = self.cmd(cmd, env)
         self._soft_quit = soft_quit

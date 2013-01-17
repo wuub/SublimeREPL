@@ -103,14 +103,14 @@ class PythonVirtualenvRepl(sublime_plugin.WindowCommand):
                 "autocomplete_server": True,
                 "extend_env": {
                     "PATH": directory,
-                    "SUBLIMEREPL_ACTIVATE_THIS": activate_file
+                    "SUBLIMEREPL_ACTIVATE_THIS": activate_file,
+                    "PYTHONIOENCODING": "utf-8"
                 },
                 "cmd": [python_executable, "-u", "${packages}/SublimeREPL/config/Python/ipy_repl.py"],
                 "cwd": "$file_path",
                 "encoding": "utf8",
                 "syntax": "Packages/Python/Python.tmLanguage",
-                "external_id": "python",
-                "extend_env": {"PYTHONIOENCODING": "utf-8"}
+                "external_id": "python"
              })
 
     def run(self):

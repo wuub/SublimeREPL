@@ -37,9 +37,10 @@ cfg.InteractiveShell.editor = os.environ.get("SUBLIMEREPL_EDITOR", editor)
 embedded_shell = InteractiveShellEmbed(config=cfg, user_ns={})
 
 ac_port = int(os.environ.get("SUBLIMEREPL_AC_PORT", "0"))
+ac_ip = os.environ.get("SUBLIMEREPL_AC_IP", "127.0.0.1")
 if ac_port:
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.connect(("localhost", ac_port))
+    s.connect((ac_ip, ac_port))
 
 
 def read_netstring(s):
