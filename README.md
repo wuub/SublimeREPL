@@ -52,10 +52,10 @@ Very basic documentation will soon be available on RTD: [http://sublimerepl.read
 #### Getting started
 
 * Create or open your file with code.
-* Menu/Tools/Command Palete (or Mac OS X: `⇧⌘P`) 
-then type "SublimeREPL" and select the approperiate language
-* Menu/View/Layout/Rows: 2 (or Mac OS X: `⌥⇧⌘2`)
-* Menu/View/Move File to Group/Group 2 (or: `⌃⇧2`)
+* Menu / Tools / Command Palette (OS X: `⇧⌘P`) 
+then type "SublimeREPL" and select the approperiate language.
+* Menu / View / Layout / Rows: 2 (OS X: `⌥⇧⌘2`).
+* Menu / View / Move File to Group / Group 2 (`⌃⇧2`).
 
 #### Keybindings
 
