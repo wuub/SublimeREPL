@@ -17,7 +17,7 @@
                     "cmd": ["clisp", "-disable-readline"],
                     "cwd": "$file_path",
                     "syntax": "Packages/Lisp/Lisp.tmLanguage",
-                    "external_id": "Lisp"
+                    "external_id": "lisp"
                     }
                 }
             ]
