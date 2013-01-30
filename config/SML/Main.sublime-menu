@@ -17,7 +17,7 @@
                     "cmd": ["sml"],
                     "cwd": "$file_path",
                     "external_id": "sml",
-                    "syntax": "Packages/SML/SML.tmLanguage"
+                    "syntax": "Packages/SML (Standard ML)/sml.tmLanguage"
                     }
                 }
             ]
