@@ -1,0 +1,10 @@
+[
+    {
+        "caption": "SublimeREPL: Racket",
+        "command": "run_existing_window_command", "args":
+        {
+            "id": "repl_plt_racket",
+            "file": "config/Racket/Main.sublime-menu"
+        }
+    }
+]
