@@ -19,7 +19,7 @@
                      "args": {
                         "type": "subprocess",
                         "encoding": "utf8",
-                        "external_id": "scheme",
+                        "external_id": "lisp",
                         "cmd": {"linux": ["scheme"],
                                 "osx": ["scheme"],
                                 "windows": ["scheme"]},
@@ -27,7 +27,7 @@
                         "cwd": "$folder",
                         "cmd_postfix": "\n",
                         "extend_env": {"INSIDE_EMACS": "1"},
-                        "syntax": "Packages/sublime-scheme-syntax/Scheme.tmLanguage"
+                        "syntax": "Packages/Lisp/Lisp.tmLanguage"
                         }
                     },
                     {"command": "repl_open",
