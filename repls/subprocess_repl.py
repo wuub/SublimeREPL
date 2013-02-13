@@ -191,3 +191,5 @@ class SubprocessRepl(repl.Repl):
         if self.is_alive():
             self.popen.send_signal(sig)
 
+    def is_local(self):
+        return True

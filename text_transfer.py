@@ -55,6 +55,27 @@ def ruby_sender(repl, text, file_name=None):
     return default_sender(repl, payload, file_name)
 
 
+def default_fileloader(repl, text, file_name):
+    # if no specific handler is known simply transfer the file's content to repl
+    SENDERS[repl.external_id](repl, text, file_name)
+
+"""FILELOADERS is a dict of functions used to let the repl load a file directly from
+   the disk, rather than copying the entire file contents over"""
+FILELOADERS = defaultdict(lambda: default_fileloader)
+
+def fileloader(external_id,):
+    def wrap(func):
+        FILELOADERS[external_id] = func
+    return wrap
+
+@fileloader("clojure")
+def clojure_fileloader(repl, text, file_name):
+    repl.write("(load-file \"" + str(file_name).replace('"', '\\\"') + "\")" + repl.cmd_postfix)
+
+@fileloader("python")
+def python_fileloader(repl, text, file_name):
+    repl.write("execfile(" + repr(file_name) + ")" + repl.cmd_postfix)
+
 class ReplViewWrite(sublime_plugin.WindowCommand):
     def run(self, external_id, text, file_name=None):
         rv = manager.find_repl(external_id)
@@ -68,11 +89,23 @@ class ReplSend(sublime_plugin.WindowCommand):
         rv = manager.find_repl(external_id)
         if not rv:
             return
-        cmd = text
         if with_auto_postfix:
-            cmd += rv.repl.cmd_postfix
-        SENDERS[external_id](rv.repl, cmd, file_name)
+            text += rv.repl.cmd_postfix
+        SENDERS[external_id](rv.repl, text, file_name)
 
+class ReplLoadFile(sublime_plugin.WindowCommand):
+    def run(self, external_id, file_name, text, with_auto_postfix=True):
+        rv = manager.find_repl(external_id)
+        if not rv:
+            return
+        if with_auto_postfix:
+            text += rv.repl.cmd_postfix
+
+        # check if this repl has access to the local disk
+        if rv.repl.is_local():
+            FILELOADERS[external_id](rv.repl, text, file_name)
+        else:
+            SENDERS[external_id](rv.repl, text, file_name)
 
 class ReplTransferCurrent(sublime_plugin.TextCommand):
     def run(self, edit, scope="selection", action="send"):
@@ -87,6 +120,9 @@ class ReplTransferCurrent(sublime_plugin.TextCommand):
             text = self.selected_blocks()
         elif scope == "file":
             text = self.selected_file()
+            if action == "send" and self.view.file_name() and not self.view.is_dirty():
+                # try to let the repl load the file externally if it supports it
+                action = "load_file"
         cmd = "repl_" + action
         self.view.window().run_command(cmd, {"external_id": self.repl_external_id(), "text": text, "file_name": self.view.file_name()})
 
