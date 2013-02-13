@@ -5,6 +5,16 @@
 	// once "PATH": "{PATH}:/home/username/mylocalinstalls/bin" or whatever
 	"default_extend_env": {},
 
+	// Specify whether to move repls to a different Sublime Text group (frame)
+	// immediately on opening. Setting this to true will simply move it to
+	// the 'next' group from the one that was in focus when it was opened
+	// (one down with row layout, one to the right with column and grid
+	// layout). Alternatively, you can set this to the index of the group in
+	// which you want all repls to be opened (index 0 being the top-left group).
+	// Activating this option will NOT automatically change your layout/create
+	// a new group if it isn't open.
+	"open_repl_in_group": false,
+
 	// Persistent history is stored per REPL external_id, it means that all python
 	// REPLS will share history. If you wish you can disable history altogether
 	"persistent_history_enabled": true,
