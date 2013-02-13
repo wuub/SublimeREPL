@@ -56,14 +56,14 @@ class Repl(object):
         return NotImplementedError
 
     def is_alive(self):
-        """ Returns true if the undelying process is stil working"""
+        """Returns True if the underlying process is still working"""
         raise NotImplementedError
 
     def write_bytes(self, bytes):
         raise NotImplementedError
 
     def read_bytes(self):
-        """Reads at lest one byte of Repl output. Returns None if output died.
+        """Reads at least one byte of Repl output. Returns None if output died.
            Can block!!!"""
         raise NotImplementedError
 
@@ -92,3 +92,9 @@ class Repl(object):
                 self.reset_decoder()
             if output:
                 return output
+
+    def is_local(self):
+        """Subclasses for which the Repl runs on the local machine should
+        return True here to signal that 'eval file' can potentially load
+        files directly from disk"""
+        return False

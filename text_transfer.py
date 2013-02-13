@@ -57,7 +57,7 @@ def ruby_sender(repl, text, file_name=None):
 
 def default_fileloader(repl, text, file_name):
     # if no specific handler is known simply transfer the file's content to repl
-    SENDERS[repl.external_id](repl, text + repl.cmd_postfix, file_name)
+    SENDERS[repl.external_id](repl, text, file_name)
 
 """FILELOADERS is a dict of functions used to let the repl load a file directly from
    the disk, rather than copying the entire file contents over"""
@@ -89,17 +89,23 @@ class ReplSend(sublime_plugin.WindowCommand):
         rv = manager.find_repl(external_id)
         if not rv:
             return
-        cmd = text
         if with_auto_postfix:
-            cmd += rv.repl.cmd_postfix
-        SENDERS[external_id](rv.repl, cmd, file_name)
+            text += rv.repl.cmd_postfix
+        SENDERS[external_id](rv.repl, text, file_name)
 
 class ReplLoadFile(sublime_plugin.WindowCommand):
     def run(self, external_id, file_name, text, with_auto_postfix=True):
         rv = manager.find_repl(external_id)
         if not rv:
             return
-        FILELOADERS[external_id](rv.repl, text, file_name)
+        if with_auto_postfix:
+            text += rv.repl.cmd_postfix
+
+        # check if this repl has access to the local disk
+        if rv.repl.is_local():
+            FILELOADERS[external_id](rv.repl, text, file_name)
+        else:
+            SENDERS[external_id](rv.repl, text, file_name)
 
 class ReplTransferCurrent(sublime_plugin.TextCommand):
     def run(self, edit, scope="selection", action="send"):
