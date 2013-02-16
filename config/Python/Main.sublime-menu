@@ -68,7 +68,7 @@
                         "cmd": {
                             "osx": ["python", "-u", "${packages}/SublimeREPL/config/Python/ipy_repl.py"],
                             "linux": ["python", "-u", "${packages}/SublimeREPL/config/Python/ipy_repl.py"],
-                            "windows": ["[unsupported]", "Sorry, IPython doesn't work under SublimeREPL on Windows. If you can help with this integration, please get in touch.", "github@wuub.net"]
+                            "windows": ["python", "-u", "${packages}/SublimeREPL/config/Python/ipy_repl.py"]
                         },
                         "cwd": "$file_path",
                         "syntax": "Packages/Python/Python.tmLanguage",

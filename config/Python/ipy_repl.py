@@ -1,4 +1,9 @@
 import os
+import sys
+import json
+import socket
+import threading
+
 activate_this = os.environ.get("SUBLIMEREPL_ACTIVATE_THIS", None)
 
 if activate_this:
@@ -11,17 +16,6 @@ try:
 except ImportError:
     IPYTHON = False
 
-## compatibility if no ipython available or running on windows
-if not IPYTHON or os.name == "nt":
-    import code
-    code.InteractiveConsole().interact()
-
-import sys
-import json
-import socket
-import threading
-
-from IPython.frontend.terminal.embed import InteractiveShellEmbed
 from IPython.config.loader import Config
 
 
@@ -35,13 +29,17 @@ cfg.InteractiveShell.editor = os.environ.get("SUBLIMEREPL_EDITOR", editor)
 
 
 from IPython.frontend.terminal.console.app import ZMQTerminalIPythonApp
-from IPython.frontend.terminal.console.completer import ZMQCompleter
 
 embedded_shell = ZMQTerminalIPythonApp(config=cfg, user_ns={})
 embedded_shell.initialize()
 
-# completer = ZMQCompleter(embedded_shell.shell, embedded_shell.kernel_manager)
-#embedded_shell = InteractiveShellEmbed(config=cfg, user_ns={})
+if not IPYTHON or os.name == "nt":
+    # OMG what a fugly hack
+    import IPython.utils.io as io
+    io.stdout = io.IOStream(sys.__stdout__, fallback=io.devnull)
+    io.stderr = io.IOStream(sys.__stderr__, fallback=io.devnull)
+    embedded_shell.shell.show_banner()  # ... my eyes, oh my eyes..
+
 
 ac_port = int(os.environ.get("SUBLIMEREPL_AC_PORT", "0"))
 ac_ip = os.environ.get("SUBLIMEREPL_AC_IP", "127.0.0.1")
@@ -78,6 +76,7 @@ def complete(zmq_shell, req):
         return msg["content"]["matches"]
     return []
 
+
 def handle():
     while True:
         msg = read_netstring(s).decode("utf-8")
@@ -87,7 +86,7 @@ def handle():
             result = (req["text"], completions)
             res = json.dumps(result)
             send_netstring(s, res)
-        except Exceptione:
+        except Exception:
             send_netstring(s, b"[]")
 
 if ac_port:
