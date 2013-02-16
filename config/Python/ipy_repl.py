@@ -16,8 +16,12 @@ try:
 except ImportError:
     IPYTHON = False
 
-from IPython.config.loader import Config
+if not IPYTHON:
+    # for virtualenvs w/o IPython
+    import code
+    code.InteractiveConsole().interact()
 
+from IPython.config.loader import Config
 
 editor = "subl -w"
 
@@ -33,7 +37,7 @@ from IPython.frontend.terminal.console.app import ZMQTerminalIPythonApp
 embedded_shell = ZMQTerminalIPythonApp(config=cfg, user_ns={})
 embedded_shell.initialize()
 
-if not IPYTHON or os.name == "nt":
+if os.name == "nt":
     # OMG what a fugly hack
     import IPython.utils.io as io
     io.stdout = io.IOStream(sys.__stdout__, fallback=io.devnull)
