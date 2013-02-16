@@ -34,7 +34,14 @@ cfg.InteractiveShell.colors = "NoColor"
 cfg.InteractiveShell.editor = os.environ.get("SUBLIMEREPL_EDITOR", editor)
 
 
-embedded_shell = InteractiveShellEmbed(config=cfg, user_ns={})
+from IPython.frontend.terminal.console.app import ZMQTerminalIPythonApp
+from IPython.frontend.terminal.console.completer import ZMQCompleter
+
+embedded_shell = ZMQTerminalIPythonApp(config=cfg, user_ns={})
+embedded_shell.initialize()
+
+# completer = ZMQCompleter(embedded_shell.shell, embedded_shell.kernel_manager)
+#embedded_shell = InteractiveShellEmbed(config=cfg, user_ns={})
 
 ac_port = int(os.environ.get("SUBLIMEREPL_AC_PORT", "0"))
 ac_ip = os.environ.get("SUBLIMEREPL_AC_IP", "127.0.0.1")
@@ -64,22 +71,30 @@ def send_netstring(s, msg):
     s.sendall(payload)
 
 
+def complete(zmq_shell, req):
+    msg_id = zmq_shell.kernel_manager.shell_channel.complete(**req)
+    msg = zmq_shell.kernel_manager.shell_channel.get_msg(timeout=0.5)
+    if msg['parent_header']['msg_id'] == msg_id:
+        return msg["content"]["matches"]
+    return []
+
 def handle():
     while True:
         msg = read_netstring(s).decode("utf-8")
         try:
             req = json.loads(msg)
-            completions = embedded_shell.complete(**req)
-            res = json.dumps(completions)
+            completions = complete(embedded_shell, req)
+            result = (req["text"], completions)
+            res = json.dumps(result)
             send_netstring(s, res)
-        except:
+        except Exceptione:
             send_netstring(s, b"[]")
 
 if ac_port:
     t = threading.Thread(target=handle)
     t.start()
 
-embedded_shell()
+embedded_shell.start()
 
 if ac_port:
     s.close()
