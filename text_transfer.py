@@ -26,7 +26,7 @@ def unload_handler():
     os.unlink(TEMP_FILE.name)
 
 
-def default_sender(repl, text, file_name=None):
+def default_sender(repl, text, view=None):
     repl.write(text)
 
 """Senders is a dict of functions used to transfer text to repl as a repl
@@ -41,37 +41,87 @@ def sender(external_id,):
 
 
 @sender("python")
-def python_sender(repl, text, file_name=None):
+def python_sender(repl, text, view=None):
     code = text.encode('utf-8').encode("hex")
     execute = 'from binascii import unhexlify as __un; exec(compile(__un(b\'%s\').decode("utf-8"), "<string>", "exec"))\n' % (code,)
-    return default_sender(repl, execute, file_name)
+    return default_sender(repl, execute, view)
 
 
 @sender("ruby")
-def ruby_sender(repl, text, file_name=None):
+def ruby_sender(repl, text, view=None):
     import binascii
     code = binascii.b2a_base64(text)
     payload = "begin require 'base64'; eval(Base64.decode64('%s')) end\n" % (code,)
-    return default_sender(repl, payload, file_name)
+    return default_sender(repl, payload, view)
 
 
-class ReplViewWrite(sublime_plugin.WindowCommand):
-    def run(self, external_id, text, file_name=None):
+# custom clojure sender that makes sure that all selections are
+# evaluated in the namespace declared by the file they are in
+@sender("clojure")
+def clojure_sender(repl, text, view):
+    # call (load-string) instead of just writing the string so
+    # that syntax errors are caught and thrown back immediately
+    text = '(load-string "' + text.strip().replace('"', r'\"') + '")'
+
+    # find the first non-commented statement from the start of the file
+    namespacedecl = view.find(r"^[^;]*?\(", 0)
+
+    # if it's a namespace declaration, go search for the namespace name
+    if namespacedecl and view.scope_name(namespacedecl.end()-1).startswith("source.clojure meta.function.namespace.clojure"):
+        namespacedecl = view.extract_scope(namespacedecl.end()-1)
+
+        # we're looking for the first symbol within the declaration that
+        # looks like a namespace and isn't metadata, a comment, etc.
+        pos = namespacedecl.begin() + 3
+        while pos < namespacedecl.end():
+            # see http://clojure.org/reader for a description of valid
+            # namespace names. the inital } or whitespace make sure we're
+            # not matching on keywords etc.
+            namespace = view.find("[\}\s][A-Za-z\_!\?\*\+\-][\w!\?\*\+\-:]*(\.[\w!\?\*\+\-:]+)*", pos)
+
+            if not namespace:
+                # couldn't find the namespace name within the declaration. suspicious.
+                break
+            elif view.scope_name(namespace.begin() + 1).startswith("source.clojure meta.function.namespace.clojure entity.name.namespace.clojure"):
+                # looks alright, we've got our namespace!
+                # switch to namespace before executing command
+
+                # we could do this explicitly by calling (ns), (in-ns) etc:
+                # text = "(ns " + view.substr(namespace)[1:] + ") " + text
+                # but this would not only result in an extra return value
+                # printed to the user, the repl would also remain in that
+                # namespace after execution, so instead we do the same thing
+                # that swank-clojure does:
+                text = "(binding [*ns* (or (find-ns '" + view.substr(namespace)[1:] + ") (find-ns 'user))] " + text + ')'
+                # i.e. we temporarily switch to the namespace if it has already
+                # been created, otherwise we execute it in 'user. the most
+                # elegant option for this would probably be:
+                # text = "(binding [*ns* (create-ns '" + view.substr(namespace)[1:] + ")] " + text + ')'
+                # but this can lead to problems because of newly created
+                # namespaces not automatically referring to clojure.core
+                # (see https://groups.google.com/forum/?fromgroups=#!topic/clojure/Th-Bqq68hfo)
+                break
+            else:
+                # false alarm (metadata or a comment), keep looking
+                pos = namespace.end()
+    return default_sender(repl, text + repl.cmd_postfix, view)
+
+class ReplViewWrite(sublime_plugin.TextCommand):
+    def run(self, edit, external_id, text):
         rv = manager.find_repl(external_id)
         if not rv:
             return
         rv.append_input_text(text)
 
 
-class ReplSend(sublime_plugin.WindowCommand):
-    def run(self, external_id, text, with_auto_postfix=True, file_name=None):
+class ReplSend(sublime_plugin.TextCommand):
+    def run(self, edit, external_id, text, with_auto_postfix=True):
         rv = manager.find_repl(external_id)
         if not rv:
             return
-        cmd = text
         if with_auto_postfix:
-            cmd += rv.repl.cmd_postfix
-        SENDERS[external_id](rv.repl, cmd, file_name)
+            text += rv.repl.cmd_postfix
+        SENDERS[external_id](rv.repl, text, self.view)
 
 
 class ReplTransferCurrent(sublime_plugin.TextCommand):
@@ -88,7 +138,7 @@ class ReplTransferCurrent(sublime_plugin.TextCommand):
         elif scope == "file":
             text = self.selected_file()
         cmd = "repl_" + action
-        self.view.window().run_command(cmd, {"external_id": self.repl_external_id(), "text": text, "file_name": self.view.file_name()})
+        self.view.window().run_command(cmd, {"external_id": self.repl_external_id(), "text": text})
 
     def repl_external_id(self):
         return self.view.scope_name(0).split(" ")[0].split(".")[1]
