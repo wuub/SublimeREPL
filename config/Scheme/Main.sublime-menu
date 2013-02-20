@@ -19,7 +19,7 @@
                      "args": {
                         "type": "subprocess",
                         "encoding": "utf8",
-                        "external_id": "lisp",
+                        "external_id": "scheme",
                         "cmd": {"linux": ["scheme"],
                                 "osx": ["scheme"],
                                 "windows": ["scheme"]},
@@ -27,7 +27,7 @@
                         "cwd": "$folder",
                         "cmd_postfix": "\n",
                         "extend_env": {"INSIDE_EMACS": "1"},
-                        "syntax": "Packages/Lisp/Lisp.tmLanguage"
+                        "syntax": "Packages/sublime-scheme-syntax/Scheme.tmLanguage"
                         }
                     },
                     {"command": "repl_open",
@@ -46,6 +46,24 @@
                         "cmd_postfix": "\n",
                         "extend_env": {"INSIDE_EMACS": "1"},
                         "syntax": "Packages/Gauche/Gauche.tmLanguage"
+                        }
+                    },
+                    {"command": "repl_open",
+                     "caption": "Petite Chez Scheme",
+                     "id": "repl_petite",
+                     "mnemonic": "r",
+                     "args": {
+                        "type": "subprocess",
+                        "encoding": "utf8",
+                        "external_id": "petite",
+                        "cmd": {"linux": ["petite"],
+                                "osx": ["petite"],
+                                "windows": ["petite"]},
+                        "soft_quit": "\n(exit)\n",
+                        "cwd": "$folder",
+                        "cmd_postfix": "\n",
+                        "extend_env": {"INSIDE_EMACS": "1"},
+                        "syntax": "Packages/sublime-scheme-syntax/Scheme.tmLanguage"
                         }
                     }
                 ]}
