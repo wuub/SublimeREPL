@@ -14,5 +14,14 @@
             "id": "repl_gauche",
             "file": "config/Scheme/Main.sublime-menu"
         }
+    },
+        {
+        "caption": "SublimeREPL: Petite Chez Scheme",
+        "command": "run_existing_window_command", "args":
+        {
+            "id": "repl_petite",
+            "file": "config/Scheme/Main.sublime-menu"
+        }
+    }
     }
 ]
