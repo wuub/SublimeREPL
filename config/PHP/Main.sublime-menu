@@ -17,7 +17,7 @@
                     "encoding": {"windows": "$win_cmd_encoding",
                                  "linux": "utf-8",
                                  "osx": "utf-8"},
-                    "cmd": {"windows": ["php.exe -a"],
+                    "cmd": {"windows": ["php.exe", "-a"],
                             "linux": ["php", "-a"],
                             "osx": ["php", "-a"]},
                     "cwd": "$file_path",
