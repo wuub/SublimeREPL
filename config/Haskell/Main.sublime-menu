@@ -13,9 +13,9 @@
                  "id": "repl_haskell",
                  "mnemonic": "h",
                  "args": {
-                    "type": "subprocess",
+                    "type": "sublime_haskell",
                     "encoding": "utf8",
-                    "cmd": ["ghc", "--interactive"],
+                    "cmd": ["ghci"],
                     "cwd": "$file_path",
                     "external_id": "haskell",
                     "syntax": "Packages/Haskell/Haskell.tmLanguage"
