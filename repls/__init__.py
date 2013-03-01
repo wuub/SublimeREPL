@@ -4,3 +4,4 @@ import telnet_repl
 import sublimepython_repl
 import execnet_repl
 import powershell_repl
+import sublimehaskell_repl
