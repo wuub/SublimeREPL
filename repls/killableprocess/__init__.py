@@ -1,3 +1,3 @@
-from killableprocess import Popen, mswindows
+from .killableprocess import Popen, mswindows
 if mswindows:
-	from winprocess import STARTUPINFO, STARTF_USESHOWWINDOW
+	from .winprocess import STARTUPINFO, STARTF_USESHOWWINDOW

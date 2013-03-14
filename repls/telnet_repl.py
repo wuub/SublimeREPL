@@ -4,7 +4,7 @@
 # See LICENSE.txt for details.
 
 import telnetlib
-import repl
+from . import repl
 
 class TelnetRepl(repl.Repl):
     TYPE = "telnet"

@@ -1,4 +1,4 @@
-from sublimerepl import manager
+from .sublimerepl import manager
 import sublime_plugin
 import sublime
 from collections import defaultdict

@@ -87,8 +87,8 @@ class Repl(object):
                 return None
             try:
                 output = self.decoder.decode(bs)
-            except Exception, e:
-                output = u"■"
+            except Exception as e:
+                output = "■"
                 self.reset_decoder()
             if output:
                 return output

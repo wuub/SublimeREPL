@@ -1,8 +1,8 @@
 # encoding: utf-8
 import code
 import contextlib
-import repl
-from Queue import Queue
+from . import repl
+from queue import Queue
 import sys
 import threading
 
@@ -54,7 +54,7 @@ class SublimePythonRepl(repl.Repl):
     TYPE = "sublime_python"
 
     def __init__(self, encoding):
-        super(SublimePythonRepl, self).__init__(encoding, u"python", "\n", False)
+        super(SublimePythonRepl, self).__init__(encoding, "python", "\n", False)
         self._console = InterceptingConsole()
         self._thread = threading.Thread(target=self._console.run)
         self._thread.start()

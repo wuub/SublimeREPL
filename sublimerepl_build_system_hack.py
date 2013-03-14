@@ -1,5 +1,5 @@
 import sublime_plugin
-import Queue
+import queue
 
 RESULTS = None
 HACK_BUILD_SYSTEM = "Packages/SublimeREPL/sublimerepl_build_system_hack.sublime-build"
@@ -14,7 +14,7 @@ class SublimereplBuildSystemHackCommand(sublime_plugin.WindowCommand):
 def get_project_settings(window):
     global RESULTS
     try:
-        RESULTS = Queue.Queue()  # in case of garbage on RESULTS
+        RESULTS = queue.Queue()  # in case of garbage on RESULTS
         window.run_command("set_build_system", {"file": HACK_BUILD_SYSTEM})
         window.run_command("build")
     finally:
