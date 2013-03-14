@@ -3,7 +3,7 @@ gem 'pry'
 require 'pry'
 require 'socket'
 require 'thread'
-require 'JSON'
+require 'json'
 
 include Socket::Constants
 
