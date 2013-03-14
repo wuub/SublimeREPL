@@ -39,6 +39,7 @@
                   "soft_quit":"\nexit\n",
                   "cwd":"$file_path",
                   "cmd_postfix":"\n",
+                  "autocomplete_server": true,
                   "syntax":"Packages/Ruby/Ruby.tmLanguage"
                 }
               },
