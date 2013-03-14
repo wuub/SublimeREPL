@@ -3,6 +3,7 @@ import sublime_plugin
 import sublime
 from collections import defaultdict
 import tempfile
+import binascii
 
 
 """This is a bit stupid, but it's really difficult to create a temporary file with
@@ -42,16 +43,19 @@ def sender(external_id,):
 
 @sender("python")
 def python_sender(repl, text, view=None):
-    code = text.encode('utf-8').encode("hex")
-    execute = 'from binascii import unhexlify as __un; exec(compile(__un(b\'%s\').decode("utf-8"), "<string>", "exec"))\n' % (code,)
+    code = binascii.hexlify(text.encode("utf-8"))
+    execute = ''.join([
+        'from binascii import unhexlify as __un; exec(compile(__un(',
+        str(code),
+        ').decode("utf-8"), "<string>", "exec"))\n'
+    ])
     return default_sender(repl, execute, view)
 
 
 @sender("ruby")
 def ruby_sender(repl, text, view=None):
-    import binascii
-    code = binascii.b2a_base64(text)
-    payload = "begin require 'base64'; eval(Base64.decode64('%s')) end\n" % (code,)
+    code = binascii.b2a_base64(text.encode("utf-8"))
+    payload = "begin require 'base64'; eval(Base64.decode64('%s')) end\n" % (code.decode("ascii"),)
     return default_sender(repl, payload, view)
 
 
