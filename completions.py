@@ -7,7 +7,7 @@ class SublimeREPLCompletions(sublime_plugin.EventListener):
         if not view.settings().get("repl"):
             return True
 
-        from sublimerepl import manager
+        from .sublimerepl import manager
         rv = manager.repl_view(view)
         if not rv:
             return []
