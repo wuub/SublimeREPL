@@ -329,7 +329,7 @@ class ReplView(object):
         if e:
             self._view.insert(e, self._view.size(), text)
         else:
-            self._view.run_command("repl_insert_text", {"pos": self._view.size(), "text": text})            
+            self._view.run_command("repl_insert_text", {"pos": self._view.size(), "text": text})
 
     def new_output(self):
         """Returns new data from Repl and bool indicating if Repl is still
@@ -711,7 +711,7 @@ class SubprocessReplSendSignal(sublime_plugin.TextCommand):
 
     def is_visible(self):
         rv = manager.repl_view(self.view)
-        return rv and hasattr(rv.repl, "send_signal")
+        return bool(rv) and hasattr(rv.repl, "send_signal")
 
     def is_enabled(self):
         return self.is_visible()
