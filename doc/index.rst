@@ -111,31 +111,36 @@ main menu and palette options for REPL startup, keymaps, and special REPL
 extensions unique to the target language. An integration may contain several
 different REPL modes which are based  on different underlying classes.
 
+
+
 Clojure
 ^^^^^^^
 
-The Clojure backend supports Leiningen projects. To start a REPL with
-Leiningen project environment, open your `project.clj` and use the menu or the
-command palette to start the REPL while the project file is currently open.
+The Clojure integration supports Leiningen projects. SublimeREPL uses your
+`project.clj` to set up the REPL.
 
-If your Leiningen installation is not system-global, you may need to tweak your
-configuration so that SublimeREPL can find your lein binary::
+* In subprocess REPL mode, the REPL is launched as a subprocess of the editor. 
+  This is the mode you should use right now.
+* The telnet mode no longer works because of the changes in Leiningen and nrepl.
+
+To start a REPL subprocess with Leiningen project environment, open your `project.clj` 
+and, while it is the current file, use the menu or the
+command palette to start the REPL.
+
+If your Leiningen installation is not system-global, you may need to tweak
+SublimeREPL  configuration (via Preferences > Package Settings > SublimeREPL >
+Settings - User) so that we can find your lein binary::
 
     "default_extend_env": {"PATH": "{PATH}:/home/myusername/bin"}
 
-Additionally, the Clojure backend has a telnet mode that can connect to an
-existing REPL by asking for a TCP port number  on the local machine.
-Unfortunately, the feature that automagically determines port numbers from the
-project file no longer works with Leiningen 2 projects. For now, port numbers
-can only be specified manually.
 
 The source buffer "send block" command (Ctrl+, b) deserves a special mention.
 Performing this command while the cursor is within the body of a definition
 will select this  (current, top-level) definition and send it to the REPL for
 evaluation. This means that the latest version of the function you're
 currently working on will be installed in the live environment so  that you
-can immediately start playing with it in the REPL. This is similar to [slime-]eval-defun
-in emacs.
+can immediately start playing with it in the REPL. This is similar to [slime
+-]eval-defun in emacs.
 
 Additional keybindings are available for Clojure:
 
@@ -150,7 +155,7 @@ Additional keybindings are available for Clojure:
 Python
 ^^^^^^
 
-Both stock Python and Execnet backends support virtualenv. Various ways to work with Python, including PDB and IPython, are supported.
+Both stock Python and Execnet integrations support virtualenv. Various ways to work with Python, including PDB and IPython, are supported.
 
 Documentation contributions from a Python specialist are welcome.
 
@@ -162,25 +167,31 @@ The default SublimeREPL configuration documents all available configuration sett
 Frequently Asked Questions
 --------------------------
 
-I'm trying to launch a REPL and I am getting a pop up dialog saying OSError(2, 'No such file or directory')
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+**SublimeREPL can't launch the REPL process - OSError(2, 'No such file or directory'), how do I fix that?**
 
-Sublime is unable to locate the binary that is needed to launch your REPL. If the binary is not in your system 
-path, tweak the configuration::
+   Sublime is unable to locate the binary that is needed to launch your REPL in the search paths available to it. This is
+   because the subprocess REPLs are launched, as, well, subprocesses of Sublime environment, which may be different from
+   your interactive environment, especially if your REPL is installed in a directory that is not in a system-wide path (e.g 
+   `/usr/local/bin` or '/home/myusername` on Linux, `My Documents` on Windows etc)
 
-    "default_extend_env": {"PATH": "{PATH}:/home/myusername/bin"}
+   If the binary is not in your system path and you can't or won't change that, tweak SublimeREPL configuration::
 
-I'd like an interactive REPL for Foo and it is not supported, what do?
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    {
+     ...
+     "default_extend_env": {"PATH": "{PATH}:/home/myusername/bin"}
+     ...
+    }
 
-Chances are, you only need a minimal amount of work to add an integration, and necessary steps are described
-here briefly. 
+**I'd like an interactive REPL for Foo and it is not supported, what do?**
 
-If you already have an  interactive shell for Foo, you can use the subprocess
-REPL. For an example, see PHP or Lua integration in `config/PHP`.
+   Chances are, you only need a minimal amount of work to add an integration, and necessary steps are described
+   here briefly. 
 
-If Foo provides an interactive environment over TCP, you can use the telnet
-REPL. For an example, see MozRepl integration
+   If you already have an  interactive shell for Foo, you can use the subprocess
+   REPL. For an example, see PHP or Lua integration in `config/PHP`.
+
+   If Foo provides an interactive environment over TCP, you can use the telnet
+   REPL. For an example, see MozRepl integration
 
 Supported languages
 -------------------
