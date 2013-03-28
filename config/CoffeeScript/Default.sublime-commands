@@ -1,6 +1,6 @@
 [
     {
-        "caption": "SublimeREPL: CoffeScript",
+        "caption": "SublimeREPL: CoffeeScript",
         "command": "run_existing_window_command", "args":
         {
             "id": "repl_coffeescript",
