@@ -3,19 +3,21 @@
 # All rights reserved.
 # See LICENSE.txt for details.
 
+import re
+import os
+import sys
+import queue
+import os.path
 import threading
 import traceback
-import queue
-import sys
-import os
-import os.path
-import re
+from datetime import datetime
 
 import sublime
 import sublime_plugin
 
 from . import sublimerepl_build_system_hack
 from . import repls
+from .lib import PyDbLite
 
 PLATFORM = sublime.platform().lower()
 SETTINGS_FILE = 'SublimeREPL.sublime-settings'
@@ -133,26 +135,25 @@ class MemHistory(History):
 class PersistentHistory(MemHistory):
     def __init__(self, ext):
         super(PersistentHistory, self).__init__()
-    """
-    TODO: rewrite w/o buzhug
+
     def __init__(self, external_id):
-        import datetime
         super(PersistentHistory, self).__init__()
-        path = os.path.join(sublime.packages_path(), "User", "SublimeREPLHistory")
-        self._db = buzhug.TS_Base(path)
+        path = os.path.join(sublime.packages_path(), "User", ".SublimeREPLHistory")
+        if not os.path.isdir(path):
+            os.makedirs(path)
+        filepath = os.path.join(path, external_id + ".db")
+        self._db = PyDbLite.Base(filepath)
         self._external_id = external_id
-        self._db.create(("external_id", str), ("command", str), ("ts", datetime.datetime), mode="open")
+        self._db.create("external_id", "command", "ts", mode="open")
 
     def append(self, cmd):
-        from datetime import datetime
         self._db.insert(external_id=self._external_id, command=cmd, ts=datetime.now())
+        self._db.commit()
 
     def match(self, command_prefix):
-        pattern = re.compile("^" + re.escape(command_prefix) + ".*")
-        retults = self._db.select(None, 'external_id==eid and p.match(command)', eid=self._external_id, p=pattern)
-        retults.sort_by("+ts")
-        return HistoryMatchList(command_prefix, [x.command for x in retults])
-"""
+        retults = [cmd for cmd in self._db if cmd["command"].startswith(command_prefix)]
+        return HistoryMatchList(command_prefix, [x["command"] for x in retults])
+
 
 class ReplView(object):
     def __init__(self, view, repl, syntax):
