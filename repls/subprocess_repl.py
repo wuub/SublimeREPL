@@ -9,7 +9,7 @@ from .repl import Repl
 import signal
 from sublime import load_settings
 from .autocomplete_server import AutocompleteServer
-from .killableprocess import Popen
+from .killableprocess import Popen, STARTUPINFO, STARTF_USESHOWWINDOW
 
 
 class Unsupported(Exception):
@@ -141,8 +141,8 @@ class SubprocessRepl(Repl):
     def startupinfo(self, settings):
         startupinfo = None
         if os.name == 'nt':
-            startupinfo = killableprocess.STARTUPINFO()
-            startupinfo.dwFlags |= killableprocess.STARTF_USESHOWWINDOW
+            startupinfo = STARTUPINFO()
+            startupinfo.dwFlags |= STARTF_USESHOWWINDOW
             startupinfo.wShowWindow |= 1 # SW_SHOWNORMAL
         return startupinfo
 
