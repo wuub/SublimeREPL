@@ -2,14 +2,22 @@
 # Copyright (c) 2011, Wojciech Bederski (wuub.net)
 # All rights reserved.
 # See LICENSE.txt for details.
+from __future__ import absolute_import, unicode_literals, print_function, division
 
 import subprocess
 import os
+import sys
 from .repl import Repl
 import signal
 from sublime import load_settings
 from .autocomplete_server import AutocompleteServer
-from .killableprocess import Popen
+
+PY3 = sys.version_info[0] == 3
+if PY3:
+    from subprocess import Popen
+else:
+    from .killableprocess import Popen
+
 
 class Unsupported(Exception):
     def __init__(self, msgs):
@@ -59,6 +67,12 @@ class SubprocessRepl(Repl):
         env = self.env(env, extend_env, settings)
         env[b"SUBLIMEREPL_AC_PORT"] = str(self.autocomplete_server_port()).encode("utf-8")
         env[b"SUBLIMEREPL_AC_IP"] = settings.get("autocomplete_server_ip").encode("utf-8")
+
+        if PY3:
+            strings_env = {}
+            for k, v in env.items():
+                strings_env[k.decode("utf-8")] = v.decode("utf-8")
+            env = strings_env
 
         self._cmd = self.cmd(cmd, env)
         self._soft_quit = soft_quit
@@ -141,7 +155,7 @@ class SubprocessRepl(Repl):
     def startupinfo(self, settings):
         startupinfo = None
         if os.name == 'nt':
-            from repls.killableprocess import STARTUPINFO, STARTF_USESHOWWINDOW
+            from .killableprocess import STARTUPINFO, STARTF_USESHOWWINDOW
             startupinfo = STARTUPINFO()
             startupinfo.dwFlags |= STARTF_USESHOWWINDOW
             startupinfo.wShowWindow |= 1 # SW_SHOWNORMAL
