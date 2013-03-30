@@ -11,7 +11,6 @@ from sublime import load_settings
 from .autocomplete_server import AutocompleteServer
 from .killableprocess import Popen
 
-
 class Unsupported(Exception):
     def __init__(self, msgs):
         super(Unsupported, self).__init__()
@@ -58,8 +57,8 @@ class SubprocessRepl(Repl):
             self._autocomplete_server.start()
 
         env = self.env(env, extend_env, settings)
-        env["SUBLIMEREPL_AC_PORT"] = str(self.autocomplete_server_port())
-        env["SUBLIMEREPL_AC_IP"] = settings.get("autocomplete_server_ip")
+        env[b"SUBLIMEREPL_AC_PORT"] = str(self.autocomplete_server_port()).encode("utf-8")
+        env[b"SUBLIMEREPL_AC_IP"] = settings.get("autocomplete_server_ip").encode("utf-8")
 
         self._cmd = self.cmd(cmd, env)
         self._soft_quit = soft_quit
@@ -127,7 +126,8 @@ class SubprocessRepl(Repl):
                 enc_v = self.encoder(str(v))[0]
             except UnicodeDecodeError:
                 continue #f*** it, we'll do it live
-            bytes_env[enc_k] = enc_v
+            else:
+                bytes_env[enc_k] = enc_v
         return bytes_env
 
     def interpolate_extend_env(self, env, extend_env):
@@ -141,7 +141,7 @@ class SubprocessRepl(Repl):
     def startupinfo(self, settings):
         startupinfo = None
         if os.name == 'nt':
-            from .killableprocess import STARTUPINFO, STARTF_USESHOWWINDOW
+            from repls.killableprocess import STARTUPINFO, STARTF_USESHOWWINDOW
             startupinfo = STARTUPINFO()
             startupinfo.dwFlags |= STARTF_USESHOWWINDOW
             startupinfo.wShowWindow |= 1 # SW_SHOWNORMAL

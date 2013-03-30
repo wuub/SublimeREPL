@@ -155,8 +155,3 @@ def test_qijo():
     result = QueryInformationJobObject(popen._job, 8)
     if result.BasicInfo.ActiveProcesses != 0:
         raise AssertionError('expected ActiveProcesses to be 0')
-
-if __name__ == '__main__':
-    print("testing.")
-    test_qijo()
-    print("success!")
