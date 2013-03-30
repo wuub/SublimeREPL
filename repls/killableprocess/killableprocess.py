@@ -53,7 +53,6 @@ import os
 import time
 import datetime
 import types
-import exceptions
 
 try:
     from subprocess import CalledProcessError
@@ -72,7 +71,7 @@ except ImportError:
 mswindows = (sys.platform == "win32")
 
 if mswindows:
-    import winprocess
+    from . import winprocess
 else:
     import signal
 
@@ -107,7 +106,7 @@ class Popen(subprocess.Popen):
                            p2cread, p2cwrite,
                            c2pread, c2pwrite,
                            errread, errwrite):
-            if not isinstance(args, types.StringTypes):
+            if not isinstance(args, str):
                 args = subprocess.list2cmdline(args)
             
             # Always or in the create new process group
@@ -238,7 +237,7 @@ class Popen(subprocess.Popen):
                 def group_wait(timeout):
                     try:
                         os.waitpid(self.pid, 0)
-                    except OSError, e:
+                    except OSError as e:
                         pass # If wait has already been called on this pid, bad things happen
                     return self.returncode
             elif sys.platform == 'darwin':
@@ -254,7 +253,7 @@ class Popen(subprocess.Popen):
                             os.killpg(self.pid, signal.SIG_DFL)
                             # count is increased by 500ms for every 0.5s of sleep
                             time.sleep(.5); count += 500
-                    except exceptions.OSError:
+                    except OSError:
                         return self.returncode
                         
             if timeout is None:

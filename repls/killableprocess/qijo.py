@@ -68,7 +68,7 @@ class JobObjectInfo(object):
                    9: JOBOBJECT_EXTENDED_LIMIT_INFORMATION
                    }
     def __init__(self, _class):
-        if isinstance(_class, basestring):
+        if isinstance(_class, str):
             assert _class in self.mapping, 'Class should be one of %s; you gave %s' % (self.mapping, _class)
             _class = self.mapping[_class]
         assert _class in self.structures, 'Class should be one of %s; you gave %s' % (self.structures, _class)
@@ -131,20 +131,20 @@ def QueryInformationJobObject(hJob, JobObjectInfoClass):
     return SubscriptableReadOnlyStruct(jobinfo.info)
 
 def test_qijo():
-    from killableprocess import Popen
+    from .killableprocess import Popen
 
     popen = Popen('c:\\windows\\notepad.exe')
 
     try:
         result = QueryInformationJobObject(0, 8)
         raise AssertionError('throw should occur')
-    except WindowsError, e:
+    except WindowsError as e:
         pass
 
     try:
         result = QueryInformationJobObject(0, 1)
         raise AssertionError('throw should occur')
-    except NotImplementedError, e:
+    except NotImplementedError as e:
         pass
 
     result = QueryInformationJobObject(popen._job, 8)
@@ -157,6 +157,6 @@ def test_qijo():
         raise AssertionError('expected ActiveProcesses to be 0')
 
 if __name__ == '__main__':
-    print "testing."
+    print("testing.")
     test_qijo()
-    print "success!"
+    print("success!")

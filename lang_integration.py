@@ -1,3 +1,4 @@
+from __future__ import absolute_import, unicode_literals, print_function, division
 import sublime
 import sublime_plugin
 
@@ -40,7 +41,7 @@ class ClojureAutoTelnetRepl(sublime_plugin.WindowCommand):
                     else:
                         description += " (not responding)"
                     choices.append([description, port])
-            except IOError, e:
+            except IOError as e:
                 pass  # just ignore it, no file or no access
 
         return choices + [["Custom telnet", "Pick your own telnet port number to Lein REPL"]]
@@ -78,7 +79,7 @@ def scan_for_virtualenvs(venv_paths):
     for venv_path in venv_paths:
         p = os.path.expanduser(venv_path)
         pattern = os.path.join(p, "*", bin_dir, "activate_this.py")
-        found_dirs.update(map(os.path.dirname, glob.glob(pattern)))
+        found_dirs.update(list(map(os.path.dirname, glob.glob(pattern))))
     return sorted(found_dirs)
 
 
@@ -147,7 +148,7 @@ class ExecnetVirtualenvRepl(sublime_plugin.WindowCommand):
         try:
             gw = execnet.makegateway("ssh=" + host_string)
             ch = gw.remote_exec(VENV_SCAN_CODE)
-        except Exception, e:
+        except Exception as e:
             sublime.error_message(repr(e))
             return
 

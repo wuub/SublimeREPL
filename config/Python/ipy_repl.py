@@ -1,4 +1,9 @@
 import os
+import sys
+import json
+import socket
+import threading
+
 activate_this = os.environ.get("SUBLIMEREPL_ACTIVATE_THIS", None)
 
 if activate_this:
@@ -11,19 +16,12 @@ try:
 except ImportError:
     IPYTHON = False
 
-## compatibility if no ipython available or running on windows
-if not IPYTHON or os.name == "nt":
+if not IPYTHON:
+    # for virtualenvs w/o IPython
     import code
     code.InteractiveConsole().interact()
 
-import sys
-import json
-import socket
-import threading
-
-from IPython.frontend.terminal.embed import InteractiveShellEmbed
 from IPython.config.loader import Config
-
 
 editor = "subl -w"
 
@@ -34,7 +32,18 @@ cfg.InteractiveShell.colors = "NoColor"
 cfg.InteractiveShell.editor = os.environ.get("SUBLIMEREPL_EDITOR", editor)
 
 
-embedded_shell = InteractiveShellEmbed(config=cfg, user_ns={})
+from IPython.frontend.terminal.console.app import ZMQTerminalIPythonApp
+
+embedded_shell = ZMQTerminalIPythonApp(config=cfg, user_ns={})
+embedded_shell.initialize()
+
+if os.name == "nt":
+    # OMG what a fugly hack
+    import IPython.utils.io as io
+    io.stdout = io.IOStream(sys.__stdout__, fallback=io.devnull)
+    io.stderr = io.IOStream(sys.__stderr__, fallback=io.devnull)
+    embedded_shell.shell.show_banner()  # ... my eyes, oh my eyes..
+
 
 ac_port = int(os.environ.get("SUBLIMEREPL_AC_PORT", "0"))
 ac_ip = os.environ.get("SUBLIMEREPL_AC_IP", "127.0.0.1")
@@ -64,22 +73,31 @@ def send_netstring(s, msg):
     s.sendall(payload)
 
 
+def complete(zmq_shell, req):
+    msg_id = zmq_shell.kernel_manager.shell_channel.complete(**req)
+    msg = zmq_shell.kernel_manager.shell_channel.get_msg(timeout=0.5)
+    if msg['parent_header']['msg_id'] == msg_id:
+        return msg["content"]["matches"]
+    return []
+
+
 def handle():
     while True:
         msg = read_netstring(s).decode("utf-8")
         try:
             req = json.loads(msg)
-            completions = embedded_shell.complete(**req)
-            res = json.dumps(completions)
+            completions = complete(embedded_shell, req)
+            result = (req["text"], completions)
+            res = json.dumps(result)
             send_netstring(s, res)
-        except:
+        except Exception:
             send_netstring(s, b"[]")
 
 if ac_port:
     t = threading.Thread(target=handle)
     t.start()
 
-embedded_shell()
+embedded_shell.start()
 
 if ac_port:
     s.close()

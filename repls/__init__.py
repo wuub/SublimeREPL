@@ -1,6 +1,6 @@
-from repl import Repl
-import subprocess_repl
-import telnet_repl
-import sublimepython_repl
-import execnet_repl
-import powershell_repl
+from .repl import *
+from .subprocess_repl import *
+# from .telnet_repl import *
+# from .sublimepython_repl import *
+# from .execnet_repl import *
+# from .powershell_repl import *

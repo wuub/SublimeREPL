@@ -6,14 +6,14 @@
 import subprocess
 import os
 import re
-import repl
+from . import repl
 import signal
 import killableprocess
 from sublime import load_settings
-from autocomplete_server import AutocompleteServer
+from .autocomplete_server import AutocompleteServer
 
-from subprocess_repl import Unsupported, win_find_executable
-import subprocess_repl
+from .subprocess_repl import Unsupported, win_find_executable
+from . import subprocess_repl
 
 # PowerShell in interactive mode shows no prompt, so we must hold it by hand.
 # Every command prepended with other command, which will output only one character ('.')

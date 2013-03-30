@@ -5,11 +5,11 @@
 
 import subprocess
 import os
-import repl
+from .repl import Repl
 import signal
-import killableprocess
 from sublime import load_settings
-from autocomplete_server import AutocompleteServer
+from .autocomplete_server import AutocompleteServer
+from .killableprocess import Popen, STARTUPINFO, STARTF_USESHOWWINDOW
 
 
 class Unsupported(Exception):
@@ -41,7 +41,7 @@ def win_find_executable(executable, env):
     return None
 
 
-class SubprocessRepl(repl.Repl):
+class SubprocessRepl(Repl):
     TYPE = "subprocess"
 
     def __init__(self, encoding, external_id=None, cmd_postfix="\n", suppress_echo=False, cmd=None,
@@ -64,7 +64,7 @@ class SubprocessRepl(repl.Repl):
         self._cmd = self.cmd(cmd, env)
         self._soft_quit = soft_quit
         self._killed = False
-        self.popen = killableprocess.Popen(
+        self.popen = Popen(
                         self._cmd,
                         startupinfo=self.startupinfo(settings),
                         creationflags=self.creationflags(settings),
@@ -99,7 +99,7 @@ class SubprocessRepl(repl.Repl):
            executable in env because of this: http://bugs.python.org/issue8557"""
         if os.name != "nt":
             return cmd
-        if isinstance(cmd, basestring):
+        if isinstance(cmd, str):
             _cmd = [cmd]
         else:
             _cmd = cmd
@@ -121,10 +121,10 @@ class SubprocessRepl(repl.Repl):
         if extend_env:
             updated_env.update(self.interpolate_extend_env(updated_env, extend_env))
         bytes_env = {}
-        for k,v in updated_env.items():
+        for k,v in list(updated_env.items()):
             try:
-                enc_k = self.encoder(unicode(k))[0]
-                enc_v = self.encoder(unicode(v))[0]
+                enc_k = self.encoder(str(k))[0]
+                enc_v = self.encoder(str(v))[0]
             except UnicodeDecodeError:
                 continue #f*** it, we'll do it live
             bytes_env[enc_k] = enc_v
@@ -134,15 +134,15 @@ class SubprocessRepl(repl.Repl):
         """Interpolates (subst) values in extend_env.
            Mostly for path manipulation"""
         new_env = {}
-        for key, val in extend_env.items():
+        for key, val in list(extend_env.items()):
             new_env[key] = str(val).format(**env)
         return new_env
 
     def startupinfo(self, settings):
         startupinfo = None
         if os.name == 'nt':
-            startupinfo = killableprocess.STARTUPINFO()
-            startupinfo.dwFlags |= killableprocess.STARTF_USESHOWWINDOW
+            startupinfo = STARTUPINFO()
+            startupinfo.dwFlags |= STARTF_USESHOWWINDOW
             startupinfo.wShowWindow |= 1 # SW_SHOWNORMAL
         return startupinfo
 
@@ -155,7 +155,7 @@ class SubprocessRepl(repl.Repl):
     def name(self):
         if self.external_id:
             return self.external_id
-        if isinstance(self._cmd, basestring):
+        if isinstance(self._cmd, str):
             return self._cmd
         return " ".join([str(x) for x in self._cmd])
 
@@ -179,7 +179,7 @@ class SubprocessRepl(repl.Repl):
 
     def available_signals(self):
         signals = {}
-        for k, v in signal.__dict__.items():
+        for k, v in list(signal.__dict__.items()):
             if not k.startswith("SIG"):
                 continue
             signals[k] = v

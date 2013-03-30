@@ -8,20 +8,20 @@ import sublime
 def read_netstring(s):
     size = 0
     while True:
-        ch = s.recv(1)
-        if ch == ':':
+        byte = s.recv(1)
+        if byte == b':':
             break
-        size = size * 10 + int(ch)
-    msg = ""
+        size = size * 10 + int(byte)
+    msg = b""
     while size != 0:
         msg += s.recv(size)
         size -= len(msg)
-    ch = s.recv(1)
-    assert ch == ','
-    return msg
+    byte = s.recv(1)
+    assert byte == b','
+    return msg.decode("utf-8")
 
 def send_netstring(s, msg):
-    payload = "".join([str(len(msg)), ':', msg, ','])
+    payload = "".join([str(len(msg)), ':', msg, ',']).encode("utf-8")
     s.sendall(payload)
 
 

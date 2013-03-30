@@ -1,6 +1,6 @@
 # encoding: utf-8
-import repl
-from Queue import Queue
+from . import repl
+from queue import Queue
 import sys
 import execnet
 
@@ -75,7 +75,7 @@ class ExecnetRepl(repl.Repl):
     TYPE = "execnet_repl"
 
     def __init__(self, encoding, connection_string=None, activate_file="", ps1=">>> "):
-        super(ExecnetRepl, self).__init__(encoding, u"python", "\n", False)
+        super(ExecnetRepl, self).__init__(encoding, "python", "\n", False)
         self._connections_string = connection_string
         self._ps1 = ps1
         self._gw = execnet.makegateway(connection_string)
