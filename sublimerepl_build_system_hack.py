@@ -1,5 +1,10 @@
+from __future__ import absolute_import, unicode_literals, print_function, division
+
 import sublime_plugin
-import queue
+try:
+    import queue
+except ImportError:
+    import Queue as queue
 
 RESULTS = None
 HACK_BUILD_SYSTEM = "Packages/SublimeREPL/sublimerepl_build_system_hack.sublime-build"

@@ -2,11 +2,11 @@
 # Copyright (c) 2011, Wojciech Bederski (wuub.net)
 # All rights reserved.
 # See LICENSE.txt for details.
+from __future__ import absolute_import, unicode_literals, print_function, division
 
 import re
 import os
 import sys
-import queue
 import os.path
 import threading
 import traceback
@@ -15,9 +15,18 @@ from datetime import datetime
 import sublime
 import sublime_plugin
 
-from . import sublimerepl_build_system_hack
-from . import repls
-from .lib import PyDbLite
+try:
+    import queue
+    from . import sublimerepl_build_system_hack
+    from . import repls
+    from .repllibs import PyDbLite
+    unicode_type = str
+except ImportError:
+    import sublimerepl_build_system_hack
+    import repls
+    from repllibs import PyDbLite
+    import Queue as queue
+    unicode_type = unicode
 
 PLATFORM = sublime.platform().lower()
 SETTINGS_FILE = 'SublimeREPL.sublime-settings'
@@ -464,7 +473,7 @@ class ReplManager(object):
             subst = ReplManager._subst_for_translate(window)
         if isinstance(obj, dict):
             return ReplManager._translate_dict(window, obj, subst)
-        if isinstance(obj, str):
+        if isinstance(obj, unicode_type):  # PY2
             return ReplManager._translate_string(window, obj, subst)
         if isinstance(obj, list):
             return ReplManager._translate_list(window, obj, subst)
@@ -506,7 +515,6 @@ class ReplManager(object):
 
     @staticmethod
     def _translate_string(window, string, subst=None):
-        #$file, $file_path, $packages
         from string import Template
         if subst is None:
             subst = ReplManager._subst_for_translate(window)

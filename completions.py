@@ -1,13 +1,18 @@
+from __future__ import absolute_import, unicode_literals, print_function, division
+
 import sublime
 import sublime_plugin
 
+try:
+    from .sublimerepl import manager
+except ValueError:
+    from sublimerepl import manager
 
 class SublimeREPLCompletions(sublime_plugin.EventListener):
     def on_query_completions(self, view, prefix, locations):
         if not view.settings().get("repl"):
             return True
 
-        from .sublimerepl import manager
         rv = manager.repl_view(view)
         if not rv:
             return []

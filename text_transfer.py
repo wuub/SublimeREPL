@@ -1,10 +1,15 @@
-from .sublimerepl import manager
+from __future__ import absolute_import, unicode_literals, print_function, division
+
 import sublime_plugin
 import sublime
 from collections import defaultdict
 import tempfile
 import binascii
 
+try:
+    from .sublimerepl import manager
+except (ImportError, ValueError):
+    from sublimerepl import manager
 
 """This is a bit stupid, but it's really difficult to create a temporary file with
 a persistent name that can be passed to external process using this name, and then

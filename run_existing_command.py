@@ -1,4 +1,7 @@
+from __future__ import absolute_import, unicode_literals, print_function, division
+
 import os
+import sys
 import json
 import codecs
 import sublime
@@ -12,6 +15,12 @@ def plugin_loaded():
     global SUBLIMEREPL_USER_DIR
     SUBLIMEREPL_DIR = "Packages/SublimeREPL"
     SUBLIMEREPL_USER_DIR = os.path.join(sublime.packages_path(), "User", "SublimeREPL")
+
+PY2 = False
+if sys.version_info[0] == 2:
+    SUBLIMEREPL_DIR = os.getcwd()
+    SUBLIMEREPL_USER_DIR = os.path.join(sublime.packages_path(), "User", "SublimeREPL")
+    PY2 = True
 
 # yes, CommandCommmand :) 
 class RunExistingWindowCommandCommand(sublime_plugin.WindowCommand):
@@ -33,11 +42,16 @@ class RunExistingWindowCommandCommand(sublime_plugin.WindowCommand):
                 
     def _find_cmd_in_file(self, id, file):
         try:
-            f = sublime.load_resource(file)
-            data = json.loads(f)
-            return self._find_cmd_in_json(id, data)
+            if PY2:
+                with open(file) as f:
+                    bytes = f.read()
+            else:
+                bytes = sublime.load_resource(file)
         except (IOError, ValueError):
             return None
+        else:
+            data = json.loads(bytes)
+            return self._find_cmd_in_json(id, data)
 
     def _find_cmd_in_json(self, id, json_object):
         if isinstance(json_object, list):

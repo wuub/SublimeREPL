@@ -28,7 +28,7 @@
                     "extend_env": {"osx": {"PATH": "{PATH}:/usr/local/bin"},
                                    "linux": {"PATH": "{PATH}:/usr/local/bin"},
                                    "windows": {}},
-                    "cmd_postfix": "\n", // postfix that will be automatically added after a line in repl
+                    "cmd_postfix": "\n", 
                     "suppress_echo": {"osx": true,
                                       "linux": true,
                                       "windows": false},
