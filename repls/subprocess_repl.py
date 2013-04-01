@@ -2,14 +2,21 @@
 # Copyright (c) 2011, Wojciech Bederski (wuub.net)
 # All rights reserved.
 # See LICENSE.txt for details.
+from __future__ import absolute_import, unicode_literals, print_function, division
 
 import subprocess
 import os
+import sys
 from .repl import Repl
 import signal
 from sublime import load_settings
 from .autocomplete_server import AutocompleteServer
-from .killableprocess import Popen
+
+PY3 = sys.version_info[0] == 3
+if PY3:
+    from subprocess import Popen
+else:
+    from .killableprocess import Popen
 
 
 class Unsupported(Exception):
@@ -58,8 +65,14 @@ class SubprocessRepl(Repl):
             self._autocomplete_server.start()
 
         env = self.env(env, extend_env, settings)
-        env["SUBLIMEREPL_AC_PORT"] = str(self.autocomplete_server_port())
-        env["SUBLIMEREPL_AC_IP"] = settings.get("autocomplete_server_ip")
+        env[b"SUBLIMEREPL_AC_PORT"] = str(self.autocomplete_server_port()).encode("utf-8")
+        env[b"SUBLIMEREPL_AC_IP"] = settings.get("autocomplete_server_ip").encode("utf-8")
+
+        if PY3:
+            strings_env = {}
+            for k, v in env.items():
+                strings_env[k.decode("utf-8")] = v.decode("utf-8")
+            env = strings_env
 
         self._cmd = self.cmd(cmd, env)
         self._soft_quit = soft_quit
@@ -127,7 +140,8 @@ class SubprocessRepl(Repl):
                 enc_v = self.encoder(str(v))[0]
             except UnicodeDecodeError:
                 continue #f*** it, we'll do it live
-            bytes_env[enc_k] = enc_v
+            else:
+                bytes_env[enc_k] = enc_v
         return bytes_env
 
     def interpolate_extend_env(self, env, extend_env):
