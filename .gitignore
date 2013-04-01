@@ -1,2 +1,3 @@
 *.pyc
 *.bak
+doc/_build
