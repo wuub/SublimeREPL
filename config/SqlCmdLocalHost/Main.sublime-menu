@@ -1,0 +1,27 @@
+[
+     {
+        "id": "tools",
+        "children":
+        [{
+            "caption": "SublimeREPL",
+            "mnemonic": "r",
+            "id": "SublimeREPL",
+            "children":
+            [
+                {"command": "repl_open", 
+                 "caption": "LocalHost SQL2K12 TSQL",
+                 "id": "repl_sql",
+                 "mnemonic": "tsql",
+                 "args": {
+                    "type": "subprocess",
+                    "encoding": "utf8",
+                    "cmd": ["sqlcmd ","-E","-Slocalhost\\SQL2K12","-dPlayGround"],
+                    "cwd": "$file_path",
+                    "external_id": "tsql",
+                    "syntax": "Packages/TSQL/TSQL.tmLanguage"
+                    }
+                }
+            ]   
+        }]
+    }
+]
