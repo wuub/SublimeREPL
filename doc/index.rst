@@ -226,18 +226,139 @@ SublimeREPL currently ships with support for the following languages:
 * Sublime internal REPL (?)
 * Tower (CoffeeScript)
 
-Plugin structure
-----------------
+Structure of SublimeREPL 
+------------------------
 
-SublimeREPL implements five different types of REPLs which are based on an abstract REPL class:
+.. NOTE::
+   If this is your first time dealing with Sublime plugins, you may find it a bit too magical. Basically,
+   Sublime automatically scans plugin directories loads configuration files and plugin code without manual
+   intervention, and reloads them dynamically as soon as they change. The entry points to a plugin's code are its commands, 
+   which are Python objects that extend Sublime's standard command class. Sublime calls them when needed. There
+   is no initialization entry point or a "plugin loaded" callback or somesuch. 
 
-* Subprocess-based REPLs. The process running in the REPL is a subprocess of the editor. The input and
+Basics of language integration
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+A language integration in SublimeREPL consists of configuration files and,
+where needed, Python code. The configuration consists of:
+
+* Command palette `configuration files <http://docs.sublimetext.info/en/latest/reference/command_palette.html>`_
+* Menu configuration files
+* Optional `keybinding configuration files <http://docs.sublimetext.info/en/latest/reference/key_bindings.html>`_ 
+
+REPLs are started by SublimeREPL command `repl_open`. The command and its arguments is usually specified in
+the menu configuration file, and the other places refer to that configuration item by file name and ID using the
+`run_existing_window_command` command.
+
+Simple language integrations use an existing REPL class (see below) without
+modification. For these integrations, no additional Python code is needed.
+They use one of the standard REPL classes as the base, as documented below. In
+most cases, this will be the subprocess based REPL class. An example of such an integration is Lua.
+
+The menu configuration file `config/Lua/Menu.sublime-menu` contains::
+
+  [
+       {
+          "id": "tools",
+          "children":
+          [{
+              "caption": "SublimeREPL",
+              "mnemonic": "r",
+              "id": "SublimeREPL",
+              "children":
+              [
+                  {"command": "repl_open", 
+                   "caption": "Lua",
+                   "id": "repl_lua",
+                   "mnemonic": "l",
+                   "args": {
+                      "type": "subprocess",
+                      "encoding": "utf8",
+                      "cmd": ["lua", "-i"],
+                      "cwd": "$file_path",
+                      "external_id": "lua",
+                      "syntax": "Packages/Lua/Lua.tmLanguage"
+                      }
+                  }
+              ]   
+          }]
+      }
+  ]
+
+This adds a "Lua" menu item to "Tools > SublimeREPL" which creates a Lua REPL via SublimeREPL command
+`repl_open`. The important part to take note of here is the `id` attribute (`repl_lua`). This is the ID by
+which the command palette configuration file refers to Lua REPL configuration. 
+
+The command configuration file `config/Lua/Default.sublime-commands` looks like this::
+
+  [
+      {
+          "caption": "SublimeREPL: Lua",
+          "command": "run_existing_window_command", "args":
+          {
+              /* Note that both these arguments are used to identify the file above and 
+                 load the REPL configuration from it
+               */
+              "id": "repl_lua",
+              "file": "config/Lua/Main.sublime-menu"
+          }
+      }
+  ]
+
+As you can see, the REPL configuration is concentrated in the menu files.
+However, if you load a REPL from the palette (and in some integrations, via
+keybindings), the command will be ran in the context of the currently open
+window. This allows some integrations to read the currently open file and do something
+during REPL startup based on it. For example, Clojure integration will check if the
+current window contains a Leiningen file, and use it to start a Leiningen REPL.
+
+REPL classes
+^^^^^^^^^^^^
+
+All REPL instances are descendants of :class:`Repl`. New integrations can either provide their own class,
+or use one of the base classes that ship with SublimeREPL:
+
+* Class :class:`SubprocessRepl` for  subprocess-based REPLs. The process running in the REPL is a subprocess of the editor. The input and
   output of the process is connected to the output and the input of the REPL
-* Telnet-based REPLs. The process runs outside of the editor, presumably having been spawned
-  externally or daemonized, and the REPL connects to it via minimal telnet protocol.
-* PowerShell REPLs. These are only used by PowerShell integration.
-* Execnet REPLs. These are only used by Execnet Python integration
-* Sublime REPLs.
+* Class :class:`TelnetRepl`. The process runs outside of the editor, presumably having been spawned
+  externally, and the REPL connects to it over TCP via Python `telnetlib`.
 
-A concrete language integration is *configuration* that specifies one of these REPL classes as the base. 
-Most integrations use the subprocess-based REPL.
+There are three integrations that provide their own classes:
+
+* Class :class:`PowershellRepl`. This is only used by PowerShell integration.
+* Class :class:`ExecnetRepl`. This is only used by Execnet Python integration
+* Class :class:`SublimePythonRepl`. A REPL over SublimeText's internal Python interpreter.
+
+All these can be found in the plugin's `repl/` subdirectory. 
+
+A REPL class is expected to provide a standard interface for SublimeREPL integration:
+
+.. py:method:: read_bytes()
+
+   Read and return some bytes from REPL's incoming stream, blocking as necessary. :class:`ReplManager` will set up
+   a separate thread with a :class:`ReplReader` pump that keeps polling this method.  
+
+.. py:method:: write_bytes(bytes)  
+
+   Write some bytes to REPL's outgoing stream. User input in the REPL view's command line will be delivered here. 
+
+REPL manager
+^^^^^^^^^^^^
+ 
+Class :class:`ReplManager` is responsible for managing REPL instances (subclasses of :class:`Repl`). It initializes new REPLs by:
+
+* Creating REPL instances
+* Providing an instance of the Sublime view associated with the REPL by reusing an existing one, or creating a new one
+* Creating and remembering a named :class:`ReplView` instance that couples between the two. 
+
+REPL views
+^^^^^^^^^^
+
+A :class:`ReplView` instance is a coupling between a REPL instance and a Sublime view. Its main responsibility 
+is to create Sublime views and maintain the loops that read from, and write to, the REPL.
+
+* The incoming data *from* the REPL is read in a separate thread using :class:`ReplReader`, because read operations
+  are assumed to be blocking
+* The outgoing data is written into the REPL by ReplView's method py:method:`update_view_loop`. This method is called
+  by ReplView's constructor at the very end and, as long as the associated REPL object is alive, reschedules itself
+  with Sublime's py:method:`set_timeout`.
