@@ -1,0 +1,10 @@
+[
+    {
+        "caption": "SublimeREPL: SqlCmd",
+        "command": "run_existing_window_command", "args":
+        {
+            "id": "repl_sqlcmd",
+            "file": "config/SqlCmd/Main.sublime-menu"
+        }
+    }
+]
