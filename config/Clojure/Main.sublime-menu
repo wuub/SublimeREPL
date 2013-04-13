@@ -21,7 +21,7 @@
                                 "linux": ["lein", "repl"],
                                 "osx":  ["lein", "repl"]},
                         "soft_quit": "\n(. System exit 0)\n",
-                        "cwd": {"windows":"c:/Clojure", // where the lein.bat lives!
+                        "cwd": {"windows":"c:/Clojure",
                                 "linux": "$file_path",
                                 "osx": "$file_path"},
                         "syntax": "Packages/Clojure/Clojure.tmLanguage",
