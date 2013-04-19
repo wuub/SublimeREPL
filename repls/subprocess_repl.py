@@ -18,6 +18,13 @@ if PY3:
 else:
     from .killableprocess import Popen
 
+if os.name == 'posix':
+    POSIX = True
+    import fcntl
+    import select
+else:
+    POSIX = False
+
 
 class Unsupported(Exception):
     def __init__(self, msgs):
@@ -87,6 +94,10 @@ class SubprocessRepl(Repl):
                         stderr=subprocess.STDOUT,
                         stdin=subprocess.PIPE,
                         stdout=subprocess.PIPE)
+
+        if POSIX:
+            flags = fcntl.fcntl(self.popen.stdout, fcntl.F_GETFL)
+            fcntl.fcntl(self.popen.stdout, fcntl.F_SETFL, flags | os.O_NONBLOCK)
 
     def autocomplete_server_port(self):
         if not self._autocomplete_server:
@@ -178,9 +189,16 @@ class SubprocessRepl(Repl):
         return self.popen.poll() is None
 
     def read_bytes(self):
-        # this is windows specific problem, that you cannot tell if there
-        # are more bytes ready, so we read only 1 at a times
-        return self.popen.stdout.read(1)
+        out = self.popen.stdout
+        if POSIX:
+            while True:
+                i, _, _ = select.select([out], [], [])
+                if i:
+                    return out.read(4096)
+        else:
+            # this is windows specific problem, that you cannot tell if there
+            # are more bytes ready, so we read only 1 at a times
+            return self.popen.stdout.read(1)
 
     def write_bytes(self, bytes):
         si = self.popen.stdin
