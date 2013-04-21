@@ -2,7 +2,10 @@
 import code
 import contextlib
 from .repl import Repl
-from queue import Queue
+try:
+    from queue import Queue
+except ImportError:
+    from Queue import Queue
 import sys
 import threading
 
