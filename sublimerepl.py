@@ -34,12 +34,12 @@ SETTINGS_FILE = 'SublimeREPL.sublime-settings'
 
 class ReplInsertTextCommand(sublime_plugin.TextCommand):
     def run(self, edit, pos, text):
-        self.view.insert(edit, long(pos), text)
+        self.view.insert(edit, int(pos), text)
 
 
 class ReplEraseTextCommand(sublime_plugin.TextCommand):
     def run(self, edit, start, end):
-        self.view.erase(edit, sublime.Region(long(start), long(end)))
+        self.view.erase(edit, sublime.Region(int(start), int(end)))
 
 
 class Event:
