@@ -69,5 +69,9 @@
 	// will not work
 	"external_id_mapping": {
 		"octave": "matlab"
-	}
+	},
+
+	// If set to true, SublimeREPL will try to append evaluated code to repl
+	// output before evaluation (e.g. Ctrl+, f)
+	"show_transferred_text": false
 }

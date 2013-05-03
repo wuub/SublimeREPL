@@ -7,9 +7,9 @@ import tempfile
 import binascii
 
 try:
-    from .sublimerepl import manager
+    from .sublimerepl import manager, SETTINGS_FILE
 except (ImportError, ValueError):
-    from sublimerepl import manager
+    from sublimerepl import manager, SETTINGS_FILE
 
 """This is a bit stupid, but it's really difficult to create a temporary file with
 a persistent name that can be passed to external process using this name, and then
@@ -130,6 +130,11 @@ class ReplSend(sublime_plugin.TextCommand):
             return
         if with_auto_postfix:
             text += rv.repl.cmd_postfix
+
+        if sublime.load_settings(SETTINGS_FILE).get('show_transferred_text'):
+            rv.append_input_text(text)
+            rv.adjust_end()
+
         SENDERS[external_id](rv.repl, text, self.view)
 
 
