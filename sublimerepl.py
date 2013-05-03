@@ -34,11 +34,13 @@ SETTINGS_FILE = 'SublimeREPL.sublime-settings'
 
 class ReplInsertTextCommand(sublime_plugin.TextCommand):
     def run(self, edit, pos, text):
+        self.view.set_read_only(False)  # make sure view is writable
         self.view.insert(edit, int(pos), text)
 
 
 class ReplEraseTextCommand(sublime_plugin.TextCommand):
     def run(self, edit, start, end):
+        self.view.set_read_only(False)  # make sure view is writable
         self.view.erase(edit, sublime.Region(int(start), int(end)))
 
 
@@ -142,9 +144,6 @@ class MemHistory(History):
 
 
 class PersistentHistory(MemHistory):
-    def __init__(self, ext):
-        super(PersistentHistory, self).__init__()
-
     def __init__(self, external_id):
         super(PersistentHistory, self).__init__()
         path = os.path.join(sublime.packages_path(), "User", ".SublimeREPLHistory")
@@ -599,7 +598,7 @@ class ReplEscapeCommand(sublime_plugin.TextCommand):
 def repl_view_delta(sublime_view):
     """Return a repl_view and number of characters from current selection
     to then beggingin of user_input (otherwise known as _output_end)"""
-    rv = repl_view(sublime_view)
+    rv = manager.repl_view(sublime_view)
     if not rv:
         return None, -1
     delta = rv._output_end - sublime_view.sel()[0].begin()
