@@ -60,5 +60,14 @@
 	// IP address used to setup autocomplete server in sublimerepl.
 	// changing this is usefull when you want to exclude one address
 	// from proxychains/tsocks routing
-	"autocomplete_server_ip": "127.0.0.1"
+	"autocomplete_server_ip": "127.0.0.1",
+
+	// Mapping is used, when external_id of REPL does not match 
+	// source.[xxx] scope of syntax definition used to highlight
+	// files from which text is being transfered. For example octave 
+	// repls use source.matlab syntax files and w/o this mapping text transfer
+	// will not work
+	"external_id_mapping": {
+		"octave": "matlab"
+	}
 }

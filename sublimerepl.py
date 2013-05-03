@@ -427,14 +427,19 @@ class ReplManager(object):
         return rv
 
     def find_repl(self, external_id):
+        """Finds rv matching external_id taken from 
+           syntax definiton. A mapping is used to handle 
+           edge cases"""
+        exid_map = sublime.load_settings(SETTINGS_FILE).get("external_id_mapping")           
         for rv in list(self.repl_views.values()):
-            if rv.external_id == external_id:
+            rvid = rv.external_id
+            view_id = exid_map.get(rvid, rvid)
+            if view_id == external_id:
                 return rv
         return None
 
     def find_repl_by_syntax(self, syntax):
         for rv in list(self.repl_views.values()):
-            print(rv._view.settings().get('syntax'))
             if rv._view.settings().get('syntax') == syntax:
                 return rv
         return None
