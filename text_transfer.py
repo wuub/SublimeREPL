@@ -155,7 +155,7 @@ class ReplTransferCurrent(sublime_plugin.TextCommand):
         self.view.window().run_command(cmd, {"external_id": self.repl_external_id(), "text": text})
 
     def repl_external_id(self):
-        return self.view.scope_name(0).split(" ")[0].split(".")[1]
+        return self.view.scope_name(0).split(" ")[0].split(".", 1)[1]
 
     def selected_text(self):
         v = self.view

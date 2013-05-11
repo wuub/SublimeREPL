@@ -1,7 +1,6 @@
 import re
 import os
 import sublime
-import sublime_plugin
 
 from .subprocess_repl import SubprocessRepl
 
@@ -31,5 +30,5 @@ def ghci_append_package_db(cmd):
 class SublimeHaskellRepl(SubprocessRepl):
     TYPE = "sublime_haskell"
 
-    def __init__(self, encoding=None, external_id=None, cmd_postfix="\n", suppress_echo=False, cmd=None, env=None, cwd=None, extend_env=None, soft_quit="", autocomplete_server=False):
-        super(SublimeHaskellRepl, self).__init__(encoding, external_id, cmd_postfix, suppress_echo, ghci_append_package_db(cmd), env, cwd, extend_env, soft_quit, autocomplete_server)
+    def __init__(self, encoding, cmd=None, **kwds):
+        super(SublimeHaskellRepl, self).__init__(encoding, cmd=ghci_append_package_db(cmd), **kwds)

@@ -58,9 +58,8 @@ def win_find_executable(executable, env):
 class SubprocessRepl(Repl):
     TYPE = "subprocess"
 
-    def __init__(self, encoding, external_id=None, cmd_postfix="\n", suppress_echo=False, cmd=None,
-                 env=None, cwd=None, extend_env=None, soft_quit="", autocomplete_server=False):
-        super(SubprocessRepl, self).__init__(encoding, external_id, cmd_postfix, suppress_echo)
+    def __init__(self, encoding, cmd=None, env=None, cwd=None, extend_env=None, soft_quit="", autocomplete_server=False, **kwds):
+        super(SubprocessRepl, self).__init__(encoding, **kwds)
         settings = load_settings('SublimeREPL.sublime-settings')
 
         if cmd[0] == "[unsupported]":

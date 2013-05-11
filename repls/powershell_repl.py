@@ -2,17 +2,8 @@
 # Copyright (c) 2011, Wojciech Bederski (wuub.net)
 # All rights reserved.
 # See LICENSE.txt for details.
-
-import subprocess
 import os
 import re
-from . import repl
-import signal
-import killableprocess
-from sublime import load_settings
-from .autocomplete_server import AutocompleteServer
-
-from .subprocess_repl import Unsupported, win_find_executable
 from . import subprocess_repl
 
 # PowerShell in interactive mode shows no prompt, so we must hold it by hand.
@@ -26,8 +17,7 @@ class PowershellRepl(subprocess_repl.SubprocessRepl):
     TYPE = "powershell"
     PREPENDER = "."
 
-    def __init__(self, encoding = None, external_id=None, cmd_postfix="\n", suppress_echo=False, cmd=None,
-                 env=None, cwd=None, extend_env=None, soft_quit="", autocomplete_server=False):
+    def __init__(self, encoding, **kwds):
         if not encoding:
             # Detect encoding
             chcp = os.popen('chcp')
@@ -37,7 +27,7 @@ class PowershellRepl(subprocess_repl.SubprocessRepl):
             encoding = "cp" + chcp_encoding.groups()[0]
             print(encoding)
 
-        super(PowershellRepl, self).__init__(encoding, external_id, cmd_postfix, suppress_echo, cmd, env, cwd, extend_env, soft_quit, autocomplete_server)
+        super(PowershellRepl, self).__init__(encoding, **kwds)
 
         # Using this to detect whether PowerShell returns some output or it needs more input
         # PowerShell in interactive mode doesn't show prompt, so we must hold it by hand
