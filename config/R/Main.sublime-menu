@@ -15,6 +15,7 @@
                  "args": {
                     "type": "subprocess",
                     "external_id": "r",
+                    "additional_scopes": ["tex.latex.knitr"],
                     "encoding": {
                         "windows": "$win_cmd_encoding",
                         "linux": "utf8",
@@ -28,7 +29,7 @@
                     "extend_env": {"osx": {"PATH": "{PATH}:/usr/local/bin"},
                                    "linux": {"PATH": "{PATH}:/usr/local/bin"},
                                    "windows": {}},
-                    "cmd_postfix": "\n", 
+                    "cmd_postfix": "\n",
                     "suppress_echo": {"osx": true,
                                       "linux": true,
                                       "windows": false},
