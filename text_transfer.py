@@ -117,25 +117,25 @@ def clojure_sender(repl, text, view):
 
 class ReplViewWrite(sublime_plugin.TextCommand):
     def run(self, edit, external_id, text):
-        rv = manager.find_repl(external_id)
-        if not rv:
-            return
-        rv.append_input_text(text)
+        for rv in manager.find_repl(external_id):
+            rv.append_input_text(text)
+            break  # send to first repl found
+        else:
+            sublime.error_message("Cannot find REPL for '{}'".format(external_id))
 
 
 class ReplSend(sublime_plugin.TextCommand):
     def run(self, edit, external_id, text, with_auto_postfix=True):
-        rv = manager.find_repl(external_id)
-        if not rv:
-            return
-        if with_auto_postfix:
-            text += rv.repl.cmd_postfix
-
-        if sublime.load_settings(SETTINGS_FILE).get('show_transferred_text'):
-            rv.append_input_text(text)
-            rv.adjust_end()
-
-        SENDERS[external_id](rv.repl, text, self.view)
+        for rv in manager.find_repl(external_id):
+            if with_auto_postfix:
+                text += rv.repl.cmd_postfix
+            if sublime.load_settings(SETTINGS_FILE).get('show_transferred_text'):
+                rv.append_input_text(text)
+                rv.adjust_end()
+            SENDERS[external_id](rv.repl, text, self.view)
+            break
+        else:
+            sublime.error_message("Cannot find REPL for '{}'".format(external_id))
 
 
 class ReplTransferCurrent(sublime_plugin.TextCommand):

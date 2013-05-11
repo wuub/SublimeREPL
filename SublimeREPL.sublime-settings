@@ -62,15 +62,6 @@
 	// from proxychains/tsocks routing
 	"autocomplete_server_ip": "127.0.0.1",
 
-	// Mapping is used, when external_id of REPL does not match 
-	// source.[xxx] scope of syntax definition used to highlight
-	// files from which text is being transfered. For example octave 
-	// repls use source.matlab syntax files and w/o this mapping text transfer
-	// will not work
-	"external_id_mapping": {
-		"octave": "matlab"
-	},
-
 	// If set to true, SublimeREPL will try to append evaluated code to repl
 	// output before evaluation (e.g. Ctrl+, f)
 	"show_transferred_text": false

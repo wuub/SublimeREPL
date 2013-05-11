@@ -428,22 +428,13 @@ class ReplManager(object):
         return rv
 
     def find_repl(self, external_id):
-        """Finds rv matching external_id taken from 
-           syntax definiton. A mapping is used to handle 
-           edge cases"""
-        exid_map = sublime.load_settings(SETTINGS_FILE).get("external_id_mapping")           
-        for rv in list(self.repl_views.values()):
+        """Yields rvews matching external_id taken from source.[external_id] scope
+           Match is done on external_id value of repl and additional_scopes"""
+        for rv in self.repl_views.values():
             rvid = rv.external_id
-            view_id = exid_map.get(rvid, rvid)
-            if view_id == external_id:
-                return rv
-        return None
-
-    def find_repl_by_syntax(self, syntax):
-        for rv in list(self.repl_views.values()):
-            if rv._view.settings().get('syntax') == syntax:
-                return rv
-        return None
+            additional_scopes = rv.repl.additional_scopes
+            if rvid == external_id or external_id in additional_scopes:
+                yield rv
 
     def open(self, window, encoding, type, syntax=None, view_id=None, **kwds):
         try:
@@ -551,29 +542,6 @@ class ReplOpenCommand(sublime_plugin.WindowCommand):
     def run(self, encoding, type, syntax=None, view_id=None, **kwds):
         manager.open(self.window, encoding, type, syntax, view_id, **kwds)
 
-
-# View Commands ###########################################
-
-# Send selection/line to REPL
-class ReplSendNewCommand(sublime_plugin.TextCommand):
-    def run(self, edit):
-        ## TODO: see text_transfer.py!
-        syntax = self.view.settings().get('syntax')
-        rv = manager.find_repl_by_syntax(syntax)
-        if not rv:
-            return
-
-        lines = []
-        for region in self.view.sel():
-            if region.empty():
-                line = self.view.substr(self.view.line(region))
-            else:
-                line = self.view.substr(region)
-            lines.append(line)
-
-        cmd = '\n'.join(lines)
-        print(cmd)
-        rv.run(edit, cmd)
 
 # REPL Comands ############################################
 
