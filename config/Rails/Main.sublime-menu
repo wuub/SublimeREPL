@@ -1,0 +1,37 @@
+[
+     {
+        "id": "tools",
+        "children":
+        [{
+            "caption": "Rails",
+            "mnemonic": "r",
+            "id": "SublimeREPL",
+            "children":
+            [
+                {
+                 "command": "repl_open",
+                 "caption": "Rails",
+                 "id": "repl_rails",
+                 "external_id":"rails",
+                 "mnemonic": "r",
+                 "args":
+                  {
+                    "type": "subprocess",
+                    "encoding": {"windows": "$win_cmd_encoding",
+                                 "linux": "utf-8",
+                                 "osx": "utf-8"},
+                    "cmd": { "windows": ["ruby.exe", "${packages}/SublimeREPL/config/Rails/pry_repl.rb", "$editor"],
+                             "linux": ["ruby", "${packages}/SublimeREPL/config/Rails/pry_repl.rb", "$editor"],
+                             "osx": ["ruby", "${packages}/SublimeREPL/config/Rails/pry_repl.rb", "$editor"] },
+                    "env": {},
+                    "soft_quit":"\nexit\n",
+                    "cwd":"$folder",
+                    "cmd_postfix":"\n",
+                    "autocomplete_server": true,
+                    "syntax": "Packages/Ruby/Ruby.tmLanguage"
+                  }
+                }
+            ]
+        }]
+    }
+]

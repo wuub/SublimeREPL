@@ -13,7 +13,7 @@
 	// which you want all repls to be opened (index 0 being the top-left group).
 	// Activating this option will NOT automatically change your layout/create
 	// a new group if it isn't open.
-	"open_repl_in_group": false,
+	"open_repl_in_group": true,
 
 	// Persistent history is stored per REPL external_id, it means that all python
 	// REPLS will share history. If you wish you can disable history altogether
@@ -61,6 +61,15 @@
 	// changing this is usefull when you want to exclude one address
 	// from proxychains/tsocks routing
 	"autocomplete_server_ip": "127.0.0.1",
+
+	// Mapping is used, when external_id of REPL does not match
+	// source.[xxx] scope of syntax definition used to highlight
+	// files from which text is being transfered. For example octave
+	// repls use source.matlab syntax files and w/o this mapping text transfer
+	// will not work
+	"external_id_mapping": {
+		"octave": "matlab"
+	},
 
 	// If set to true, SublimeREPL will try to append evaluated code to repl
 	// output before evaluation (e.g. Ctrl+, f)

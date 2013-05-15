@@ -203,26 +203,26 @@ class ReplView(object):
         # TODO: port, because it's failing
         # optionally move view to a different group
         # find current position of this replview
-        # (group, index) = self._window.get_view_index(view
+        (group, index) = self._window.get_view_index(view)
 
         # get the view that was focussed before the repl was opened.
         # we'll have to focus this one briefly to make sure it's in the
         # foreground again after moving the replview away
-        # oldview = self._window.views_in_group(group)[max(0, index - 1)]
+        oldview = self._window.views_in_group(group)[max(0, index - 1)]
 
-        # target = settings.get("open_repl_in_group")
+        target = settings.get("open_repl_in_group")
 
         # either the target group is specified by index
-        #if isinstance(target, int):
-        #    if 0 <= target < self._window.num_groups() and target != group:
-        #        self._window.set_view_index(view, target, len(self._window.views_in_group(target)))
-        #        self._window.focus_view(oldview)
-        #        self._window.focus_view(view)
+        if isinstance(target, int):
+            if 0 <= target < self._window.num_groups() and target != group:
+                self._window.set_view_index(view, target, len(self._window.views_in_group(target)))
+                self._window.focus_view(oldview)
+                self._window.focus_view(view)
         ## or, if simply set to true, move it to the next group from the currently active one
-        #elif target and group + 1 < self._window.num_groups():
-        #    self._window.set_view_index(view, group + 1, len(self._window.views_in_group(group + 1)))
-        #    self._window.focus_view(oldview)
-        #    self._window.focus_view(view)
+        elif target and group + 1 < self._window.num_groups():
+            self._window.set_view_index(view, group + 1, len(self._window.views_in_group(group + 1)))
+            self._window.focus_view(oldview)
+            self._window.focus_view(view)
 
         # begin refreshing attached view
         self.update_view_loop()
