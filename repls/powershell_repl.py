@@ -21,7 +21,7 @@ class PowershellRepl(subprocess_repl.SubprocessRepl):
         if not encoding:
             # Detect encoding
             chcp = os.popen('chcp')
-            chcp_encoding = re.match(r'[^\d]+(\d+)$', chcp.read())
+            chcp_encoding = re.match(r'[^\d]+(\d+)', chcp.read())
             if not chcp_encoding:
                 raise LookupError("Can't detect encoding from chcp")
             encoding = "cp" + chcp_encoding.groups()[0]
