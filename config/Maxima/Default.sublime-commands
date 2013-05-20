@@ -1,0 +1,10 @@
+[
+    {
+        "caption": "SublimeREPL: Maxima",
+        "command": "run_existing_window_command", "args":
+        {
+            "id": "repl_maxima",
+            "file": "config/Maxima/Main.sublime-menu"
+        }
+    }
+]

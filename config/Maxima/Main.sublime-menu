@@ -1,0 +1,26 @@
+[
+     {
+        "id": "tools",
+        "children":
+        [{
+            "caption": "SublimeREPL",
+            "mnemonic": "r",
+            "id": "SublimeREPL",
+            "children":
+            [
+                {"command": "repl_open",
+                 "caption": "Maxima",
+                 "id": "repl_maxima",
+                 "mnemonic": "m",
+                  "args": {
+                    "type": "subprocess",
+                    "encoding": "utf8",
+                    "cmd": ["maxima"],
+                    "cwd": "$file_path",
+                    "external_id": "maxima"
+                    }
+                }
+            ]
+        }]
+    }
+]
