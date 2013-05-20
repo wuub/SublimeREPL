@@ -86,7 +86,7 @@ def clojure_sender(repl, text, view):
             # see http://clojure.org/reader for a description of valid
             # namespace names. the inital } or whitespace make sure we're
             # not matching on keywords etc.
-            namespace = view.find("[\}\s][A-Za-z\_!\?\*\+\-][\w!\?\*\+\-:]*(\.[\w!\?\*\+\-:]+)*", pos)
+            namespace = view.find(r"[\}\s][A-Za-z\_!\?\*\+\-][\w!\?\*\+\-:]*(\.[\w!\?\*\+\-:]+)*", pos)
 
             if not namespace:
                 # couldn't find the namespace name within the declaration. suspicious.
