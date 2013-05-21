@@ -660,6 +660,21 @@ class SublimeReplListener(sublime_plugin.EventListener):
         if rv:
             rv.on_close()
 
+    def on_text_command(self, view, command_name, args):
+
+        # with "auto_complete_commit_on_tab": true enter does
+        # not work when autocomplete is displayed, this fixes
+        # it by replacing insert \n with repl_enter
+        if command_name != 'insert':
+            return None
+        rv = manager.repl_view(view)
+        if not rv:
+            return None
+        if args.get('characters') == '\n':
+            return 'repl_enter', {}
+        return None
+
+
 
 class SubprocessReplSendSignal(sublime_plugin.TextCommand):
     def run(self, edit, signal=None):
