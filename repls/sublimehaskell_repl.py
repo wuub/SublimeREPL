@@ -50,8 +50,8 @@ class SublimeHaskellRepl(SubprocessRepl):
         super(SublimeHaskellRepl, self).__init__(encoding, cmd=ghci_append_package_db(cmd), **kwds)
 
     def write(self, command):
-        setting_multiline = get_setting('format_multiline', True)
-        setting_trimwhitespace = get_setting('format_trim_whitespace', True)
+        setting_multiline = get_setting('format_multiline', False)
+        setting_trimwhitespace = get_setting('format_trim_whitespace', False)
         
         newCmd = ""
         if command.isspace() or (not setting_multiline and not setting_trimwhitespace):
