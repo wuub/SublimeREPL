@@ -48,7 +48,8 @@
 		"detect_indentation": false,
 		"auto_complete": true,
 		"line_numbers": false,
-		"gutter": false
+		"gutter": false,
+		"auto_complete_commit_on_tab": true
 	},
 
 	// this settings exposes additional variables in repl config files, especially
