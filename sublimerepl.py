@@ -671,6 +671,7 @@ class SublimeReplListener(sublime_plugin.EventListener):
         if not rv:
             return None
         if args.get('characters') == '\n':
+            view.run_command('hide_auto_complete')
             return 'repl_enter', {}
         return None
 
