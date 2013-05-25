@@ -11,26 +11,6 @@ try:
 except (ImportError, ValueError):
     from sublimerepl import manager, SETTINGS_FILE
 
-"""This is a bit stupid, but it's really difficult to create a temporary file with
-a persistent name that can be passed to external process using this name, and then
-delete it reliably..."""
-TEMP_FILE = None
-
-
-def temp_file():
-    global TEMP_FILE
-    if not TEMP_FILE:
-        TEMP_FILE = tempfile.NamedTemporaryFile(delete=False, prefix="SublimeREPL_")
-        TEMP_FILE.close()
-    return TEMP_FILE
-
-
-def unload_handler():
-    import os.path
-    if not TEMP_FILE or not os.path.isfile(TEMP_FILE.name):
-        return
-    os.unlink(TEMP_FILE.name)
-
 
 def default_sender(repl, text, view=None):
     repl.write(text)
