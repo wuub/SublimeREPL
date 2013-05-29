@@ -41,7 +41,7 @@ def ghci_inject_let(lines):
     # matches eg. "func x y z ="
     # must start lowercase at start of line
     # remaining chars must be upper or lowercase letters, numbers, _ or '
-    if fixed_lines and re.search("\A([a-z](\w|['_])*[ ]).*[=][ ]", lines[0]):
+    if fixed_lines and (not fixed_lines[0].startswith("let ")) and re.search("\A([a-z](\w|['_])*[ ]).*[=][ ]", lines[0]):
         fixed_lines[0] = letprefix + fixed_lines[0]
         fixed_lines[1:] = [spaceprefix + line for line in fixed_lines[1:]]
 
