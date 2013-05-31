@@ -31,7 +31,7 @@ def python_sender(repl, text, view=None):
     code = binascii.hexlify(text.encode("utf-8"))
     execute = ''.join([
         'from binascii import unhexlify as __un; exec(compile(__un("',
-        str(code),
+        str(code.decode('ascii')),
         '").decode("utf-8"), "<string>", "exec"))\n'
     ])
     return default_sender(repl, execute, view)
