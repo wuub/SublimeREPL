@@ -60,17 +60,17 @@ then type "SublimeREPL" and select the approperiate language.
 #### Keybindings
 
 * Evaluate in REPL:
- * `⌃+,, s` Selection
- * `⌃+,, f` File  
- * `⌃+,, l` Lines
- * `⌃+,, b` Block
+ * <kbd>ctrl+,</kbd>, <kbd>s</kbd> Selection
+ * <kbd>ctrl+,</kbd>, <kbd>f</kbd> File  
+ * <kbd>ctrl+,</kbd>, <kbd>l</kbd> Lines
+ * <kbd>ctrl+,</kbd>, <kbd>b</kbd> Block
 * Transfer in REPL (just copy, without evaluating it):
- * `⌃⇧+,, s` Selection
- * `⌃⇧+,, f` File  
- * `⌃⇧+,, l` Lines
- * `⌃⇧+,, b` Block
+ * <kbd>ctrl+shift+,</kbd>, <kbd>s</kbd> Selection
+ * <kbd>ctrl+shift+,</kbd>, <kbd>f</kbd> File  
+ * <kbd>ctrl+shift+,</kbd>, <kbd>l</kbd> Lines
+ * <kbd>ctrl+shift+,</kbd>, <kbd>b</kbd> Block
 
-Note: `⌃+,, f` means: press Ctrl and Comma, release all, press F.
+Note: <kbd>ctrl+,</kbd>, <kbd>f</kbd> means: press Ctrl and Comma, release all, press F.
 
 
 License and Price
@@ -92,6 +92,10 @@ FAQ
 
 ### 1. Is this a terminal emulator?
 
-No. Shell (cmd.exe/bash) REPL can be used for simple tasks (file creation, `git init` etc.) but anything _terminal like_ (mc, ipython, vim) will not work! SublimeREPL has a sister project: [SublimePTY](https://github.com/wuub/SublimePTY) that aims to bring real terminal emulator to SublimeText2.
+No. Shell (cmd.exe/bash) REPL can be used for simple tasks (file creation, `git init` etc.) but anything _terminal like_ (mc, vim) will not work! SublimeREPL has a sister project: [SublimePTY](https://github.com/wuub/SublimePTY) that aims to bring real terminal emulator to SublimeText2.
+
+### 2. Is IPython supported?
+
+Yes, with autocompletion and some windowed `%pylab`. Inline `%pylab` is unfortuneatly not possible right now.
 
 
