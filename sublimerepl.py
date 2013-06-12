@@ -648,6 +648,13 @@ class ReplKillCommand(sublime_plugin.TextCommand):
         if rv:
             rv.repl.kill()
 
+    def is_visible(self):
+        rv = manager.repl_view(self.view)
+        return bool(rv)
+
+    def is_enabled(self):
+        return self.is_visible()
+
 
 class SublimeReplListener(sublime_plugin.EventListener):
     def on_selection_modified(self, view):
