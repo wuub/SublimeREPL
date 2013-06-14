@@ -45,6 +45,10 @@ same result as picking it from *Tools > SublimeREPL* menu.
 .. [#] One of the most frequently reported errors is SublimeREPL not being able
    to find interpreter executable, even if it's visible in your shell. There are several way to fix this problem that we'll discuss in FAQ. 
 
+You may now use a source buffer to either evaluate text from the buffer in
+the REPL or copy text over to the REPL without evaluation. For this to work,
+ensure that the language syntax definition for your source buffer matches
+the REPL.
 
 Keyboard shortcuts
 ------------------
