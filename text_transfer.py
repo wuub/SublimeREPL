@@ -1,5 +1,6 @@
 from __future__ import absolute_import, unicode_literals, print_function, division
 
+import re
 import sublime_plugin
 import sublime
 from collections import defaultdict
@@ -28,7 +29,12 @@ def sender(external_id,):
 
 @sender("python")
 def python_sender(repl, text, view=None):
-    code = binascii.hexlify(text.encode("utf-8"))
+    text_wo_encoding = re.sub(
+        pattern=r"#.*coding[:=]\s*([-\w.]+)",
+        repl="# <SublimeREPL: encoding comment removed>",
+        string=text,
+        count=1)
+    code = binascii.hexlify(text_wo_encoding.encode("utf-8"))
     execute = ''.join([
         'from binascii import unhexlify as __un; exec(compile(__un("',
         str(code.decode('ascii')),
