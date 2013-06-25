@@ -92,4 +92,4 @@ class SublimeHaskellRepl(SubprocessRepl):
                 if setting_multiline:
                         lines = ghci_wrap_multiline_syntax(lines)
                 new_cmd = "".join(lines)     
-        return super(HaskellRepl, self).write(new_cmd)
+        return super(SublimeHaskellRepl, self).write(new_cmd)
