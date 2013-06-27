@@ -46,7 +46,7 @@ def python_sender(repl, text, view=None):
 @sender("ruby")
 def ruby_sender(repl, text, view=None):
     code = binascii.b2a_base64(text.encode("utf-8"))
-    payload = "begin require 'base64'; eval(Base64.decode64('%s')) end\n" % (code.decode("ascii"),)
+    payload = "begin require 'base64'; eval(Base64.decode64('%s'), binding=TOPLEVEL_BINDING) end\n" % (code.decode("ascii"),)
     return default_sender(repl, payload, view)
 
 
