@@ -30,6 +30,7 @@ except ImportError:
 
 PLATFORM = sublime.platform().lower()
 SETTINGS_FILE = 'SublimeREPL.sublime-settings'
+SUBLIME2 = sublime.version() < '3000'
 
 RESTART_MSG = """
 #############
@@ -47,6 +48,11 @@ class ReplEraseTextCommand(sublime_plugin.TextCommand):
     def run(self, edit, start, end):
         self.view.set_read_only(False)  # make sure view is writable
         self.view.erase(edit, sublime.Region(int(start), int(end)))
+
+
+class ReplPass(sublime_plugin.TextCommand):
+    def run(self, edit):
+        pass
 
 
 class Event:
@@ -189,6 +195,7 @@ class ReplView(object):
         view.settings().set("repl_id", repl.id)
         view.settings().set("repl", True)
         view.settings().set("repl_restart_args", repl_restart_args)
+        view.settings().set("repl_sublime2", SUBLIME2)
 
         rv_settings = settings.get("repl_view_settings", {})
         for setting, value in list(rv_settings.items()):
@@ -709,18 +716,29 @@ class SublimeReplListener(sublime_plugin.EventListener):
             rv.on_close()
 
     def on_text_command(self, view, command_name, args):
-
-        # with "auto_complete_commit_on_tab": true enter does
-        # not work when autocomplete is displayed, this fixes
-        # it by replacing insert \n with repl_enter
-        if command_name != 'insert':
-            return None
         rv = manager.repl_view(view)
         if not rv:
             return None
-        if args.get('characters') == '\n':
-            view.run_command('hide_auto_complete')
-            return 'repl_enter', {}
+
+        if command_name == 'insert':
+            # with "auto_complete_commit_on_tab": true enter does
+            # not work when autocomplete is displayed, this fixes
+            # it by replacing insert \n with repl_enter
+            if args.get('characters') == '\n':
+                view.run_command('hide_auto_complete')
+                return 'repl_enter', {}
+            return None
+
+        if command_name == 'left_delete':
+            # stop backspace on ST3 w/o breaking brackets
+            if rv.delta >= 0:
+                return 'repl_pass', {}
+
+        if command_name == 'delete_word' and not args.get('forward'):
+            # stop ctrl+backspace on ST3 w/o breaking brackets
+            if rv.delta >= 0:
+                return 'repl_pass', {}
+
         return None
 
 

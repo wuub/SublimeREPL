@@ -47,6 +47,7 @@
 	"context":
 		[
 			{ "key": "setting.repl", "operator": "equal", "operand": true },
+			{ "key": "setting.repl_sublime2", "operator": "equal", "operand": true },
 			{ "key": "selection_empty", "operator": "equal", "operand": true, "match_all": true }
 		]
 	},
@@ -54,6 +55,7 @@
 	"context":
 		[
 			{ "key": "setting.repl", "operator": "equal", "operand": true },
+			{ "key": "setting.repl_sublime2", "operator": "equal", "operand": true },
 			{ "key": "selection_empty", "operator": "equal", "operand": true, "match_all": true }
 		]
 	},
