@@ -1,5 +1,6 @@
 [
 	{"caption": "-"},
-	{"command": "repl_kill", "caption": "Kill"},
+    {"command": "repl_kill", "caption": "Kill"},
+	{"command": "repl_restart", "caption": "Restart"},
 	{"command": "subprocess_repl_send_signal", "caption": "Send other SIGNAL"}
 ]

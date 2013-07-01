@@ -31,6 +31,11 @@ except ImportError:
 PLATFORM = sublime.platform().lower()
 SETTINGS_FILE = 'SublimeREPL.sublime-settings'
 
+RESTART_MSG = """
+#############
+## RESTART ##
+#############
+"""
 
 class ReplInsertTextCommand(sublime_plugin.TextCommand):
     def run(self, edit, pos, text):
@@ -164,11 +169,11 @@ class PersistentHistory(MemHistory):
 
 
 class ReplView(object):
-    def __init__(self, view, repl, syntax):
+    def __init__(self, view, repl, syntax, repl_restart_args):
         self.repl = repl
         self._view = view
         self._window = view.window()
-
+        self._repl_launch_args = repl_restart_args
         self.closed = Event()
 
         if syntax:
@@ -183,6 +188,7 @@ class ReplView(object):
         view.settings().set("repl_external_id", repl.external_id)
         view.settings().set("repl_id", repl.id)
         view.settings().set("repl", True)
+        view.settings().set("repl_restart_args", repl_restart_args)
 
         rv_settings = settings.get("repl_view_settings", {})
         for setting, value in list(rv_settings.items()):
@@ -437,6 +443,12 @@ class ReplManager(object):
                 yield rv
 
     def open(self, window, encoding, type, syntax=None, view_id=None, **kwds):
+        repl_restart_args = {
+            'encoding': encoding,
+            'type': type,
+            'syntax': syntax,
+        }
+        repl_restart_args.update(kwds)
         try:
             kwds = ReplManager.translate(window, kwds)
             encoding = ReplManager.translate(window, encoding)
@@ -448,7 +460,7 @@ class ReplManager(object):
                     break
             view = found or window.new_file()
 
-            rv = ReplView(view, r, syntax)
+            rv = ReplView(view, r, syntax, repl_restart_args)
             rv.closed += self._delete_repl
             self.repl_views[r.id] = rv
             view.set_scratch(True)
@@ -457,6 +469,23 @@ class ReplManager(object):
         except Exception as e:
             traceback.print_exc()
             sublime.error_message(repr(e))
+
+    def restart(self, view, edit):
+        repl_restart_args = view.settings().get("repl_restart_args")
+        if not repl_restart_args:
+            sublime.message_dialog("No restart parameters found")
+            return False
+        rv = self.repl_view(view)
+        if rv:
+            if rv.repl and rv.repl.is_alive() and not sublime.ok_cancel_dialog("Still running. Really restart?"):
+                return False
+            rv.on_close()
+
+        view.insert(edit, view.size(), RESTART_MSG)
+        repl_restart_args["view_id"] = view.id()
+        self.open(view.window(), **repl_restart_args)
+        return True
+
 
     def _delete_repl(self, repl_id):
         if repl_id not in self.repl_views:
@@ -542,6 +571,18 @@ class ReplOpenCommand(sublime_plugin.WindowCommand):
     def run(self, encoding, type, syntax=None, view_id=None, **kwds):
         manager.open(self.window, encoding, type, syntax, view_id, **kwds)
 
+
+class ReplRestartCommand(sublime_plugin.TextCommand):
+    def run(self, edit):
+        manager.restart(self.view, edit)
+
+    def is_visible(self):
+        if not self.view:
+            return False
+        return bool(self.view.settings().get("repl_restart_args", None))
+
+    def is_enabled(self):
+        return self.is_visible()
 
 # REPL Comands ############################################
 
@@ -681,7 +722,6 @@ class SublimeReplListener(sublime_plugin.EventListener):
             view.run_command('hide_auto_complete')
             return 'repl_enter', {}
         return None
-
 
 
 class SubprocessReplSendSignal(sublime_plugin.TextCommand):
