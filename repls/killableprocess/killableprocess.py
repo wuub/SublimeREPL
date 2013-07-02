@@ -69,7 +69,7 @@ except ImportError:
             return "Command '%s' returned non-zero exit status %d" % (self.cmd, self.returncode)
 
 mswindows = (sys.platform == "win32")
-py2 = (sys.version_info.major == 2)
+py2 = (sys.version_info[0] == 2)
 
 if mswindows:
     from . import winprocess
