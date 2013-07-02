@@ -55,34 +55,6 @@ class ReplPass(sublime_plugin.TextCommand):
         pass
 
 
-class Event:
-    def __init__(self):
-        self.handlers = set()
-
-    def handle(self, handler):
-        self.handlers.add(handler)
-        return self
-
-    def unhandle(self, handler):
-        try:
-            self.handlers.remove(handler)
-        except:
-            raise ValueError("Handler is not handling this event, so cannot unhandle it.")
-        return self
-
-    def fire(self, *args, **kargs):
-        for handler in self.handlers:
-            handler(*args, **kargs)
-
-    def handlers_count(self):
-        return len(self.handlers)
-
-    __iadd__ = handle
-    __isub__ = unhandle
-    __call__ = fire
-    __len__ = handlers_count
-
-
 class ReplReader(threading.Thread):
     def __init__(self, repl):
         super(ReplReader, self).__init__()
@@ -180,7 +152,8 @@ class ReplView(object):
         self._view = view
         self._window = view.window()
         self._repl_launch_args = repl_restart_args
-        self.closed = Event()
+        # list of callable(repl) to handle view close events
+        self.call_on_close = []
 
         if syntax:
             view.set_syntax_file(syntax)
@@ -213,7 +186,6 @@ class ReplView(object):
 
         self._filter_color_codes = settings.get("filter_ascii_color_codes")
 
-        # TODO: port, because it's failing
         # optionally move view to a different group
         # find current position of this replview
         (group, index) = self._window.get_view_index(view)
@@ -284,7 +256,8 @@ class ReplView(object):
 
     def on_close(self):
         self.repl.close()
-        self.closed(self.repl.id)
+        for fun in self.call_on_close:
+            fun(self)
 
     def clear(self, edit):
         self.escape(edit)
@@ -468,7 +441,7 @@ class ReplManager(object):
             view = found or window.new_file()
 
             rv = ReplView(view, r, syntax, repl_restart_args)
-            rv.closed += self._delete_repl
+            rv.call_on_close.append(self._delete_repl)
             self.repl_views[r.id] = rv
             view.set_scratch(True)
             view.set_name("*REPL* [%s]" % (r.name(),))
@@ -486,15 +459,15 @@ class ReplManager(object):
         if rv:
             if rv.repl and rv.repl.is_alive() and not sublime.ok_cancel_dialog("Still running. Really restart?"):
                 return False
-            rv.on_close()
+            rv.on_close()  # yes on_close, delete rv from
 
         view.insert(edit, view.size(), RESTART_MSG)
         repl_restart_args["view_id"] = view.id()
         self.open(view.window(), **repl_restart_args)
         return True
 
-
-    def _delete_repl(self, repl_id):
+    def _delete_repl(self, repl_view):
+        repl_id = repl_view.repl.id
         if repl_id not in self.repl_views:
             return None
         del self.repl_views[repl_id]
