@@ -11,12 +11,9 @@ from .repl import Repl
 import signal
 from sublime import load_settings
 from .autocomplete_server import AutocompleteServer
+from .killableprocess import Popen
 
 PY3 = sys.version_info[0] == 3
-# if PY3:
-#     from subprocess import Popen
-# else:
-from .killableprocess import Popen
 
 if os.name == 'posix':
     POSIX = True
@@ -47,9 +44,9 @@ def win_find_executable(executable, env):
         extensions = [ext]
     else:
         extensions = pathext.split(os.path.pathsep)
-    for dir in dirs:
+    for directory in dirs:
         for extension in extensions:
-            filepath = os.path.join(dir, base + extension)
+            filepath = os.path.join(directory, base + extension)
             if os.path.exists(filepath):
                 return filepath
     return None
@@ -144,7 +141,7 @@ class SubprocessRepl(Repl):
         if extend_env:
             updated_env.update(self.interpolate_extend_env(updated_env, extend_env))
         bytes_env = {}
-        for k,v in list(updated_env.items()):
+        for k, v in list(updated_env.items()):
             try:
                 enc_k = self.encoder(str(k))[0]
                 enc_v = self.encoder(str(v))[0]
@@ -173,7 +170,7 @@ class SubprocessRepl(Repl):
 
     def creationflags(self, settings):
         creationflags = 0
-        if os.name =="nt":
+        if os.name == "nt":
             creationflags = 0x8000000 # CREATE_NO_WINDOW
         return creationflags
 
@@ -218,7 +215,7 @@ class SubprocessRepl(Repl):
         return signals
 
     def send_signal(self, sig):
-        if sig==signal.SIGTERM:
+        if sig == signal.SIGTERM:
             self._killed = True
         if self.is_alive():
             self.popen.send_signal(sig)
