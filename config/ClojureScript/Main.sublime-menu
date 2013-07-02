@@ -21,7 +21,7 @@
                                 "linux": ["lein", "trampoline", "cljsbuild", "repl-listen"],
                                 "osx":  ["lein", "trampoline", "cljsbuild", "repl-listen"]},
                         "soft_quit": "\n(. System exit 0)\n",
-                        "cwd": {"windows":"c:/Clojure", // where the lein.bat lives!
+                        "cwd": {"windows":"c:/Clojure",
                                 "linux": "$file_path",
                                 "osx": "$file_path"},
                         "syntax": "Packages/Clojure/Clojure.tmLanguage",
@@ -39,7 +39,7 @@
                                 "linux": ["lein", "trampoline", "cljsbuild", "repl-rhino"],
                                 "osx":  ["lein", "trampoline", "cljsbuild", "repl-rhino"]},
                         "soft_quit": "\n(. System exit 0)\n",
-                        "cwd": {"windows":"c:/Clojure", // where the lein.bat lives!
+                        "cwd": {"windows":"c:/Clojure",
                                 "linux": "$file_path",
                                 "osx": "$file_path"},
                         "syntax": "Packages/Clojure/Clojure.tmLanguage",
