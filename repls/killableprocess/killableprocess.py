@@ -69,6 +69,7 @@ except ImportError:
             return "Command '%s' returned non-zero exit status %d" % (self.cmd, self.returncode)
 
 mswindows = (sys.platform == "win32")
+py2 = (sys.version_info.major == 2)
 
 if mswindows:
     from . import winprocess
@@ -100,7 +101,39 @@ if not mswindows:
 class Popen(subprocess.Popen):
     kill_called = False
     if mswindows:
-        def _execute_child(self, args, executable, preexec_fn, close_fds,
+        if py2:
+            def _execute_child(self, args, executable, preexec_fn, close_fds,
+                           cwd, env, universal_newlines, startupinfo,
+                           creationflags, shell,
+                           p2cread, p2cwrite,
+                           c2pread, c2pwrite,
+                           errread, errwrite):
+                return self._execute_child_compat(args, executable, preexec_fn, close_fds,
+                           cwd, env, universal_newlines, startupinfo,
+                           creationflags, shell,
+                           p2cread, p2cwrite,
+                           c2pread, c2pwrite,
+                           errread, errwrite)
+        else:
+            def _execute_child(self, args, executable, preexec_fn, close_fds,
+                               pass_fds,
+                               cwd, env,
+                               startupinfo,
+                               creationflags, shell,
+                               p2cread, p2cwrite,
+                               c2pread, c2pwrite,
+                               errread, errwrite,
+                               unused_restore_signals, unused_start_new_session):
+                return self._execute_child_compat(args, executable, preexec_fn, close_fds,
+                           cwd, env, True, startupinfo,
+                           creationflags, shell,
+                           p2cread, p2cwrite,
+                           c2pread, c2pwrite,
+                           errread, errwrite)
+
+
+    if mswindows:
+        def _execute_child_compat(self, args, executable, preexec_fn, close_fds,
                            cwd, env, universal_newlines, startupinfo,
                            creationflags, shell,
                            p2cread, p2cwrite,
@@ -108,7 +141,7 @@ class Popen(subprocess.Popen):
                            errread, errwrite):
             if not isinstance(args, str):
                 args = subprocess.list2cmdline(args)
-            
+
             # Always or in the create new process group
             creationflags |= winprocess.CREATE_NEW_PROCESS_GROUP
 
@@ -117,7 +150,7 @@ class Popen(subprocess.Popen):
 
             if None not in (p2cread, c2pwrite, errwrite):
                 startupinfo.dwFlags |= winprocess.STARTF_USESTDHANDLES
-                
+
                 startupinfo.hStdInput = int(p2cread)
                 startupinfo.hStdOutput = int(c2pwrite)
                 startupinfo.hStdError = int(errwrite)
@@ -145,27 +178,27 @@ class Popen(subprocess.Popen):
                 winprocess.EnvironmentBlock(env),
                 cwd, startupinfo)
             self._child_created = True
-            self._handle = hp
+            self._handle = int(hp)
             self._thread = ht
             self.pid = pid
             self.tid = tid
-
+            
             if canCreateJob:
                 # We create a new job for this process, so that we can kill
-                # the process and any sub-processes 
+                # the process and any sub-processes
                 self._job = winprocess.CreateJobObject()
                 winprocess.AssignProcessToJobObject(self._job, int(hp))
             else:
                 self._job = None
-                    
+
             winprocess.ResumeThread(int(ht))
             ht.Close()
 
-            if p2cread is not None:
+            if p2cread is not None and p2cread != -1:
                 p2cread.Close()
-            if c2pwrite is not None:
+            if c2pwrite is not None and c2pwrite != -1:
                 c2pwrite.Close()
-            if errwrite is not None:
+            if errwrite is not None and errwrite != -1:
                 errwrite.Close()
             time.sleep(.1)
 
@@ -181,7 +214,7 @@ class Popen(subprocess.Popen):
                 except:
                     # TODO: better error handling here
                     pass
-            self.returncode = 127    
+            self.returncode = 127
         else:
             if group:
                 try:
@@ -197,7 +230,7 @@ class Popen(subprocess.Popen):
         If timeout seconds are reached and the process has not terminated,
         it will be forcefully killed. If timeout is -1, wait will not
         time out."""
-        
+
         if timeout is not None:
             # timeout is now in milliseconds
             timeout = timeout * 1000
@@ -211,7 +244,7 @@ class Popen(subprocess.Popen):
             if timeout is None:
                 timeout = -1
             rc = winprocess.WaitForSingleObject(self._handle, timeout)
-            
+
             if rc != winprocess.WAIT_TIMEOUT:
                 def check():
                     now = datetime.datetime.now()
@@ -225,7 +258,7 @@ class Popen(subprocess.Popen):
                     return False
                 while check():
                     time.sleep(.5)
-            
+
             now = datetime.datetime.now()
             diff = now - starttime
             if (diff.seconds * 1000 * 1000 + diff.microseconds) > (timeout * 1000):
@@ -255,7 +288,7 @@ class Popen(subprocess.Popen):
                             time.sleep(.5); count += 500
                     except OSError:
                         return self.returncode
-                        
+
             if timeout is None:
                 if group is True:
                     return group_wait(timeout)
@@ -277,14 +310,14 @@ class Popen(subprocess.Popen):
                 now = datetime.datetime.now()
                 diff = now - starttime
             return self.returncode
-                
+
         return self.returncode
     # We get random maxint errors from subprocesses __del__
-    __del__ = lambda self: None        
-        
+    __del__ = lambda self: None
+
 def setpgid_preexec_fn():
     os.setpgid(0, 0)
-        
+
 def runCommand(cmd, **kwargs):
     if sys.platform != "win32":
         return Popen(cmd, preexec_fn=setpgid_preexec_fn, **kwargs)

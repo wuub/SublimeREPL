@@ -13,10 +13,10 @@ from sublime import load_settings
 from .autocomplete_server import AutocompleteServer
 
 PY3 = sys.version_info[0] == 3
-if PY3:
-    from subprocess import Popen
-else:
-    from .killableprocess import Popen
+# if PY3:
+#     from subprocess import Popen
+# else:
+from .killableprocess import Popen
 
 if os.name == 'posix':
     POSIX = True
