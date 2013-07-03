@@ -48,6 +48,11 @@ class Repl(object):
     def autocomplete_completions(self, whole_line, pos_in_line, prefix, whole_prefix, locations):
         raise NotImplementedError
 
+    def allow_restarts(self):
+        """Override if for some reason restart logic should not be
+           used for this REPL"""
+        return True
+
     def close(self):
         if self.is_alive():
             self.kill()

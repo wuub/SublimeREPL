@@ -167,8 +167,9 @@ class ReplView(object):
         view.settings().set("repl_external_id", repl.external_id)
         view.settings().set("repl_id", repl.id)
         view.settings().set("repl", True)
-        view.settings().set("repl_restart_args", repl_restart_args)
         view.settings().set("repl_sublime2", SUBLIME2)
+        if repl.allow_restarts():
+            view.settings().set("repl_restart_args", repl_restart_args)
 
         rv_settings = settings.get("repl_view_settings", {})
         for setting, value in list(rv_settings.items()):
