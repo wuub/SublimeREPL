@@ -7,7 +7,7 @@ import threading
 activate_this = os.environ.get("SUBLIMEREPL_ACTIVATE_THIS", None)
 
 # turn off pager
-os.environ['TERM'] = 'dumb'
+os.environ['TERM'] = 'emacs'
 
 if activate_this:
     with open(activate_this, "r") as f:
