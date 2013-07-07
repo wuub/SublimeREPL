@@ -400,6 +400,20 @@ class ReplView(object):
         to then begging of user_input (otherwise known as _output_end)"""
         return self._output_end - self._view.sel()[0].begin()
 
+    def allow_deletion(self):
+        # returns true if all selections falls in user input
+        # and can be safetly deleted
+        output_end = self._output_end
+        for sel in self._view.sel():
+            if sel.begin() == sel.end() and sel.begin() == output_end:
+                # special case, when single selecion
+                # is at the very beggining of prompt
+                return False
+            # i don' really know if end() is always after begin()
+            if sel.begin() < output_end or sel.end() < output_end:
+                return False
+        return True
+
 
 class ReplManager(object):
 
@@ -705,16 +719,15 @@ class SublimeReplListener(sublime_plugin.EventListener):
 
         if command_name == 'left_delete':
             # stop backspace on ST3 w/o breaking brackets
-            if rv.delta >= 0:
+            if not rv.allow_deletion():
                 return 'repl_pass', {}
 
         if command_name == 'delete_word' and not args.get('forward'):
             # stop ctrl+backspace on ST3 w/o breaking brackets
-            if rv.delta >= 0:
+            if not rv.allow_deletion():
                 return 'repl_pass', {}
 
         return None
-
 
 class SubprocessReplSendSignal(sublime_plugin.TextCommand):
     def run(self, edit, signal=None):
