@@ -1,0 +1,61 @@
+Welcome to SublimeREPL 2.0.0
+============================
+
+This is the first, official Sublime Text 3 and Sublime Text 2
+compatible release. It's been in the works for over 5 months.
+
+First the bad news:
+ - during migration persistent history database was changed from
+   buzhug to PyDBLite. This means you **will have to rebuild** your history.
+ - Testing release on 6 separate setups (Linux, OSX, Windows with ST2 & ST3)
+   is becoming a bit time consuming. Recently I test mostly on Linux with
+   ST3 and occasionally on Windows with ST3 & ST2.
+   I expect some early bugs, and **count on you** to let me know if something
+   out of ordinary is happening. Create github issue, send me an email
+   (github at wuub.net) or reach me on twitter @wuub :)
+
+
+Now the good news. Lots, and I mean LOTS of issues were closed,
+in those 5 months. Many of them directly driven by your input.
+Here's a condensed changelog, if you want to learn more
+feel free to visit
+  - https://github.com/wuub/SublimeREPL/issues
+
+
+- NEW: Compatibility with Sublime Text 3 and Sublime Text 2 with single codebase
+- NEW: documentation improvements
+- NEW: 'Restart' command in context menu (even with ghost views after full ST restart)
+- NEW: option to open REPLs in next view group (e.g. side-by-side)
+- NEW: add option to show evaluated code (#106 and #84)
+- BUGFIX: huge output will no longer cause Sublime to become unresponsive (#23... wow :))
+- BUGFIX: closing bracket are now removed automatically (ST3 only, #182)
+- NEW: hanlde cases when external_id differs from source.x (think: source.lisp -> scheme repl) (#161, #165 and #167)w
+- NEW: [Python] iPython on Windows
+- NEW: [Python] automatically remove "#! coding: ..." comments from evaluated code (#187)
+- NEW: [Python] iPython plot() support (qt, wx, *not* inline!)
+- BUGFIX: [Python] fix pager in IPython (#170)
+- BUGFIX: [Python] ipython pager broken on windows (#141)
+
+- NEW: [Ruby] Pry autocomplete support
+- BUGFIX: [Ruby] REPL does not eval at top level (#194)
+
+- NEW: [Haskell] automatic let binding injection for top level functions
+- NEW: [Haskell] let now support top level functions with any kind of parameterization
+- BUGFIX: [Haskell] typo in SublimeiHaskellRepl.write(), Code called wrong superclass
+- NEW: [Haskell] cabal/cabal-dev depending on SublimeHaskell settings
+
+- NEW: ClojureScript REPLs
+- NEW: Rails REPL
+- NEW: Knitr support in R REPL (#165)
+- NEW: Maxima REPL
+- NEW: Racket REPL
+- NEW: Petite Chez Scheme REPL
+- REMOVED: Execnet REPL (for now, waiting for community input, anyone uses this?)
+
+- NEW: change persistent history db from buzhug to PyDbLite (py3)
+- BUGFIX: repl could become unresponsive after code evaluation (#159)
+- BUGFIX: traceback in is_visible() on context menu
+- BUGFIX: AttributeError in update_view_loop
+- BUGFIX: fix enter handling with "auto_complete_commit_on_tab": true
+- BUGFIX: [F#] The mono command for F# interactive is fsharpi.
+- BUGFIX [PowerShell] update pattern for chcp_encoding detection
