@@ -15,7 +15,7 @@ from . import subprocess_repl
 
 class PowershellRepl(subprocess_repl.SubprocessRepl):
     TYPE = "powershell"
-    PREPENDER = "."
+    PREPENDER = b"."
 
     def __init__(self, encoding, **kwds):
         if not encoding:
@@ -40,7 +40,8 @@ class PowershellRepl(subprocess_repl.SubprocessRepl):
     def read_bytes(self):
         # this is windows specific problem, that you cannot tell if there
         # are more bytes ready, so we read only 1 at a times
-        result = self.popen.stdout.read(1)
+
+        result = super(PowershellRepl, self).read_bytes()
 
         # Consumes output (it must be equal to PREPENDER)
         if result and not self.got_output:
@@ -66,8 +67,8 @@ class PowershellRepl(subprocess_repl.SubprocessRepl):
 
     def prompt(self):
         """ Sends command to get prompt """
-        self.do_write('Write-Host ("PS " + (gl).Path + "> ") -NoNewline\n')
+        self.do_write(b'Write-Host ("PS " + (gl).Path + "> ") -NoNewline\n')
 
     def prepend(self):
         """ Command to prepend every output with special mark to detect multiline mode """
-        self.do_write('Write-Host "' + PowershellRepl.PREPENDER + '" -NoNewLine; ')
+        self.do_write(b'Write-Host "' + PowershellRepl.PREPENDER + b'" -NoNewLine; ')
