@@ -194,7 +194,16 @@ class SubprocessRepl(Repl):
         else:
             # this is windows specific problem, that you cannot tell if there
             # are more bytes ready, so we read only 1 at a times
-            return self.popen.stdout.read(1)
+
+            while True:
+                byte = self.popen.stdout.read(1)
+                if byte == b'\r':
+                    # f'in HACK, for \r\n -> \n translation on windows
+                    # I tried universal_endlines but it was pain and misery! :'(
+                    continue
+                return byte
+
+
 
     def write_bytes(self, bytes):
         si = self.popen.stdin
