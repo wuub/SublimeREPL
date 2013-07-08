@@ -21,7 +21,8 @@
                             "osx": ["scriptcs"],
                             "linux": ["scriptcs"]},
                     "cwd": "$file_path",
-                    "syntax": "Packages/scriptcs/ScriptCs.tmLanguage" // https://github.com/scriptcs/scriptcs-sublime
+                    "additional_scopes": ["csx"],
+                    "syntax": "Packages/scriptcs/ScriptCs.tmLanguage"
                     }
                 }
             ]
