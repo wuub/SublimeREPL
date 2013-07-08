@@ -29,6 +29,8 @@ def ghci_append_package_db(cmd):
 
 def ghci_get_min_whitespace_prefix(lines):
     line_spaces = [len(line) - len(line.lstrip()) for line in lines]
+    if not line_spaces:
+        return 0
     min_spaces = min(line_spaces)
     return min_spaces
 
@@ -45,13 +47,13 @@ def ghci_inject_let(lines):
         fixed_lines[0] = letprefix + fixed_lines[0]
         fixed_lines[1:] = [spaceprefix + line for line in fixed_lines[1:]]
 
-    return fixed_lines   
+    return fixed_lines
 
 def ghci_remove_whitespace(lines):
     # remove lines that are completely whitespace
     lines = [line for line in lines if not line.isspace()]
-    
-    # remove extra whitespace for more flexible block execution        
+
+    # remove extra whitespace for more flexible block execution
     min_spaces = ghci_get_min_whitespace_prefix(lines)
 
     # remove the minimum number of spaces over all lines from each
@@ -79,7 +81,7 @@ class SublimeHaskellRepl(SubprocessRepl):
         setting_multiline = get_setting('format_multiline', True)
         setting_trimwhitespace = get_setting('format_trim_whitespace', True)
         setting_injectlet = get_setting('format_inject_let', True)
-        
+
         new_cmd = ""
         if command.isspace() or (not setting_multiline and not setting_trimwhitespace):
                 new_cmd = command
@@ -91,5 +93,5 @@ class SublimeHaskellRepl(SubprocessRepl):
                         lines = ghci_inject_let(lines)
                 if setting_multiline:
                         lines = ghci_wrap_multiline_syntax(lines)
-                new_cmd = "".join(lines)     
+                new_cmd = "".join(lines)
         return super(SublimeHaskellRepl, self).write(new_cmd)
