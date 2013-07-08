@@ -432,6 +432,8 @@ class ReplManager(object):
         """Yields rvews matching external_id taken from source.[external_id] scope
            Match is done on external_id value of repl and additional_scopes"""
         for rv in self.repl_views.values():
+            if not (rv.repl and rv.repl.is_alive()):
+                continue  # dead repl, skip
             rvid = rv.external_id
             additional_scopes = rv.repl.additional_scopes
             if rvid == external_id or external_id in additional_scopes:
