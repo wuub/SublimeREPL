@@ -1,0 +1,10 @@
+[
+    {
+        "caption": "SublimeREPL: ScriptCS",
+        "command": "run_existing_window_command", "args":
+        {
+            "id": "repl_scriptcs",
+            "file": "config/ScriptCS/Main.sublime-menu"
+        }
+    }
+]
