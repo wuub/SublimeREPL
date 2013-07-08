@@ -1,0 +1,31 @@
+[
+    {
+        "id": "tools",
+        "children":
+        [{
+            "caption": "SublimeREPL",
+            "mnemonic": "r",
+            "id": "SublimeREPL",
+            "children":
+            [
+                {"command": "repl_open",
+                 "caption": "ScriptCS",
+                 "id": "repl_scriptcs",
+                 "mnemonic": "scs",
+                 "args": {
+                    "type": "subprocess",
+                    "external_id": "scriptcs",
+                    "encoding": "utf8",
+                    "cmd": {
+                            "windows": ["scriptcs"],
+                            "osx": ["scriptcs"],
+                            "linux": ["scriptcs"]},
+                    "cwd": "$file_path",
+                    "additional_scopes": ["csx"],
+                    "syntax": "Packages/scriptcs/ScriptCs.tmLanguage"
+                    }
+                }
+            ]
+        }]
+    }
+]
