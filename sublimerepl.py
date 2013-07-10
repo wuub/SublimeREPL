@@ -511,6 +511,8 @@ class ReplManager(object):
             "packages": sublime.packages_path(),
             "installed_packages": sublime.installed_packages_path()
         }
+        if window.folders():
+            res["folder"] = window.folders()[0]
         res["editor"] = "subl -w"
         res["win_cmd_encoding"] = "utf8"
         if sublime.platform() == "windows":
@@ -526,9 +528,7 @@ class ReplManager(object):
         res["file"] = filename
         res["file_path"] = os.path.dirname(filename)
         res["file_basename"] = os.path.basename(filename)
-        if window.folders():
-            res["folder"] = window.folders()[0]
-        else:
+        if 'folder' not in res:
             res["folder"] = res["file_path"]
 
         if sublime.load_settings(SETTINGS_FILE).get("use_build_system_hack", False):
