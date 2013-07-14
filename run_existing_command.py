@@ -18,7 +18,7 @@ def plugin_loaded():
 
 PY2 = False
 if sys.version_info[0] == 2:
-    SUBLIMEREPL_DIR = os.getcwd()
+    SUBLIMEREPL_DIR = os.getcwdu()
     SUBLIMEREPL_USER_DIR = os.path.join(sublime.packages_path(), "User", "SublimeREPL")
     PY2 = True
 
