@@ -21,7 +21,7 @@
                             "osx": ["fsharpi", "--utf8output", "--readline-"],
                             "linux": ["fsi", "--utf8output", "--readline-"]},
                     "cwd": "$file_path",
-                    "syntax": "Packages/F#/F#.tmLanguage" // http://code.google.com/p/fsharp-tmbundle/downloads/list
+                    "syntax": "Packages/F#/F#.tmLanguage"
                     }
                 }
             ]   
