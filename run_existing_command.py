@@ -1,9 +1,9 @@
 from __future__ import absolute_import, unicode_literals, print_function, division
 
 import os
+import os.path
 import sys
 import json
-import codecs
 import sublime
 import sublime_plugin
 
@@ -42,7 +42,7 @@ class RunExistingWindowCommandCommand(sublime_plugin.WindowCommand):
                 
     def _find_cmd_in_file(self, id, file):
         try:
-            if PY2:
+            if PY2 or os.path.isfile(file):
                 with open(file) as f:
                     bytes = f.read()
             else:
