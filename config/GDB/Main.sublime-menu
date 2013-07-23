@@ -1,0 +1,26 @@
+[
+     {
+        "id": "tools",
+        "children":
+        [{
+            "caption": "SublimeREPL",
+            "mnemonic": "r",
+            "id": "SublimeREPL",
+            "children":
+            [
+                {"command": "repl_open",
+                 "caption": "GDB",
+                 "id": "repl_gdb",
+                 "mnemonic": "d",
+                 "args": {
+                    "type": "subprocess",
+                    "encoding": "utf8",
+                    "cmd": ["gdb"],
+                    "cwd": "$file_path",
+                    "external_id": "gdb"
+                    }
+                }
+            ]
+        }]
+    }
+]

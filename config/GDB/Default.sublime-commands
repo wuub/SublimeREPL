@@ -1,0 +1,10 @@
+[
+    {
+        "caption": "SublimeREPL: GDB",
+        "command": "run_existing_window_command", "args":
+        {
+            "id": "repl_gdb",
+            "file": "config/GDB/Main.sublime-menu"
+        }
+    }
+]
