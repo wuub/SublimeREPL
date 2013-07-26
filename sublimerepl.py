@@ -535,12 +535,6 @@ class ReplManager(object):
             project_settings = sublimerepl_build_system_hack.get_project_settings(window)
             res.update(project_settings)
 
-        # see #200, on older OSX (10.6.8) system wide python won't accept
-        # dict(unicode -> unicode) as **argument.
-        # It's best to just str() keys, since they are ascii anyway
-        if PY2:
-            return dict((str(key), val) for key, val in res.items())
-
         return res
 
     @staticmethod
@@ -548,6 +542,12 @@ class ReplManager(object):
         from string import Template
         if subst is None:
             subst = ReplManager._subst_for_translate(window)
+
+        # see #200, on older OSX (10.6.8) system wide python won't accept
+        # dict(unicode -> unicode) as **argument.
+        # It's best to just str() keys, since they are ascii anyway
+        if PY2:
+            subst = dict((str(key), val) for key, val in subst.items())
 
         return Template(string).safe_substitute(**subst)
 
