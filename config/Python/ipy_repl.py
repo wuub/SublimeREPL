@@ -34,8 +34,19 @@ cfg.InteractiveShell.autoindent = False
 cfg.InteractiveShell.colors = "NoColor"
 cfg.InteractiveShell.editor = os.environ.get("SUBLIMEREPL_EDITOR", editor)
 
+try:
+    # IPython 1.0.0
+    from IPython.terminal.console.app import ZMQTerminalIPythonApp
 
-from IPython.frontend.terminal.console.app import ZMQTerminalIPythonApp
+    def kernel_client(zmq_shell):
+        return zmq_shell.kernel_client
+except ImportError:
+    # Older IPythons
+    from IPython.frontend.terminal.console.app import ZMQTerminalIPythonApp
+
+    def kernel_client(zmq_shell):
+        return zmq_shell.kernel_manager
+
 
 embedded_shell = ZMQTerminalIPythonApp(config=cfg, user_ns={})
 embedded_shell.initialize()
@@ -71,14 +82,15 @@ def read_netstring(s):
     return msg
 
 
-def send_netstring(s, msg):
+def send_netstring(sock, msg):
     payload = b"".join([str(len(msg)).encode("ascii"), b':', msg.encode("utf-8"), b','])
-    s.sendall(payload)
+    sock.sendall(payload)
 
 
 def complete(zmq_shell, req):
-    msg_id = zmq_shell.kernel_manager.shell_channel.complete(**req)
-    msg = zmq_shell.kernel_manager.shell_channel.get_msg(timeout=0.5)
+    kc = kernel_client(zmq_shell)
+    msg_id = kc.shell_channel.complete(**req)
+    msg = kc.shell_channel.get_msg(timeout=0.5)
     if msg['parent_header']['msg_id'] == msg_id:
         return msg["content"]["matches"]
     return []
