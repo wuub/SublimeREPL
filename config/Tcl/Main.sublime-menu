@@ -1,0 +1,26 @@
+[
+     {
+        "id": "tools",
+        "children":
+        [{
+            "caption": "SublimeREPL",
+            "mnemonic": "r",    
+            "id": "SublimeREPL",
+            "children":
+            [
+                {"command": "repl_open",
+                 "caption": "Tcl",
+                 "id": "repl_tcl",
+                 "args": {
+                    "type": "subprocess",
+                    "encoding": "utf8",
+                    "cmd": ["tclsh", "${packages}/SublimeREPL/config/Tcl/tcl_repl.tcl"],
+                    "cwd": "$file_path",
+                    "external_id": "tclsh",
+                    "syntax": "Packages/TCL/tcl.tmLanguage"
+                    }
+                }
+            ]
+        }]
+    }
+]

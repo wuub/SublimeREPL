@@ -1,0 +1,10 @@
+[
+    {
+        "caption": "SublimeREPL: Tcl",
+        "command": "run_existing_window_command", "args":
+        {
+            "id": "repl_tcl",
+            "file": "config/Tcl/Main.sublime-menu"
+        }
+    }
+]
