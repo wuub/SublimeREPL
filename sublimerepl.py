@@ -719,15 +719,6 @@ class SublimeReplListener(sublime_plugin.EventListener):
         if not rv:
             return None
 
-        if command_name == 'insert':
-            # with "auto_complete_commit_on_tab": true enter does
-            # not work when autocomplete is displayed, this fixes
-            # it by replacing insert \n with repl_enter
-            if args.get('characters') == '\n':
-                view.run_command('hide_auto_complete')
-                return 'repl_enter', {}
-            return None
-
         if command_name == 'left_delete':
             # stop backspace on ST3 w/o breaking brackets
             if not rv.allow_deletion():
