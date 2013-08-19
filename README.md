@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/wuub/SublimeREPL.png?label=ready)](https://waffle.io/wuub/SublimeREPL)  
 SublimeREPL for SublimeText2
 ============================
 
@@ -52,10 +53,10 @@ Very basic documentation will soon be available on RTD: [http://sublimerepl.read
 #### Getting started
 
 * Create or open your file with code.
-* Menu / Tools / Command Palette (OS X: `⇧⌘P`) 
+* Menu / Tools / Command Palette (OS X: `b'bP`) 
 then type "SublimeREPL" and select the approperiate language.
-* Menu / View / Layout / Rows: 2 (OS X: `⌥⇧⌘2`).
-* Menu / View / Move File to Group / Group 2 (`⌃⇧2`).
+* Menu / View / Layout / Rows: 2 (OS X: `b%b'b2`).
+* Menu / View / Move File to Group / Group 2 (`bb'2`).
 
 #### Keybindings
 
