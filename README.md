@@ -1,7 +1,7 @@
 SublimeREPL for SublimeText (2 and 3)
 =====================================
 
-[![Stories in Ready](https://badge.waffle.io/wuub/SublimeREPL.png)](http://waffle.io/wuub/SublimeREPL) 
+[![Stories in Ready](https://badge.waffle.io/wuub/SublimeREPL.png?label=ready)](http://waffle.io/wuub/SublimeREPL) 
 
 If you would like to donate to support SublimeREPL development, you can do so using [GitTip](https://www.gittip.com/wuub/) or [PayPal](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=4DGEPH7QAVHH6&lc=GB&item_name=SublimeREPL&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted). Someone willing to take care of documentation would also be very welcome :-)
 
