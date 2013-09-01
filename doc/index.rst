@@ -115,28 +115,24 @@ main menu and palette options for REPL startup, keymaps, and special REPL
 extensions unique to the target language. An integration may contain several
 different REPL modes which are based  on different underlying classes.
 
-
-
 Clojure
 ^^^^^^^
 
-The Clojure integration supports Leiningen projects. SublimeREPL uses your
-`project.clj` to set up the REPL.
-
-* In subprocess REPL mode, the REPL is launched as a subprocess of the editor. 
-  This is the mode you should use right now.
-* The telnet mode no longer works because of the changes in Leiningen and nrepl.
-
-To start a REPL subprocess with Leiningen project environment, open your `project.clj` 
-and, while it is the current file, use the menu or the
-command palette to start the REPL.
+The Clojure integration supports Leiningen projects.
+You must install Leiningen to use Clojure integration.
 
 If your Leiningen installation is not system-global, you may need to tweak
-SublimeREPL  configuration (via Preferences > Package Settings > SublimeREPL >
+SublimeREPL configuration (via Preferences > Package Settings > SublimeREPL >
 Settings - User) so that we can find your lein binary::
 
     "default_extend_env": {"PATH": "{PATH}:/home/myusername/bin"}
 
+To start a REPL subprocess with Leiningen project environment, open your `project.clj` 
+and, while it is the current file, use the menu or the command palette to start the REPL.
+
+* In subprocess REPL mode, the REPL is launched as a subprocess of the editor. 
+  This is the mode you should use right now.
+* The telnet mode no longer works because of the changes in Leiningen and nrepl.
 
 The source buffer "send block" command (Ctrl+, b) deserves a special mention.
 Performing this command while the cursor is within the body of a definition
