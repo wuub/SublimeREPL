@@ -24,6 +24,7 @@
                     "cmd_postfix": "\n", 
                     "env": {},
                     "suppress_echo": true, 
+                    "external_id": "shell",
                     "syntax": "Packages/Text/Plain text.tmLanguage"
                     }
                 }
