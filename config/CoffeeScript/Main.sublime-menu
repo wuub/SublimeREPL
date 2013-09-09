@@ -18,6 +18,7 @@
                     "cwd": "$file_path",
                     "syntax": "Packages/CoffeeScript/CoffeeScript.tmLanguage",
                     "external_id": "coffeescript",
+                    "additional_scopes": ["coffee"],
                     "extend_env": {"NODE_DISABLE_COLORS": "1"}
                     }
                 }
