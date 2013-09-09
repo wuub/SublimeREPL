@@ -107,7 +107,7 @@ class ReplViewWrite(sublime_plugin.TextCommand):
             rv.append_input_text(text)
             break  # send to first repl found
         else:
-            sublime.error_message("Cannot find REPL for '{}'".format(external_id))
+            sublime.error_message("Cannot find REPL for '{0}'".format(external_id))
 
 
 class ReplSend(sublime_plugin.TextCommand):
