@@ -8,6 +8,7 @@ except ImportError:
     from Queue import Queue
 import sys
 import threading
+import sublime
 
 
 class QueueOut(object):
@@ -26,12 +27,30 @@ def redirect_stdio(queue):
     (sys.stdout, sys.stderr) = orig
 
 
+class SublimeLocals(dict):
+    def __init__(self, *args, **kwds):
+        import pydoc
+        super(SublimeLocals, self).__init__(*args, **kwds)
+        self['sublime'] = sublime
+        self['__name__'] = "__main__"
+        self['view'] = None
+        self['window'] = None
+        self['help'] = pydoc.help
+
+    def __getitem__(self, key):
+        if key == 'window':
+            return sublime.active_window()
+        if key == 'view':
+            return sublime.active_window().active_view()
+        return super(SublimeLocals, self).__getitem__(key)
+
+
 class InterceptingConsole(code.InteractiveConsole):
     PS1 = ">>> "
     PS2 = "... "
 
     def __init__(self, encoding):
-        code.InteractiveConsole.__init__(self, locals={"__name__": "__main__"})
+        code.InteractiveConsole.__init__(self, locals=SublimeLocals())
         self.input = Queue()
         self.output = Queue()
         self.output.put(self.PS1)
