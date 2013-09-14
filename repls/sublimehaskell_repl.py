@@ -62,13 +62,9 @@ def ghci_remove_whitespace(lines):
 
 def ghci_wrap_multiline_syntax(lines):
     # wrap in mutli-line syntax if more than one line
-    line_len = len(lines)
-    fixed_lines = lines[:]
-    if line_len == 1:
-        fixed_lines.append(os.linesep)
-    else:
-        fixed_lines.insert(0, ":{" + os.linesep)
-        fixed_lines.append(os.linesep + ":}" + os.linesep)
+    if len(lines) <= 1:
+        return lines
+    fixed_lines = [":{" + os.linesep] + lines + [os.linesep + ":}" + os.linesep]
     return fixed_lines
 
 class SublimeHaskellRepl(SubprocessRepl):
@@ -84,14 +80,14 @@ class SublimeHaskellRepl(SubprocessRepl):
 
         new_cmd = ""
         if command.isspace() or (not setting_multiline and not setting_trimwhitespace):
-                new_cmd = command
+            new_cmd = command
         else:
-                lines = command.splitlines(True)
-                if setting_trimwhitespace:
-                        lines = ghci_remove_whitespace(lines)
-                if setting_injectlet:
-                        lines = ghci_inject_let(lines)
-                if setting_multiline:
-                        lines = ghci_wrap_multiline_syntax(lines)
-                new_cmd = "".join(lines)
+            lines = command.splitlines(True)
+            if setting_trimwhitespace:
+                lines = ghci_remove_whitespace(lines)
+            if setting_injectlet:
+                lines = ghci_inject_let(lines)
+            if setting_multiline:
+                lines = ghci_wrap_multiline_syntax(lines)
+            new_cmd = "".join(lines)
         return super(SublimeHaskellRepl, self).write(new_cmd)
