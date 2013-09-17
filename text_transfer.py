@@ -27,6 +27,14 @@ def sender(external_id,):
     return wrap
 
 
+@sender("coffee")
+def coffee(repl, text, view=None):
+    """
+        use CoffeeScript multiline hack
+        http://coffeescript.org/documentation/docs/repl.html
+    """
+    default_sender(repl, text.replace("\n", u'\uFF00') + "\n", view)
+
 @sender("python")
 def python_sender(repl, text, view=None):
     text_wo_encoding = re.sub(
