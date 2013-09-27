@@ -2,14 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>fileTypes</key>
-	<array>
-		<string>io</string>
-	</array>
 	<key>keyEquivalent</key>
 	<string>^~I</string>
 	<key>name</key>
-	<string>Io</string>
+	<string>Io Repl</string>
 	<key>patterns</key>
 	<array>
 		<dict>
@@ -254,6 +250,6 @@
 	<key>scopeName</key>
 	<string>source.io</string>
 	<key>uuid</key>
-	<string>BD798537-3548-47F3-A6AB-7FB95C45DB83</string>
+	<string>52E416F3-9DF2-4579-8BC6-C54EBEF94423</string>
 </dict>
 </plist>

@@ -20,7 +20,7 @@
                             "osx": ["io"]},
                     "cwd": "$file_path",
                     "external_id": "io",
-                    "syntax": "${packages}/SublimeREPL/config/Io/Io.tmLanguage"
+                    "syntax": "Packages/SublimeREPL/config/Io/Io.tmLanguage"
                     }
                 }
             ]   
