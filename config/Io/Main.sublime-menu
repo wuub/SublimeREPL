@@ -8,22 +8,23 @@
             "id": "SublimeREPL",
             "children":
             [
-                {"command": "repl_open", 
+                {"command": "repl_open",
                  "caption": "Io",
                  "id": "repl_io",
                  "mnemonic": "i",
                  "args": {
                     "type": "subprocess",
                     "encoding": "utf8",
-                    "cmd": {"linux": ["io"],
+                    "cmd": {"linux": ["io", "${packages}/SublimeREPL/config/Io/repl.io"],
                             "windows": ["io", "${packages}/SublimeREPL/config/Io/repl.io"],
-                            "osx": ["io"]},
+                            "osx": ["io", "${packages}/SublimeREPL/config/Io/repl.io"]},
                     "cwd": "$file_path",
                     "external_id": "io",
+                    "suppress_echo": true,
                     "syntax": "Packages/SublimeREPL/config/Io/Io.tmLanguage"
                     }
                 }
-            ]   
+            ]
         }]
     }
 ]
