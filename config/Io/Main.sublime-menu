@@ -20,7 +20,9 @@
                             "osx": ["io", "${packages}/SublimeREPL/config/Io/repl.io"]},
                     "cwd": "$file_path",
                     "external_id": "io",
-                    "suppress_echo": true,
+                    "suppress_echo": {"linux": true,
+                                      "windows": false,
+                                      "osx": true},
                     "syntax": "Packages/SublimeREPL/config/Io/Io.tmLanguage"
                     }
                 }
