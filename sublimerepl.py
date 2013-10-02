@@ -384,6 +384,10 @@ class ReplView(object):
         self._window.focus_view(self._view)
 
     @property
+    def view(self):
+        return self._view
+
+    @property
     def input_region(self):
         return sublime.Region(self._output_end, self._view.size())
 

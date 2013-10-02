@@ -13,8 +13,20 @@ except (ImportError, ValueError):
     from sublimerepl import manager, SETTINGS_FILE
 
 
-def default_sender(repl, text, view=None):
+def default_sender(repl, text, view=None, repl_view=None):
     repl.write(text)
+    if view is None or not sublime.load_settings(SETTINGS_FILE).get('focus_view_on_transfer'):
+        return
+    active_window = sublime.active_window()
+    active_view = active_window.active_view()
+    target_view = repl_view.view
+    if target_view == active_view:
+        return  #
+    active_group = sublime.active_window().active_group()
+    if target_view in active_window.views_in_group(active_group):
+        return  # same group, dont switch
+    active_window.focus_view(target_view)
+
 
 """Senders is a dict of functions used to transfer text to repl as a repl
    specific load_file action"""
@@ -28,15 +40,15 @@ def sender(external_id,):
 
 
 @sender("coffee")
-def coffee(repl, text, view=None):
+def coffee(repl, text, view=None, repl_view=None):
     """
         use CoffeeScript multiline hack
         http://coffeescript.org/documentation/docs/repl.html
     """
-    default_sender(repl, text.replace("\n", u'\uFF00') + "\n", view)
+    default_sender(repl, text.replace("\n", u'\uFF00') + "\n", view, repl_view)
 
 @sender("python")
-def python_sender(repl, text, view=None):
+def python_sender(repl, text, view=None, repl_view=None):
     text_wo_encoding = re.sub(
         pattern=r"#.*coding[:=]\s*([-\w.]+)",
         repl="# <SublimeREPL: encoding comment removed>",
@@ -48,20 +60,20 @@ def python_sender(repl, text, view=None):
         str(code.decode('ascii')),
         '").decode("utf-8"), "<string>", "exec"))\n'
     ])
-    return default_sender(repl, execute, view)
+    return default_sender(repl, execute, view, repl_view)
 
 
 @sender("ruby")
-def ruby_sender(repl, text, view=None):
+def ruby_sender(repl, text, view=None, repl_view=None):
     code = binascii.b2a_base64(text.encode("utf-8"))
     payload = "begin require 'base64'; eval(Base64.decode64('%s'), binding=TOPLEVEL_BINDING) end\n" % (code.decode("ascii"),)
-    return default_sender(repl, payload, view)
+    return default_sender(repl, payload, view, repl_view)
 
 
 # custom clojure sender that makes sure that all selections are
 # evaluated in the namespace declared by the file they are in
 @sender("clojure")
-def clojure_sender(repl, text, view):
+def clojure_sender(repl, text, view, repl_view=None):
     # call (load-string) instead of just writing the string so
     # that syntax errors are caught and thrown back immediately
     text = '(load-string "' + text.strip().replace('"', r'\"') + '")'
@@ -107,7 +119,7 @@ def clojure_sender(repl, text, view):
             else:
                 # false alarm (metadata or a comment), keep looking
                 pos = namespace.end()
-    return default_sender(repl, text + repl.cmd_postfix, view)
+    return default_sender(repl, text + repl.cmd_postfix, view, repl_view)
 
 class ReplViewWrite(sublime_plugin.TextCommand):
     def run(self, edit, external_id, text):
@@ -126,7 +138,7 @@ class ReplSend(sublime_plugin.TextCommand):
             if sublime.load_settings(SETTINGS_FILE).get('show_transferred_text'):
                 rv.append_input_text(text)
                 rv.adjust_end()
-            SENDERS[external_id](rv.repl, text, self.view)
+            SENDERS[external_id](rv.repl, text, self.view, rv)
             break
         else:
             sublime.error_message("Cannot find REPL for '{}'".format(external_id))

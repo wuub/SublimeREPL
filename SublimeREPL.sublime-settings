@@ -74,5 +74,10 @@
 
 	// If set to true, SublimeREPL will try to append evaluated code to repl
 	// output before evaluation (e.g. Ctrl+, f)
-	"show_transferred_text": false
+	"show_transferred_text": false,
+
+	// If set to true repl view (tab) that receives text for evaluation will
+	// grab focus after text transfer. Note: This will not fire if repl view
+	// is in the same tab group as the view from which the code is sent.
+	"focus_view_on_transfer": false
 }
