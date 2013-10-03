@@ -26,6 +26,7 @@ def default_sender(repl, text, view=None, repl_view=None):
     if target_view in active_window.views_in_group(active_group):
         return  # same group, dont switch
     active_window.focus_view(target_view)
+    active_window.focus_view(view)
 
 
 """Senders is a dict of functions used to transfer text to repl as a repl
