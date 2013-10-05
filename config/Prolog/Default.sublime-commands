@@ -1,0 +1,10 @@
+[
+    {
+        "caption": "SublimeREPL: Prolog (Sicstus)",
+        "command": "run_existing_window_command", "args":
+        {
+            "id": "repl_prolog",
+            "file": "config/Prolog/Main.sublime-menu"
+        }
+    }
+]
