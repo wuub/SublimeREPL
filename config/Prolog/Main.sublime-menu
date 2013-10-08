@@ -1,0 +1,31 @@
+[
+  {
+    "id":"tools",
+    "children":[
+      {
+        "caption":"SublimeREPL",
+        "mnemonic":"r",
+        "id":"SublimeREPL",
+        "children":[
+          {
+            "caption":"Prolog (Sicstus)",
+            "command":"repl_open",
+            "id":"repl_prolog",
+            "mnemonic":"p",
+            "args":{
+              "type":"subprocess",
+              "external_id":"prolog",
+              "encoding":"utf8",
+              "cmd": ["sicstus"],
+              "soft_quit":"\nexit\n",
+              "cwd":"$file_path",
+              "cmd_postfix":"\n",
+              "autocomplete_server": true,
+              "syntax":"Packages/Prolog/Prolog.tmLanguage"
+            }
+          }
+        ]
+      }
+    ]
+  }
+]
