@@ -221,6 +221,7 @@ SublimeREPL currently ships with support for the following languages:
 * Matlab
 * MozRepl
 * NodeJS
+* OCaml
 * Octave
 * Perl
 * PHP interactive mode

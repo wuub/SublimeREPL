@@ -1,0 +1,73 @@
+[
+  {
+    "id":"tools",
+    "children":[
+      {
+        "caption":"SublimeREPL",
+        "mnemonic":"r",
+        "id":"SublimeREPL",
+        "children":[
+          {
+            "caption":"OCaml",
+            "children":[
+              {
+                "command":"repl_open",
+                "caption":"OCaml toplevel",
+                "id":"repl_ocaml",
+                "mnemonic":"r",
+                "args":{
+                  "type":"subprocess",
+                  "external_id":"ocaml",
+                  "encoding":"utf8",
+                  "cmd":{
+                    "windows":[
+                      "ocaml.exe"
+                    ],
+                    "linux":[
+                      "ocaml"
+                    ],
+                    "osx":[
+                      "ocaml"
+                    ]
+                  },
+                  "soft_quit":"\n#quit;;\n",
+                  "cwd":"$file_path",
+                  "cmd_postfix":";;\n",
+                  "autocomplete_server": false,
+                  "syntax":"Packages/OCaml/OCaml.tmLanguage"
+                }
+              },
+              {
+                "command":"repl_open",
+                "caption":"OCaml utop",
+                "id":"repl_ocaml_utop",
+                "mnemonic":"r",
+                "args":{
+                  "type":"subprocess",
+                  "external_id":"utop",
+                  "encoding":"utf8",
+                  "cmd":{
+                    "windows":[
+                      "utop.exe"
+                    ],
+                    "linux":[
+                      "utop"
+                    ],
+                    "osx":[
+                      "utop"
+                    ]
+                  },
+                  "soft_quit":"\n#quit;;\n",
+                  "cwd":"$file_path",
+                  "cmd_postfix":";;\n",
+                  "autocomplete_server": false,
+                  "syntax":"Packages/OCaml/OCaml.tmLanguage"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]
