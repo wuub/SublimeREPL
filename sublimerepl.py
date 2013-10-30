@@ -279,11 +279,17 @@ class ReplView(object):
             v.sel().clear()
             v.sel().add(sublime.Region(v.size()))
 
+        l = self._output_end
+
         self.push_history(self.user_input)  # don't include cmd_postfix in history
         v.run_command("insert", {"characters": self.repl.cmd_postfix})
         command = self.user_input
         self.adjust_end()
-        self.repl.write(command)
+
+        if self.repl.apiv2:
+            self.repl.write(command, location=l)
+        else:
+            self.repl.write(command)
 
     def previous_command(self, edit):
         self._view.set_read_only(False)
@@ -351,16 +357,22 @@ class ReplView(object):
             return True
 
     def handle_repl_packet(self, packet):
-        if packet.__class__ is str:
-            self.write(packet)
-        else:
+        if self.repl.apiv2:
             for opcode, data in packet:
                 if opcode == 'output':
                     self.write(data)
                 elif opcode == 'prompt':
                     self.write_prompt(data)
+                elif opcode == 'highlight':
+                    a, b = data
+                    regions = self._view.get_regions('sublimerepl')
+                    regions.append(sublime.Region(a, b))
+                    self._view.add_regions('sublimerepl', regions, 'invalid',
+                                           '', sublime.DRAW_EMPTY | sublime.DRAW_OUTLINED)
                 else:
                     print('SublimeREPL: unknown REPL opcode: ' + opcode)
+        else:
+            self.write(packet)
 
     def update_view_loop(self):
         is_still_working = self.handle_repl_output()

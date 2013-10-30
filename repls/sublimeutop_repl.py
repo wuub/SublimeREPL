@@ -9,9 +9,17 @@ class SublimeUTopRepl(SubprocessRepl):
     TYPE = "sublime_utop"
 
     def __init__(self, encoding, **kwds):
-        super(SublimeUTopRepl, self).__init__(encoding, **kwds)
+        super(SublimeUTopRepl, self).__init__(encoding, apiv2=True, **kwds)
+
+        # Buffer for reassembling stanzas arrived from utop.
         self._buffer = b''
-        self._phrase = ''
+
+        # Phrase pending input with mapping of utop-lines to
+        # SublimeREPL-view-lines.
+        self._phrase = []
+        self._phrase_line_begins = []
+
+        # Completion state.
         self._completions = None
         self._completion_prefix = ""
         self._completion_queue = Queue()
@@ -22,7 +30,7 @@ class SublimeUTopRepl(SubprocessRepl):
     def autocomplete_completions(self, whole_line, pos_in_line,
                                  prefix, whole_prefix, locations):
         self._completion_prefix = prefix
-        self.write_command('complete', '', whole_prefix)
+        self.write_command('complete', '', [whole_prefix])
 
         # This would block the UI. When REPL works correctly,
         # this blocks for less than 100ms.
@@ -36,6 +44,32 @@ class SublimeUTopRepl(SubprocessRepl):
     # by SublimeREPL.
     #
 
+    def compose_highlights(self, a, b):
+        highlights = []
+
+        # Highlight each fragment of line which lies in [a;b).
+        for (line, loc) in zip(self._phrase, self._phrase_line_begins):
+            # Does this line have any highlight?
+            if a < len(line):
+                # Yeah, does it end here?
+                if b <= len(line):
+                    # Highlight the requested area and return.
+                    highlights.append((loc + a, loc + b))
+                    break
+                else:
+                    # Highlight till the end of line.
+                    highlights.append((loc + a, loc + len(line)))
+
+            # Shift the highlight region left by len(line) and
+            # continue.
+            a -= len(line) + 1
+            b -= len(line) + 1
+            # Always start from beginning of line for next lines.
+            if a < 0:
+                a = 0
+
+        return [('highlight', x) for x in highlights]
+
     def read(self):
         stanza = self.read_stanza()
         if stanza is None:
@@ -45,8 +79,13 @@ class SublimeUTopRepl(SubprocessRepl):
         if key == 'accept':
             packet = []
 
+            if value != "":
+                a, b = map(int, value.split(','))
+                packet.extend(self.compose_highlights(a, b))
+
             # We've finished this phrase.
-            self._phrase = ''
+            self._phrase = []
+            self._phrase_line_begins = []
 
             # Erase prompt. Accept is the first stanza we receive in
             # reply to input; immediately after it may follow stdout/stderr
@@ -90,9 +129,15 @@ class SublimeUTopRepl(SubprocessRepl):
         else:
             return []
 
-    def write(self, expression):
-        # If the phrase is incomplete, utop will not remember it.
-        self._phrase += expression
+    def write(self, expression, location=None):
+        # If the phrase is incomplete, utop will not remember it, so
+        # we need to account for it here. Also, Shift+Enter will add a literal
+        # newline, which would otherwise break protocol.
+        for line in expression.split('\n'):
+            self._phrase.append(line)
+            self._phrase_line_begins.append(location)
+            location += len(line) + 1
+
         self.write_command('input', 'allow-incomplete', self._phrase)
 
     #
@@ -104,8 +149,8 @@ class SublimeUTopRepl(SubprocessRepl):
 
     def write_command(self, command, options, data):
         self.write_stanza(command, options)
-        for line in data.split('\n'):
-            self.write_stanza('data', line)
+        for datum in data:
+            self.write_stanza('data', datum)
         self.write_stanza('end')
 
     #
