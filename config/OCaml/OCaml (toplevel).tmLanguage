@@ -25,7 +25,7 @@
 			<key>begin</key>
 			<string>^- </string>
 			<key>end</key>
-			<string>$</string>
+			<string>^(?=#)</string>
 			<key>name</key>
 			<string>source.ocaml.toplevel.embedded.value</string>
 			<key>patterns</key>
