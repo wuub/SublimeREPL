@@ -31,9 +31,8 @@ Pry.config.correct_indent = false
 
 port = ENV["SUBLIMEREPL_AC_PORT"].to_i
 
-socket = Socket.new(AF_INET, SOCK_STREAM, 0)
-sockaddr = Socket.pack_sockaddr_in(port, '127.0.0.1')
-socket.connect(sockaddr)
+socket = TCPSocket.new('127.0.0.1', port)
+
 completer = Pry::InputCompleter.build_completion_proc(binding)
 
 def read_netstring(s)
@@ -56,17 +55,26 @@ end
 
 # Thread.abort_on_exception = true
 t1 = Thread.new do
-    while true
-        data = read_netstring(socket)
-        req = JSON.parse(data)
-        line = req["line"]
-        completions = completer.call(req["line"])
-        response = [line, completions]
-        response_msg = JSON.dump(response)
-        payload = response_msg.length.to_s + ":" + response_msg + ","
-        socket.write(payload)
+    begin
+        while true
+            data = read_netstring(socket)
+            req = JSON.parse(data)
+            line = req["line"]
+            begin
+                completions = completer.call(req["line"])
+                response = [line, completions]
+                response_msg = JSON.dump(response)
+            rescue NoMethodError => e
+                #NO OP. Prevent pry's failure to autocomplete certain messages
+                # From causing socket to timeout.
+            end
+            payload = response_msg.length.to_s + ":" + response_msg + ","
+            socket.write(payload)
+        end
+    rescue Exception => e
+        puts e
     end
 end
 
 
-Pry.start self
+Pry.start #self
