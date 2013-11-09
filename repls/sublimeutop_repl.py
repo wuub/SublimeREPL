@@ -1,8 +1,10 @@
 # encoding: utf-8
+from __future__ import absolute_import, print_function, division
 
-import sublime
-from queue import Queue
-from .repl import Repl
+try:
+    from queue import Queue
+except ImportError:
+    from Queue import Queue
 from .subprocess_repl import SubprocessRepl
 
 class SublimeUTopRepl(SubprocessRepl):
