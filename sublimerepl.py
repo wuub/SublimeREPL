@@ -160,6 +160,7 @@ class ReplView(object):
         if syntax:
             view.set_syntax_file(syntax)
         self._output_end = view.size()
+        self._prompt_size = 0
 
         self._repl_reader = ReplReader(repl)
         self._repl_reader.start()
@@ -278,11 +279,17 @@ class ReplView(object):
             v.sel().clear()
             v.sel().add(sublime.Region(v.size()))
 
+        l = self._output_end
+
         self.push_history(self.user_input)  # don't include cmd_postfix in history
         v.run_command("insert", {"characters": self.repl.cmd_postfix})
         command = self.user_input
         self.adjust_end()
-        self.repl.write(command)
+
+        if self.repl.apiv2:
+            self.repl.write(command, location=l)
+        else:
+            self.repl.write(command)
 
     def previous_command(self, edit):
         self._view.set_read_only(False)
@@ -318,35 +325,57 @@ class ReplView(object):
             unistr = re.sub(r'.\x08', '', unistr)
 
         # string is assumed to be already correctly encoded
-        self._view.run_command("repl_insert_text", {"pos": self._output_end, "text": unistr})
+        self._view.run_command("repl_insert_text", {"pos": self._output_end - self._prompt_size, "text": unistr})
         self._output_end += len(unistr)
         self._view.show(self.input_region)
 
+    def write_prompt(self, unistr):
+        """Writes prompt from REPL into this view. Prompt is treated like
+           regular output, except output is inserted before the prompt."""
+        self._prompt_size = 0
+        self.write(unistr)
+        self._prompt_size = len(unistr)
+
     def append_input_text(self, text, edit=None):
-        e = edit
-        if e:
-            self._view.insert(e, self._view.size(), text)
+        if edit:
+            self._view.insert(edit, self._view.size(), text)
         else:
             self._view.run_command("repl_insert_text", {"pos": self._view.size(), "text": text})
 
-    def new_output(self):
+    def handle_repl_output(self):
         """Returns new data from Repl and bool indicating if Repl is still
            working"""
-        q = self._repl_reader.queue
-        data = ""
         try:
             while True:
-                packet = q.get_nowait()
+                packet = self._repl_reader.queue.get_nowait()
                 if packet is None:
-                    return data, False
-                data += packet
+                    return False
+
+                self.handle_repl_packet(packet)
+
         except queue.Empty:
-            return data, True
+            return True
+
+    def handle_repl_packet(self, packet):
+        if self.repl.apiv2:
+            for opcode, data in packet:
+                if opcode == 'output':
+                    self.write(data)
+                elif opcode == 'prompt':
+                    self.write_prompt(data)
+                elif opcode == 'highlight':
+                    a, b = data
+                    regions = self._view.get_regions('sublimerepl')
+                    regions.append(sublime.Region(a, b))
+                    self._view.add_regions('sublimerepl', regions, 'invalid',
+                                           '', sublime.DRAW_EMPTY | sublime.DRAW_OUTLINED)
+                else:
+                    print('SublimeREPL: unknown REPL opcode: ' + opcode)
+        else:
+            self.write(packet)
 
     def update_view_loop(self):
-        (data, is_still_working) = self.new_output()
-        if data:
-            self.write(data)
+        is_still_working = self.handle_repl_output()
         if is_still_working:
             sublime.set_timeout(self.update_view_loop, 100)
         else:

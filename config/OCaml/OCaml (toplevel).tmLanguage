@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>name</key>
+	<string>OCaml (toplevel)</string>
+	<key>patterns</key>
+	<array>
+		<dict>
+			<key>begin</key>
+			<string>^# </string>
+			<key>end</key>
+			<string>(;;|^(?=! ))</string>
+			<key>name</key>
+			<string>source.ocaml.toplevel.embedded.input</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>include</key>
+					<string>source.ocaml</string>
+				</dict>
+			</array>
+		</dict>
+		<dict>
+			<key>begin</key>
+			<string>^- </string>
+			<key>end</key>
+			<string>^(?=#)</string>
+			<key>name</key>
+			<string>source.ocaml.toplevel.embedded.value</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>include</key>
+					<string>source.ocaml</string>
+				</dict>
+			</array>
+		</dict>
+		<dict>
+			<key>begin</key>
+			<string>^! </string>
+			<key>end</key>
+			<string>$</string>
+			<key>name</key>
+			<string>invalid.ocaml.toplevel.stderr</string>
+		</dict>
+	</array>
+	<key>scopeName</key>
+	<string>source.ocaml.toplevel</string>
+	<key>uuid</key>
+	<string>d1a342ce-4108-11e3-b309-1b404228fc7c</string>
+</dict>
+</plist>

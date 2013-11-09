@@ -34,7 +34,7 @@
                   "cwd":"$file_path",
                   "cmd_postfix":";;\n",
                   "autocomplete_server": false,
-                  "syntax":"Packages/OCaml/OCaml.tmLanguage"
+                  "syntax":"Packages/SublimeREPL/config/OCaml/OCaml (toplevel).tmLanguage"
                 }
               },
               {
@@ -43,25 +43,25 @@
                 "id":"repl_ocaml_utop",
                 "mnemonic":"r",
                 "args":{
-                  "type":"subprocess",
+                  "type":"sublime_utop",
                   "external_id":"utop",
                   "encoding":"utf8",
                   "cmd":{
                     "windows":[
-                      "utop.exe"
+                      "utop.exe", "-emacs"
                     ],
                     "linux":[
-                      "utop"
+                      "utop", "-emacs"
                     ],
                     "osx":[
-                      "utop"
+                      "utop", "-emacs"
                     ]
                   },
                   "soft_quit":"\n#quit;;\n",
                   "cwd":"$file_path",
-                  "cmd_postfix":";;\n",
+                  "cmd_postfix":"",
                   "autocomplete_server": false,
-                  "syntax":"Packages/OCaml/OCaml.tmLanguage"
+                  "syntax":"Packages/SublimeREPL/config/OCaml/OCaml (toplevel).tmLanguage"
                 }
               }
             ]
