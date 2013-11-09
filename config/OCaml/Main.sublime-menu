@@ -60,6 +60,11 @@
                   "soft_quit":"\n#quit;;\n",
                   "cwd":"$file_path",
                   "cmd_postfix":"",
+                  "extend_env": {
+                    "OCAML_TOPLEVEL_PATH": "{HOME}/.opam/system/lib/toplevel",
+                    "CAML_LD_LIBRARY_PATH": "{HOME}/.opam/system/lib/stublibs:/usr/lib/ocaml/stublibs",
+                    "PATH": "{PATH}:{HOME}/.opam/system/bin"
+                  },
                   "autocomplete_server": false,
                   "syntax":"Packages/SublimeREPL/config/OCaml/OCaml (toplevel).tmLanguage"
                 }
