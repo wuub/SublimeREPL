@@ -76,8 +76,9 @@ def ruby_sender(repl, text, view=None, repl_view=None):
 @sender("clojure")
 def clojure_sender(repl, text, view, repl_view=None):
     # call (load-string) instead of just writing the string so
-    # that syntax errors are caught and thrown back immediately
-    text = '(load-string "' + text.strip().replace('"', r'\"') + '")'
+    # that syntax errors are caught and thrown back immediately.
+    # also, escape backslashes and double-quotes
+    text = '(load-string "' + text.strip().replace('\\', r'\\').replace('"', r'\"') + '")'
 
     # find the first non-commented statement from the start of the file
     namespacedecl = view.find(r"^[^;]*?\(", 0)
