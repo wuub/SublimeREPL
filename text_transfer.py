@@ -14,7 +14,11 @@ except (ImportError, ValueError):
 
 
 def default_sender(repl, text, view=None, repl_view=None):
-    repl.write(text)
+    if repl.apiv2:
+        repl.write(text, location=repl_view.view.size() - len(text))
+    else:
+        repl.write(text)
+
     if view is None or not sublime.load_settings(SETTINGS_FILE).get('focus_view_on_transfer'):
         return
     active_window = sublime.active_window()

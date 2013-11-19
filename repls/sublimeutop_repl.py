@@ -137,8 +137,9 @@ class SublimeUTopRepl(SubprocessRepl):
         # newline, which would otherwise break protocol.
         for line in expression.split('\n'):
             self._phrase.append(line)
-            self._phrase_line_begins.append(location)
-            location += len(line) + 1
+            if location is not None:
+                self._phrase_line_begins.append(location)
+                location += len(line) + 1
 
         self.write_command('input', 'allow-incomplete', self._phrase)
 

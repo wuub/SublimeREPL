@@ -44,7 +44,7 @@
                 "mnemonic":"r",
                 "args":{
                   "type":"sublime_utop",
-                  "external_id":"utop",
+                  "external_id":"ocaml",
                   "encoding":"utf8",
                   "cmd":{
                     "windows":[
