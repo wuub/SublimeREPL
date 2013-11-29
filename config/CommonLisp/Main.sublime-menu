@@ -1,0 +1,124 @@
+[
+     {
+        "id": "tools",
+        "children":
+        [{
+            "caption": "SublimeREPL",
+            "mnemonic": "r",
+            "id": "SublimeREPL",
+            "children":
+            [
+                {"caption": "Common Lisp",
+                 "id": "CommonLisp",
+
+                 "children":[
+                    {"command": "repl_open",
+                     "caption": "Clozure CL",
+                     "id": "repl_ccl",
+                     "mnemonic": "r",
+                     "args": {
+                        "type": "subprocess",
+                        "encoding": "utf8",
+                        "external_id": "lisp",
+                        "cmd": ["ccl"],
+                        "soft_quit": "\n(ccl:quit)\n",
+                        "cwd": "$folder",
+                        "cmd_postfix": "\n",
+                        "syntax": "Packages/Lisp/Lisp.tmLanguage"
+                        }
+                    },
+                    {"command": "repl_open",
+                     "caption": "SBCL",
+                     "id": "repl_sbcl",
+                     "mnemonic": "r",
+                     "args": {
+                        "type": "subprocess",
+                        "encoding": "utf8",
+                        "external_id": "lisp",
+                        "cmd": ["sbcl"],
+                        "soft_quit": "\n(sb-ext:exit)\n",
+                        "cwd": "$folder",
+                        "cmd_postfix": "\n",
+                        "syntax": "Packages/Lisp/Lisp.tmLanguage"
+                        }
+                    },
+                    {"command": "repl_open",
+                     "caption": "GNU Clisp",
+                     "id": "repl_clisp",
+                     "mnemonic": "r",
+                     "args": {
+                        "type": "subprocess",
+                        "encoding": "utf8",
+                        "external_id": "lisp",
+                        "cmd": ["clisp", "-disable-readline"],
+                        "soft_quit": "\n(ext:quit)\n",
+                        "cwd": "$folder",
+                        "cmd_postfix": "\n",
+                        "syntax": "Packages/Lisp/Lisp.tmLanguage"
+                        }
+                    },
+                    {"command": "repl_open",
+                     "caption": "Allegro CL",
+                     "id": "repl_allegro",
+                     "mnemonic": "r",
+                     "args": {
+                        "type": "subprocess",
+                        "encoding": "utf8",
+                        "external_id": "lisp",
+                        "cmd": ["alisp"],
+                        "soft_quit": "\n(excl:exit 0 :quiet t)\n",
+                        "cwd": "$folder",
+                        "cmd_postfix": "\n",
+                        "syntax": "Packages/Lisp/Lisp.tmLanguage"
+                        }
+                    },
+                    {"command": "repl_open",
+                     "caption": "ABCL",
+                     "id": "repl_abcl",
+                     "mnemonic": "r",
+                     "args": {
+                        "type": "subprocess",
+                        "encoding": "utf8",
+                        "external_id": "lisp",
+                        "cmd": ["abcl"],
+                        "soft_quit": "\n(ext:exit)\n",
+                        "cwd": "$folder",
+                        "cmd_postfix": "\n",
+                        "syntax": "Packages/Lisp/Lisp.tmLanguage"
+                        }
+                    },
+                    {"command": "repl_open",
+                     "caption": "CMUCL",
+                     "id": "repl_cmucl",
+                     "mnemonic": "r",
+                     "args": {
+                        "type": "subprocess",
+                        "encoding": "utf8",
+                        "external_id": "lisp",
+                        "cmd": ["lisp"],
+                        "soft_quit": "\n(ext::quit)\n",
+                        "cwd": "$folder",
+                        "cmd_postfix": "\n",
+                        "syntax": "Packages/Lisp/Lisp.tmLanguage"
+                        }
+                    },
+                    {"command": "repl_open",
+                     "caption": "ECL",
+                     "id": "repl_ecl",
+                     "mnemonic": "r",
+                     "args": {
+                        "type": "subprocess",
+                        "encoding": "utf8",
+                        "external_id": "lisp",
+                        "cmd": ["ecl"],
+                        "soft_quit": "\n(ext:quit)\n",
+                        "cwd": "$folder",
+                        "cmd_postfix": "\n",
+                        "syntax": "Packages/Lisp/Lisp.tmLanguage"
+                        }
+                    }
+                ]}
+            ]
+        }]
+    }
+]
