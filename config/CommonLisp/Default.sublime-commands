@@ -1,0 +1,58 @@
+[
+    {
+        "caption": "SublimeREPL: Clozure CL",
+        "command": "run_existing_window_command", "args":
+        {
+            "id": "repl_ccl",
+            "file": "config/CommonLisp/Main.sublime-menu"
+        }
+    },
+    {
+        "caption": "SublimeREPL: SBCL",
+        "command": "run_existing_window_command", "args":
+        {
+            "id": "repl_sbcl",
+            "file": "config/CommonLisp/Main.sublime-menu"
+        }
+    },
+    {
+        "caption": "SublimeREPL: GNU Clisp",
+        "command": "run_existing_window_command", "args":
+        {
+            "id": "repl_clisp",
+            "file": "config/CommonLisp/Main.sublime-menu"
+        }
+    },
+    {
+        "caption": "SublimeREPL: Allegro CL",
+        "command": "run_existing_window_command", "args":
+        {
+            "id": "repl_allegro",
+            "file": "config/CommonLisp/Main.sublime-menu"
+        }
+    },
+    {
+        "caption": "SublimeREPL: ABCL",
+        "command": "run_existing_window_command", "args":
+        {
+            "id": "repl_abcl",
+            "file": "config/CommonLisp/Main.sublime-menu"
+        }
+    },
+    {
+        "caption": "SublimeREPL: CMUCL",
+        "command": "run_existing_window_command", "args":
+        {
+            "id": "repl_cmucl",
+            "file": "config/CommonLisp/Main.sublime-menu"
+        }
+    },
+    {
+        "caption": "SublimeREPL: ECL",
+        "command": "run_existing_window_command", "args":
+        {
+            "id": "repl_ecl",
+            "file": "config/CommonLisp/Main.sublime-menu"
+        }
+    }
+]
