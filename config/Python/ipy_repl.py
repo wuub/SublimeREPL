@@ -106,7 +106,7 @@ def handle():
             res = json.dumps(result)
             send_netstring(s, res)
         except Exception:
-            send_netstring(s, b"[]")
+            send_netstring(s, "[]")
 
 if ac_port:
     t = threading.Thread(target=handle)
