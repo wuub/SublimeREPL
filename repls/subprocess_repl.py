@@ -195,27 +195,26 @@ class SubprocessRepl(Repl):
             import _winapi
             import msvcrt
 
-            _winapi.SetNamedPipeHandleState(msvcrt.get_osfhandle(out.fileno()), 1, None, None)
-
             buffer_size=1
-
             bytes_read=bytearray()
-            #wait for some output
+
+            #wait for some output synchronously, to not cause infinite loop
+            bytes_read.extend(out.read(buffer_size))
+
+            #read until end of current output
+            _winapi.SetNamedPipeHandleState(msvcrt.get_osfhandle(out.fileno()), 1, None, None)
             #'Invalid Argument' means that there are no more bytes left to read
+            cur_bytes_read=out.read(buffer_size)
+            bytes_read.extend(cur_bytes_read)
             while True:
                 try:
                     cur_bytes_read=out.read(buffer_size)
+                    if not cur_bytes_read:
+                        break
                     bytes_read.extend(cur_bytes_read)
-                    #read all remaining output
-                    while True:
-                        try:
-                            cur_bytes_read=out.read(buffer_size)
-                            bytes_read.extend(cur_bytes_read)
-                        except OSError:
-                            break
-                    break
                 except OSError:
-                    continue
+                    break
+            _winapi.SetNamedPipeHandleState(msvcrt.get_osfhandle(out.fileno()), 0, None, None)
 
             # f'in HACK, for \r\n -> \n translation on windows
             # I tried universal_endlines but it was pain and misery! :'(
