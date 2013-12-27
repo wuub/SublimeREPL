@@ -204,8 +204,6 @@ class SubprocessRepl(Repl):
             #read until end of current output
             _winapi.SetNamedPipeHandleState(msvcrt.get_osfhandle(out.fileno()), 1, None, None)
             #'Invalid Argument' means that there are no more bytes left to read
-            cur_bytes_read=out.read(buffer_size)
-            bytes_read.extend(cur_bytes_read)
             while True:
                 try:
                     cur_bytes_read=out.read(buffer_size)
