@@ -100,6 +100,6 @@ No. Shell (cmd.exe/bash) REPL can be used for simple tasks (file creation, `git 
 
 ### 2. Is IPython supported?
 
-Yes, with autocompletion and some windowed `%pylab`. Inline `%pylab` is unfortuneatly not possible right now.
+Yes, with autocompletion and some windowed `%pylab`. Inline `%pylab` is unfortunately not possible right now.
 
 
