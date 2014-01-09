@@ -3,6 +3,7 @@
 	// that should be visible for all subprocess repls launched within
 	// SublimeREPL. This is a very good place to add PATH extension
 	// once "PATH": "{PATH}:/home/username/mylocalinstalls/bin" or whatever
+	// Add "REPL_USE_RAILS_BUNDLER": true" to use bundler in pry rails console
 	"default_extend_env": {},
 
 	// Specify whether to move repls to a different Sublime Text group (frame)
