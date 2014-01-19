@@ -94,8 +94,10 @@ class PythonVirtualenvRepl(sublime_plugin.WindowCommand):
         (name, directory) = choices[index]
         activate_file = os.path.join(directory, "activate_this.py")
         python_executable = os.path.join(directory, "python")
+        path_separator = ":"
         if os.name == "nt":
             python_executable += ".exe"  # ;-)
+            path_separator = ";"
 
         self.window.run_command("repl_open",
             {
@@ -103,7 +105,7 @@ class PythonVirtualenvRepl(sublime_plugin.WindowCommand):
                 "type": "subprocess",
                 "autocomplete_server": True,
                 "extend_env": {
-                    "PATH": directory,
+                    "PATH": directory + path_separator + "{PATH}",
                     "SUBLIMEREPL_ACTIVATE_THIS": activate_file,
                     "PYTHONIOENCODING": "utf-8"
                 },
