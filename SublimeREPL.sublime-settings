@@ -25,6 +25,13 @@
 	// to true will cause SublimreREPL to close view once the process died.
 	"view_auto_close": false,
 
+	// On POSIX system SublimeText launched from GUI does not inherit
+	// a proper environment. Often leading to problems with finding interpreters
+	// or not using the ones affected by changes in ~/.profile / *rc files
+	// This command is used as a workaround, it's launched before any subprocess
+	// repl starts and it's output is parsed as an environment
+	"getenv_command": ["/bin/bash", "--login", "-c", "env"],
+
 	// Some terminals output ascii color codes which are not currently supported
 	// enable this option to filter them out.
 	"filter_ascii_color_codes": true,
