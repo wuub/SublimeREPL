@@ -17,6 +17,7 @@
                  "args":
                   {
                     "type": "subprocess",
+                    "external_id": "ruby.rails",
                     "encoding": {"windows": "$win_cmd_encoding",
                                  "linux": "utf-8",
                                  "osx": "utf-8"},
