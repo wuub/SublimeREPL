@@ -159,6 +159,8 @@ class ReplTransferCurrent(sublime_plugin.TextCommand):
             text = self.selected_lines()
         elif scope == "function":
             text = self.selected_functions()
+        elif scope == "expression":
+            text = self.selected_expressions()
         elif scope == "block":
             text = self.selected_blocks()
         elif scope == "file":
@@ -175,7 +177,24 @@ class ReplTransferCurrent(sublime_plugin.TextCommand):
         return "".join(parts)
 
     def selected_blocks(self):
-        # TODO: Clojure only for now
+        # TODO: Lisp-family only for now
+        v = self.view
+        old_sel = list(v.sel())
+        v.run_command("expand_selection", {"to": "brackets"})
+
+        sel = []
+        while sel != list(v.sel()):
+            sel = list(v.sel())
+            v.run_command("expand_selection", {"to": "brackets"})
+
+        v.sel().clear()
+        for s in old_sel:
+            v.sel().add(s)
+
+        return "\n\n".join([v.substr(s) for s in sel])
+
+    def selected_expressions(self):
+        # TODO: Lisp-family only for now
         v = self.view
         strs = []
         old_sel = list(v.sel())
