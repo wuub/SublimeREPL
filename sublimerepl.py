@@ -497,10 +497,22 @@ class ReplManager(object):
             self.repl_views[r.id] = rv
             view.set_scratch(True)
             view.set_name("*REPL* [%s]" % (r.name(),))
+            self.auto_load(window, rv)
             return rv
         except Exception as e:
             traceback.print_exc()
             sublime.error_message(repr(e))
+
+    def auto_load(self, window, rv):
+        alf = sublime.load_settings(SETTINGS_FILE).get("auto_load_files")
+        if alf and rv.external_id in alf:
+            for pathname in alf[rv.external_id]:
+                try:
+                    text = open(pathname).read()
+                except IOError:
+                    print('Cannot load file: %s' % (pathname,))
+                else:
+                    window.run_command('repl_send', {"external_id": rv.external_id, "text": text})
 
     def restart(self, view, edit):
         repl_restart_args = view.settings().get("repl_restart_args")
