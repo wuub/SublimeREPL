@@ -72,6 +72,7 @@ mswindows = (sys.platform == "win32")
 py2 = (sys.version_info[0] == 2)
 
 if mswindows:
+    import _winapi
     from . import winprocess
 else:
     import signal
@@ -170,19 +171,19 @@ class Popen(subprocess.Popen):
                 creationflags |= winprocess.CREATE_BREAKAWAY_FROM_JOB
 
             # create the process
-            hp, ht, pid, tid = winprocess.CreateProcess(
+            hp, ht, pid, tid = _winapi.CreateProcess(
                 executable, args,
                 None, None, # No special security
                 1, # Must inherit handles!
                 creationflags,
-                winprocess.EnvironmentBlock(env),
+                env,
                 cwd, startupinfo)
             self._child_created = True
             self._handle = int(hp)
             self._thread = ht
             self.pid = pid
             self.tid = tid
-            
+
             if canCreateJob:
                 # We create a new job for this process, so that we can kill
                 # the process and any sub-processes
@@ -192,7 +193,7 @@ class Popen(subprocess.Popen):
                 self._job = None
 
             winprocess.ResumeThread(int(ht))
-            ht.Close()
+            _winapi.CloseHandle(ht)
 
             if p2cread is not None and p2cread != -1:
                 p2cread.Close()
