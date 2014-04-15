@@ -28,7 +28,7 @@
                     "cwd":"$folder",
                     "cmd_postfix":"\n",
                     "autocomplete_server": true,
-                    "syntax": "Packages/Ruby/Ruby.tmLanguage"
+                    "syntax": "Packages/Rails/Ruby on Rails.tmLanguage"
                   }
                 }
             ]
