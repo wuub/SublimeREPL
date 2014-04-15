@@ -12,11 +12,12 @@
                  "command": "repl_open",
                  "caption": "Rails",
                  "id": "repl_rails",
-                 "external_id":"rails",
                  "mnemonic": "r",
                  "args":
                   {
                     "type": "subprocess",
+                    "external_id":       "ruby.rails",
+                    "additional_scopes": ["ruby"],
                     "encoding": {"windows": "$win_cmd_encoding",
                                  "linux": "utf-8",
                                  "osx": "utf-8"},
