@@ -3,7 +3,7 @@
         "id": "tools",
         "children":
         [{
-            "caption": "Rails",
+            "caption": "SublimeREPL",
             "mnemonic": "r",
             "id": "SublimeREPL",
             "children":
