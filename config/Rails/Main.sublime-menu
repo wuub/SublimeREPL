@@ -26,7 +26,7 @@
                              "osx": ["ruby", "${packages}/SublimeREPL/config/Rails/pry_repl.rb", "$editor"] },
                     "env": {},
                     "soft_quit":"\nexit\n",
-                    "cwd":"$folder",
+                    "cwd":"$file_path",
                     "cmd_postfix":"\n",
                     "autocomplete_server": true,
                     "syntax": "Packages/Rails/Ruby on Rails.tmLanguage"

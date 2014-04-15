@@ -52,7 +52,17 @@ def read_netstring(s)
     return msg
 end
 
+def rails_dir
+    rails_config = 'config.ru'
+    Pathname.new(Pathname.getwd).ascend do |dir|
+        return dir if File.exist?(File.join(dir, rails_config))
+    end
+    fail 'Failed to find Rails config'
+end
+
 ENV['RAILS_ENV'] = "development"
+
+Dir.chdir rails_dir
 
 APP_PATH = File.expand_path('config/application')
 require APP_PATH
