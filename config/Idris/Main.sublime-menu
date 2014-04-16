@@ -1,0 +1,27 @@
+[
+     {
+        "id": "tools",
+        "children":
+        [{
+            "caption": "SublimeREPL",
+            "mnemonic": "r",
+            "id": "SublimeREPL",
+            "children":
+            [
+                {"command": "repl_open", 
+                 "caption": "Idris",
+                 "id": "repl_idris",
+                 "mnemonic": "i",
+                 "args": {
+                    "type": "subprocess",
+                    "encoding": "utf8",
+                    "cmd": ["idris", "--nocolour"],
+                    "cwd": "$file_path",
+                    "external_id": "idris",
+                    "syntax": "Packages/Idris/Idris.tmLanguage"
+                    }
+                }
+            ]   
+        }]
+    }
+]

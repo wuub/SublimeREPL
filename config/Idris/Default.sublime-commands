@@ -1,0 +1,10 @@
+[
+    {
+        "caption": "SublimeREPL: Idris",
+        "command": "run_existing_window_command", "args":
+        {
+            "id": "repl_idris",
+            "file": "config/Idris/Main.sublime-menu"
+        }
+    }
+]
