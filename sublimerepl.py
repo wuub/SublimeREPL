@@ -512,7 +512,10 @@ class ReplManager(object):
                 except IOError:
                     print('Cannot load file: %s' % (pathname,))
                 else:
-                    window.run_command('repl_send', {"external_id": rv.external_id, "text": text})
+                    # Can't use rv.external_id, since the names don't match up
+                    # exactly with how text_transfer wants them.
+                    ext_id = rv.view.scope_name(0).split(" ")[0].split(".", 1)[1]
+                    window.run_command('repl_send', {"external_id": ext_id, "text": text})
 
     def restart(self, view, edit):
         repl_restart_args = view.settings().get("repl_restart_args")
