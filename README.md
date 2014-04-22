@@ -1,6 +1,13 @@
 SublimeREPL for SublimeText (2 and 3)
 =====================================
 
+IMPORTANT NOTE - DISCLAIMER 
+---------------------------
+
+Due to and uncertain future of SublimeText and its current **abandonware** status (no new releases for several months, no communication with the community, non-existent technical support on disintegrating forums) all of my SublimeText plugins including SublimeREPL are currently **ON HOLD**. I'll reconsider support and development **if and only if** *SublimeHQ* resumes operation that can be considered acceptable for a company licensing a paid software. Until then I'm limiting time spent supporting my ST plugins to the absolute minimum. 
+
+
+
 [![Stories in Ready](https://badge.waffle.io/wuub/SublimeREPL.png?label=ready)](http://waffle.io/wuub/SublimeREPL) 
 
 If you would like to donate to support SublimeREPL development, you can do so using [GitTip](https://www.gittip.com/wuub/) or [PayPal](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=4DGEPH7QAVHH6&lc=GB&item_name=SublimeREPL&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted). Someone willing to take care of documentation would also be very welcome :-)
@@ -85,21 +92,4 @@ Compatibility
 ================
 
 SublimeREPL is developed against the latest dev build of SublimeText3.
-Ubuntu 13.04 is main target platform with OSX closely after.
-Windows is tested from time to time.
-
-Sublime Text 2 compatibility is maintained where possible, but it's not a priority. 
-
-
-FAQ
----
-
-### 1. Is this a terminal emulator?
-
-No. Shell (cmd.exe/bash) REPL can be used for simple tasks (file creation, `git init` etc.) but anything _terminal like_ (mc, vim) will not work! SublimeREPL has a sister project: [SublimePTY](https://github.com/wuub/SublimePTY) that aims to bring real terminal emulator to SublimeText2.
-
-### 2. Is IPython supported?
-
-Yes, with autocompletion and some windowed `%pylab`. Inline `%pylab` is unfortunately not possible right now.
-
-
+Ubuntu 13.04 is main
