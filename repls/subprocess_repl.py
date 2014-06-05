@@ -208,26 +208,40 @@ class SubprocessRepl(Repl):
     def is_alive(self):
         return self.popen.poll() is None
 
-    def read_bytes(self):
+    def read_bytes(self, buffer_size=4096):
         out = self.popen.stdout
         if POSIX:
             while True:
                 i, _, _ = select.select([out], [], [])
                 if i:
-                    return out.read(4096)
+                    return out.read(buffer_size)
         else:
-            # this is windows specific problem, that you cannot tell if there
-            # are more bytes ready, so we read only 1 at a times
+            import ctypes
+            import msvcrt
+            kernel32 = ctypes.windll.kernel32
 
+            buffer_size = 1
+            bytes_read = bytearray()
+
+            #wait for some output synchronously, to not cause infinite loop
+            bytes_read.extend(out.read(buffer_size))
+
+            #read until end of current output
+            kernel32.SetNamedPipeHandleState(ctypes.c_void_p(msvcrt.get_osfhandle(out.fileno())), ctypes.byref(ctypes.c_int(1)), None, None)
+            #'Invalid Argument' means that there are no more bytes left to read
             while True:
-                byte = self.popen.stdout.read(1)
-                if byte == b'\r':
-                    # f'in HACK, for \r\n -> \n translation on windows
-                    # I tried universal_endlines but it was pain and misery! :'(
-                    continue
-                return byte
+                try:
+                    cur_bytes_read=out.read(buffer_size)
+                    if not cur_bytes_read:
+                        break
+                    bytes_read.extend(cur_bytes_read)
+                except (OSError, IOError):
+                    break
+            kernel32.SetNamedPipeHandleState(ctypes.c_void_p(msvcrt.get_osfhandle(out.fileno())), ctypes.byref(ctypes.c_int(0)), None, None)
 
-
+            # f'in HACK, for \r\n -> \n translation on windows
+            # I tried universal_endlines but it was pain and misery! :'(
+            return bytes_read.replace(b'\r\n', b'\n')
 
     def write_bytes(self, bytes):
         si = self.popen.stdin
