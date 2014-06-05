@@ -1,23 +1,16 @@
 SublimeREPL for SublimeText (2 and 3)
 =====================================
 
-IMPORTANT NOTE - DISCLAIMER 
----------------------------
+SublimeREPL
+-----------
 
-Due to and uncertain future of SublimeText and its current **abandonware** status (no new releases for several months, no communication with the community, non-existent technical support on disintegrating forums) all of my SublimeText plugins including SublimeREPL are currently **ON HOLD**. I'll reconsider support and development **if and only if** *SublimeHQ* resumes operation that can be considered acceptable for a company licensing a paid software. Until then I'm limiting time spent supporting my ST plugins to the absolute minimum. 
-
-
-
-[![Stories in Ready](https://badge.waffle.io/wuub/SublimeREPL.png?label=ready)](http://waffle.io/wuub/SublimeREPL) 
-
-If you would like to donate to support SublimeREPL development, you can do so using [GitTip](https://www.gittip.com/wuub/) or [PayPal](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=4DGEPH7QAVHH6&lc=GB&item_name=SublimeREPL&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted). Someone willing to take care of documentation would also be very welcome :-)
-
+Picks up the torch where wuub left off.
 
 Features
 --------
 
 #### Common
- * Run an interpreter (REPL) inside SublimeText2 view/tab.
+ * Run an interpreter (REPL) inside SublimeText view/tab.
  * Per-language persistent REPL history.
  * Easily evaluate code in the running REPL
  * Replace your current build system, and use stdin in your programs.
@@ -26,7 +19,7 @@ Features
 #### Python
  * Launch python in local or remote(1) virtualenv.
  * Quickly run selected script or launch PDB.
- * Use SublimeText2 Python console with history and multiline input.
+ * Use SublimeText Python console with history and multiline input.
 
 (1) - (ssh, linux/osx only)
 
@@ -50,7 +43,7 @@ Installation
 2. Install SublimeREPL
  1. `Preferences | Package Control | Package Control: Install Package`
  2. Choose `SublimeREPL`
-3. Restart SublimeText2
+3. Restart SublimeText
 4. Configure `SublimeREPL` (default settings in `Preferences | Package Settings | SublimeREPL | Settings - Default` should be modified in `Preferences | Package Settings | SublimeREPL | Settings - User`, this way they will survive package upgrades!
 
 Documentation
@@ -82,14 +75,12 @@ then type "SublimeREPL" and select the approperiate language.
 Note: <kbd>ctrl+,</kbd>, <kbd>f</kbd> means: press Ctrl and Comma, release all, press F.
 
 
-License and Price
+License
 =================
 
 Since version 1.2.0 SublimeREPL is licensed under GPL. Previous versions were licensed under BSD.
-If you're using SublimeREPL in commercial environment a donation is strongly encouraged ;-)
 
 Compatibility
 ================
 
 SublimeREPL is developed against the latest dev build of SublimeText3.
-Ubuntu 13.04 is main
