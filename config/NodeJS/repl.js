@@ -1,15 +1,14 @@
 (function () {
+    /* global require, process */
 
     var repl = require('repl');
 
     var rep = repl.start({
-        prompt:    null, //'> ',
-        source:    null, //process.stdin,
-        eval:      null, //require('vm').runInThisContext,
-        useGlobal: true, //false
+        input:     process.stdin,
+        output:    process.stdout,
+        useGlobal: true,
         useColors: false
     });
-
 
     var net = require('net');
     var ac_port = process.env.SUBLIMEREPL_AC_PORT;
