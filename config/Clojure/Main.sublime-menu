@@ -11,15 +11,15 @@
                 {"caption": "Clojure",
                  "id": "Clojure",
                  "children":[
-                    {"command": "repl_open", 
+                    {"command": "repl_open",
                      "caption": "Clojure",
                      "id": "repl_clojure",
                      "args": {
                         "type": "subprocess",
                         "encoding": "utf8",
-                        "cmd": {"windows": ["lein.bat", "repl"],
-                                "linux": ["lein", "repl"],
-                                "osx":  ["lein", "repl"]},
+                        "cmd": {"windows": ["lein.bat", "trampoline", "run", "-m", "clojure.main"],
+                                "linux": ["lein", "trampoline", "run", "-m", "clojure.main"],
+                                "osx":  ["lein", "trampoline", "run", "-m", "clojure.main"]},
                         "soft_quit": "\n(. System exit 0)\n",
                         "cwd": {"windows":"c:/Clojure",
                                 "linux": "$file_path",
@@ -29,10 +29,10 @@
                         "extend_env": {"INSIDE_EMACS": "1"}
                         }
                     },
-                    {"command": "clojure_auto_telnet_repl", 
+                    {"command": "clojure_auto_telnet_repl",
                      "id": "repl_clojure_telnet",
                      "caption": "Clojure-Telnet"}]}
-            ]   
+            ]
         }]
     }
 ]
