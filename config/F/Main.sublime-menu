@@ -19,7 +19,7 @@
                     "cmd": {
                             "windows": ["fsi.exe", "--utf8output", "--gui-"],
                             "osx": ["fsharpi", "--utf8output", "--readline-"],
-                            "linux": ["fsi", "--utf8output", "--readline-"]},
+                            "linux": ["fsharpi", "--utf8output", "--readline-"]},
                     "cmd_postfix": ";;\n",
                     "cwd": "$file_path",
                     "syntax": "Packages/F#/F#.tmLanguage"
