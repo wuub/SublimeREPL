@@ -4,14 +4,14 @@
         "children":
         [{
             "caption": "SublimeREPL",
-            "mnemonic": "r",
+            "mnemonic": "R",
             "id": "SublimeREPL",
             "children":
             [
                 {"command": "repl_open", 
                  "caption": "PowerShell",
                  "id": "repl_powershell",
-                 "mnemonic": "p",
+                 "mnemonic": "P",
                  "args": {
                     "type": "powershell",
                     "encoding": "",

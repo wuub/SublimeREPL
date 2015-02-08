@@ -4,7 +4,7 @@
         "children":
         [{
             "caption": "SublimeREPL",
-            "mnemonic": "r",
+            "mnemonic": "R",
             "id": "SublimeREPL",
             "children":
             [
@@ -15,7 +15,7 @@
                     {"command": "repl_open",
                      "caption": "Clozure CL",
                      "id": "repl_ccl",
-                     "mnemonic": "r",
+                     "mnemonic": "C",
                      "args": {
                         "type": "subprocess",
                         "encoding": "utf8",
@@ -30,7 +30,7 @@
                     {"command": "repl_open",
                      "caption": "SBCL",
                      "id": "repl_sbcl",
-                     "mnemonic": "r",
+                     "mnemonic": "S",
                      "args": {
                         "type": "subprocess",
                         "encoding": "utf8",
@@ -45,7 +45,7 @@
                     {"command": "repl_open",
                      "caption": "GNU Clisp",
                      "id": "repl_clisp",
-                     "mnemonic": "r",
+                     "mnemonic": "G",
                      "args": {
                         "type": "subprocess",
                         "encoding": "utf8",
@@ -60,7 +60,7 @@
                     {"command": "repl_open",
                      "caption": "Allegro CL",
                      "id": "repl_allegro",
-                     "mnemonic": "r",
+                     "mnemonic": "A",
                      "args": {
                         "type": "subprocess",
                         "encoding": "utf8",
@@ -75,7 +75,7 @@
                     {"command": "repl_open",
                      "caption": "ABCL",
                      "id": "repl_abcl",
-                     "mnemonic": "r",
+                     "mnemonic": "B",
                      "args": {
                         "type": "subprocess",
                         "encoding": "utf8",
@@ -90,7 +90,7 @@
                     {"command": "repl_open",
                      "caption": "CMUCL",
                      "id": "repl_cmucl",
-                     "mnemonic": "r",
+                     "mnemonic": "M",
                      "args": {
                         "type": "subprocess",
                         "encoding": "utf8",
@@ -105,7 +105,7 @@
                     {"command": "repl_open",
                      "caption": "ECL",
                      "id": "repl_ecl",
-                     "mnemonic": "r",
+                     "mnemonic": "E",
                      "args": {
                         "type": "subprocess",
                         "encoding": "utf8",

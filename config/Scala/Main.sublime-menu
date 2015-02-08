@@ -4,7 +4,7 @@
         "children":
         [{
             "caption": "SublimeREPL",
-            "mnemonic": "r",
+            "mnemonic": "R",
             "id": "SublimeREPL",
             "children":
             [
@@ -36,7 +36,7 @@
                     {"command": "repl_open",
                      "caption": "SBT for opened folder",
                      "id": "repl_sbt",
-                     "mnemonic": "b",
+                     "mnemonic": "B",
                      "args": {
                         "type": "subprocess",
                         "encoding": "utf8",
