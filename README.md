@@ -1,12 +1,6 @@
 SublimeREPL for SublimeText (2 and 3)
 =====================================
 
-IMPORTANT NOTE - DISCLAIMER 
----------------------------
-
-Due to and uncertain future of SublimeText and its current **abandonware** status (no new releases for several months, no communication with the community, non-existent technical support on disintegrating forums) all of my SublimeText plugins including SublimeREPL are currently **ON HOLD**. I'll reconsider support and development **if and only if** *SublimeHQ* resumes operation that can be considered acceptable for a company licensing a paid software. Until then I'm limiting time spent supporting my ST plugins to the absolute minimum. 
-
-
 
 [![Stories in Ready](https://badge.waffle.io/wuub/SublimeREPL.png?label=ready)](http://waffle.io/wuub/SublimeREPL) 
 
