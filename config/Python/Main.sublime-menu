@@ -81,7 +81,8 @@
                     },
                     {"command": "python_custom_shell_virtualenv_repl",
                      "id": "python_custom_shell_virtualenv_repl",
-                     "caption": "Python - Custom shell"},
+                     "caption": "Python - Custom shell"
+                    }
                 ]}
             ]
         }]
