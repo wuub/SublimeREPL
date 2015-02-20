@@ -4,14 +4,14 @@
         "children":
         [{
             "caption": "SublimeREPL",
-            "mnemonic": "r",
+            "mnemonic": "R",
             "id": "SublimeREPL",
             "children":
             [
                 {"command": "repl_open",
                  "caption": "Octave",
                  "id": "repl_octave",
-                 "mnemonic": "o",
+                 "mnemonic": "O",
                  "args": {
                     "type": "subprocess",
                     "encoding": "utf8",

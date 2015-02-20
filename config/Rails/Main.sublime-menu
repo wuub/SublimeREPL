@@ -4,7 +4,7 @@
         "children":
         [{
             "caption": "Rails",
-            "mnemonic": "r",
+            "mnemonic": "R",
             "id": "SublimeREPL",
             "children":
             [
@@ -13,7 +13,7 @@
                  "caption": "Rails",
                  "id": "repl_rails",
                  "external_id":"rails",
-                 "mnemonic": "r",
+                 "mnemonic": "R",
                  "args":
                   {
                     "type": "subprocess",

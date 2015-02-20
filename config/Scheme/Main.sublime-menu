@@ -4,7 +4,7 @@
         "children":
         [{
             "caption": "SublimeREPL",
-            "mnemonic": "r",
+            "mnemonic": "R",
             "id": "SublimeREPL",
             "children":
             [
@@ -15,7 +15,7 @@
                     {"command": "repl_open",
                      "caption": "Scheme",
                      "id": "repl_scheme",
-                     "mnemonic": "r",
+                     "mnemonic": "S",
                      "args": {
                         "type": "subprocess",
                         "encoding": "utf8",
@@ -33,7 +33,7 @@
                     {"command": "repl_open",
                      "caption": "Gauche",
                      "id": "repl_gauche",
-                     "mnemonic": "r",
+                     "mnemonic": "G",
                      "args": {
                         "type": "subprocess",
                         "encoding": "utf8",
@@ -51,7 +51,7 @@
                     {"command": "repl_open",
                      "caption": "Petite Chez Scheme",
                      "id": "repl_petite",
-                     "mnemonic": "r",
+                     "mnemonic": "P",
                      "args": {
                         "type": "subprocess",
                         "encoding": "utf8",
