@@ -169,7 +169,8 @@ __ https://github.com/wuub/venv
 
 Also, you can create custom shells via "custom_python_shells" option in the SublimeREPL configuration file. They will
 be available throw "Python - Custom shell" menu option. For example, you can configure django shell this way:
-"custom_python_shells": {"django": "manage.py shell"}.
+"custom_python_shells": {"django": "my_django_project/manage.py shell"}. For more info see option description in
+the configuration file.
 
 Documentation contributions from a Python specialist are welcome.
 
