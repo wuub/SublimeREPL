@@ -11,7 +11,7 @@
             "caption":"Prolog (Sicstus)",
             "command":"repl_open",
             "id":"repl_prolog",
-            "mnemonic":"p",
+            "mnemonic":"P",
             "args":{
               "type":"subprocess",
               "external_id":"prolog",

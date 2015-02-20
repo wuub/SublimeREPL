@@ -281,14 +281,14 @@ The menu configuration file `config/Lua/Menu.sublime-menu` contains::
           "children":
           [{
               "caption": "SublimeREPL",
-              "mnemonic": "r",
+              "mnemonic": "R",
               "id": "SublimeREPL",
               "children":
               [
                   {"command": "repl_open", 
                    "caption": "Lua",
                    "id": "repl_lua",
-                   "mnemonic": "l",
+                   "mnemonic": "L",
                    "args": {
                       "type": "subprocess",
                       "encoding": "utf8",

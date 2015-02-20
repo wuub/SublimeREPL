@@ -4,14 +4,14 @@
         "children":
         [{
             "caption": "SublimeREPL",
-            "mnemonic": "r",
+            "mnemonic": "R",
             "id": "SublimeREPL",
             "children":
             [
                 {"command": "repl_open",
                  "caption": "ScriptCS",
                  "id": "repl_scriptcs",
-                 "mnemonic": "scs",
+                 "mnemonic": "C",
                  "args": {
                     "type": "subprocess",
                     "external_id": "scriptcs",
