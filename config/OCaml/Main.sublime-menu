@@ -4,7 +4,7 @@
     "children":[
       {
         "caption":"SublimeREPL",
-        "mnemonic":"r",
+        "mnemonic":"R",
         "id":"SublimeREPL",
         "children":[
           {
@@ -14,7 +14,7 @@
                 "command":"repl_open",
                 "caption":"OCaml toplevel",
                 "id":"repl_ocaml",
-                "mnemonic":"r",
+                "mnemonic":"t",
                 "args":{
                   "type":"subprocess",
                   "external_id":"ocaml",
@@ -41,7 +41,7 @@
                 "command":"repl_open",
                 "caption":"OCaml utop",
                 "id":"repl_ocaml_utop",
-                "mnemonic":"r",
+                "mnemonic":"u",
                 "args":{
                   "type":"sublime_utop",
                   "external_id":"ocaml",

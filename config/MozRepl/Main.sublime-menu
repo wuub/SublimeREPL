@@ -4,13 +4,13 @@
         "children":
         [{
             "caption": "SublimeREPL",
-            "mnemonic": "r",
+            "mnemonic": "R",
             "id": "SublimeREPL",
             "children":
             [
                 {"command": "repl_open", 
                  "caption": "MozRepl",
-                 "mnemonic": "m",
+                 "mnemonic": "M",
                  "id": "repl_mozrepl",
                  "args": {
                     "type": "telnet",

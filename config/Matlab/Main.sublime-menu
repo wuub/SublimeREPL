@@ -4,14 +4,14 @@
         "children":
         [{
             "caption": "SublimeREPL",
-            "mnemonic": "r",
+            "mnemonic": "R",
             "id": "SublimeREPL",
             "children":
             [
                 {"command": "repl_open",
                  "caption": "Matlab",
                  "id": "repl_matlab",
-                 "mnemonic": "m",
+                 "mnemonic": "M",
                  "args": {
                     "type": "subprocess",
                     "encoding": "utf8",

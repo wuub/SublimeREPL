@@ -4,7 +4,7 @@
     "children":[
       {
         "caption":"SublimeREPL",
-        "mnemonic":"r",
+        "mnemonic":"R",
         "id":"SublimeREPL",
         "children":[
           {
@@ -14,7 +14,7 @@
                 "command":"repl_open",
                 "caption":"Ruby",
                 "id":"repl_ruby",
-                "mnemonic":"r",
+                "mnemonic":"R",
                 "args":{
                   "type":"subprocess",
                   "external_id":"ruby",
@@ -47,7 +47,7 @@
                 "command":"repl_open",
                 "caption":"Ruby - IRB (deprecated)",
                 "id":"repl_ruby_irb",
-                "mnemonic":"r",
+                "mnemonic":"I",
                 "args":{
                   "type":"subprocess",
                   "external_id":"ruby",

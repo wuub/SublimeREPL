@@ -4,11 +4,11 @@
         "children":
         [{
             "caption": "SublimeREPL",
-            "mnemonic": "r",
+            "mnemonic": "R",
             "id": "SublimeREPL",
             "children":
             [
-                // {"command": "repl_open", 
+                // {"command": "repl_open",
                 //  "caption": "Command Caption in Menu",
                 //  "mnemonic": "m",
                 //  "args": {
@@ -19,11 +19,11 @@
                 //     "env": {}, // clean environment for subprocess repl
                 //     "extend_env": {}, // variables to be added to standard env
                 //     "cmd_postfix": "\n", // postfix that will be automatically added after a line in repl
-                //     "suppress_echo": false, // try to remove remote echo 
+                //     "suppress_echo": false, // try to remove remote echo
                 //     "syntax": "Packages/Text/Plain text.tmLanguage"
                 //     }
                 // },
-            ]   
+            ]
         }]
     }
 ]
