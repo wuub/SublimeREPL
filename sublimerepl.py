@@ -259,7 +259,7 @@ class ReplView(object):
         self._view.set_read_only(self.delta > 0)
 
     def on_close(self):
-        self.repl.close()
+        self.repl.kill()
         for fun in self.call_on_close:
             fun(self)
 
