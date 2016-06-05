@@ -1,0 +1,10 @@
+[
+    {
+        "caption": "SublimeREPL: Rust",
+        "command": "run_existing_window_command", "args":
+        {
+            "id": "repl_Rust",
+            "file": "config/Rust/Main.sublime-menu"
+        }
+    }
+]
