@@ -78,7 +78,7 @@ def scan_for_virtualenvs(venv_paths):
     found_dirs = set()
     for venv_path in venv_paths:
         p = os.path.expanduser(venv_path)
-        pattern = os.path.join(p, "*", bin_dir, "activate_this.py")
+        pattern = os.path.join(p, bin_dir, "activate_this.py")
         found_dirs.update(list(map(os.path.dirname, glob.glob(pattern))))
     return sorted(found_dirs)
 
