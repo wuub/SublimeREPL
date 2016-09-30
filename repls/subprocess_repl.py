@@ -6,6 +6,7 @@ from __future__ import absolute_import, unicode_literals, print_function, divisi
 
 import subprocess
 import os
+import io
 import sys
 from .repl import Repl
 import signal
@@ -218,16 +219,15 @@ class SubprocessRepl(Repl):
         else:
             # this is windows specific problem, that you cannot tell if there
             # are more bytes ready, so we read only 1 at a times
-
-            while True:
-                byte = self.popen.stdout.read(1)
-                if byte == b'\r':
-                    # f'in HACK, for \r\n -> \n translation on windows
-                    # I tried universal_endlines but it was pain and misery! :'(
-                    continue
-                return byte
-
-
+           
+            ## This way it is possible to read more bytes on Windows the same 
+            ## way as on POSIX.
+            with io.open(self.popen.stdout.fileno(), 'rb', closefd=False) as out:
+                byte = out.read1(4096)
+                # f'in HACK, for \r\n -> \n translation on windows
+                # I tried universal_endlines but it was pain and misery! :'(
+                byte = byte.replace(b'\r', b'')
+            return byte
 
     def write_bytes(self, bytes):
         si = self.popen.stdin
