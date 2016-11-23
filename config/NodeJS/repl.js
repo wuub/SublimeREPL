@@ -3,7 +3,7 @@
     var repl = require('repl');
 
     var rep = repl.start({
-        prompt:    null, //'> ',
+        prompt:    '> ', //'> ',
         source:    null, //process.stdin,
         eval:      null, //require('vm').runInThisContext,
         useGlobal: true, //false
