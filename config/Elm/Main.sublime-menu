@@ -1,0 +1,29 @@
+[
+     {
+        "id": "tools",
+        "children":
+        [{
+            "caption": "SublimeREPL",
+            "mnemonic": "r",
+            "id": "SublimeREPL",
+            "children":
+            [
+                {"command": "repl_open",
+                "id": "repl_elm",
+                 "caption": "Elm",
+                 "args": {
+                    "type": "subprocess",
+                    "encoding": "utf8",
+                    "cmd": ["elm-repl"],
+                    "cwd": "$file_path",
+                    "syntax": "Packages/Elm Language Support/Syntax Highlighting/Elm.tmLanguage",
+                    "external_id": "elm",
+                    "extend_env": {
+                            "linux": {"PATH": "{PATH}:{HOME}/.cabal/bin"}
+                        }
+                    }
+                }
+            ]
+        }]
+    }
+]

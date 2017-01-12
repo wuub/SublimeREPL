@@ -1,0 +1,10 @@
+[
+    {
+        "caption": "SublimeREPL: Elm",
+        "command": "run_existing_window_command", "args":
+        {
+            "id": "repl_elm",
+            "file": "config/Elm/Main.sublime-menu"
+        }
+    }
+]
