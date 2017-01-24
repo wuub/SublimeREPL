@@ -25,7 +25,6 @@ class ClojureAutoLeinConnectRepl(sublime_plugin.WindowCommand):
         self.window.run_command("repl_open", {
             "type":"subprocess", 
             "encoding":"utf8", 
-            "soft_quit": "\n(. System exit 0)\n",
             "cmd": {
                 "windows": ["lein.bat", "repl", ":connect", host_and_port],
                 "linux": ["lein", "repl", ":connect", host_and_port],
