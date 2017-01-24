@@ -1,0 +1,20 @@
+[
+     {
+        "id": "tools",
+        "children":
+        [{
+            "caption": "SublimeREPL",
+            "mnemonic": "R",
+            "id": "SublimeREPL",
+            "children":
+            [
+                {"caption": "ClojureRemote",
+                 "id": "ClojureRemote",
+                 "children":[
+                    {"command": "clojure_auto_lein_connect_repl", 
+                     "id": "repl_clojure_remote",
+                     "caption": "ClojureRemote"}]}
+            ]   
+        }]
+    }
+]
