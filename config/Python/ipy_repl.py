@@ -25,6 +25,7 @@ if not IPYTHON:
     import code
     code.InteractiveConsole().interact()
 
+
 from traitlets.config.loader import Config
 
 editor = "subl -w"
@@ -100,7 +101,13 @@ def send_netstring(sock, msg):
 
 def complete(zmq_shell, req):
     kc = kernel_client(zmq_shell)
-    msg_id = kc.shell_channel.complete(**req)
+    # IPython 4+
+    if version > 3:
+        msg_id = kc.complete(req['line'], req['cursor_pos'])
+    # Ipython 1-3
+    else:
+        msg_id = kc.shell_channel.complete(**req)
+
     msg = kc.shell_channel.get_msg(timeout=0.5)
     if msg['parent_header']['msg_id'] == msg_id:
         return msg["content"]["matches"]

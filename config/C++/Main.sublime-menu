@@ -1,0 +1,50 @@
+[
+     {
+        "id": "tools",
+        "children":
+        [{
+            "caption": "SublimeREPL",
+            "mnemonic": "R",
+            "id": "SublimeREPL",
+            "children":
+            [
+                {"command": "repl_open", 
+                 "caption": "C++ Build",
+                 "id": "repl_plusplus_build",
+                 "mnemonic": "B",
+                 "args": {
+                    "type": "subprocess",
+                    "encoding": {"linux": "utf-8",
+                                 "osx": "utf-8"},
+                    "cmd": {"linux": ["g++", "$file_basename"],
+                            "osx": ["g++", "$file_basename"]},
+                    "cwd": "$file_path",
+                    "cmd_postfix": "\n", 
+                    "soft_quit": "pwd",
+                    "env": {},
+                    "suppress_echo": false, 
+                    "syntax": "Packages/Text/Plain text.tmLanguage"
+                    }
+                },
+                {"command": "repl_open", 
+                 "caption": "C++ Run",
+                 "id": "repl_plusplus_run",
+                 "mnemonic": "R",
+                 "args": {
+                    "type": "subprocess",
+                    "encoding": {"linux": "utf-8",
+                                 "osx": "utf-8"},
+                    "cmd": {"linux": ["./a.out"],
+                            "osx": "./a.out"},
+                    "cwd": "$file_path",
+                    "cmd_postfix": "\n", 
+                    "soft_quit": "pwd",
+                    "env": {},
+                    "suppress_echo": false, 
+                    "syntax": "Packages/Text/Plain text.tmLanguage"
+                    }
+                }                
+            ]   
+        }]
+    }
+]

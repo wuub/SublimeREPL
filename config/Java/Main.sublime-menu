@@ -1,0 +1,32 @@
+[
+     {
+        "id": "tools",
+        "children":
+        [{
+            "caption": "SublimeREPL",
+            "mnemonic": "R",
+            "id": "SublimeREPL",
+            "children":
+            [
+                {"command": "repl_open", 
+                 "caption": "Java",
+                 "id": "repl_java",
+                 "mnemonic": "J",
+                 "args": {
+                    "type": "subprocess",
+                    "encoding": {"windows": "$win_cmd_encoding",
+                                 "linux": "utf-8",
+                                 "osx": "utf-8"},
+                    "cmd": {"windows": ["java", "-cp $CLASSPATH", "bsh.Interpreter"],
+                            "linux": ["java", "-cp $CLASSPATH",  "bsh.Interpreter"],
+                            "osx": ["java", "bsh.Interpreter"]},
+                    "cwd": "$file_path",
+                    "extend_env": {"CLASSPATH": "${packages}/SublimeREPL/config/Java/bsh-2.0b4.jar"},
+                    "external_id": "java",
+                    "syntax": "Packages/Java/Java.tmLanguage"
+                    }
+                }
+            ]   
+        }]
+    }
+]

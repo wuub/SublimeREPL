@@ -167,6 +167,11 @@ Alternatively, more paths can be added to "python_virtualenv_paths" in the Subli
 __ https://bitbucket.org/dhellmann/virtualenvwrapper
 __ https://github.com/wuub/venv
 
+Also, you can create custom shells via "custom_python_shells" option in the SublimeREPL configuration file. They will
+be available through "Python - Custom shell" menu option. For example, you can configure django shell this way:
+"custom_python_shells": {"django": "my_django_project/manage.py shell"}. For more info see option description in
+the configuration file.
+
 Documentation contributions from a Python specialist are welcome.
 
 Configuration

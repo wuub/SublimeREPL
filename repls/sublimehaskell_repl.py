@@ -70,8 +70,10 @@ def ghci_wrap_multiline_syntax(lines):
 class SublimeHaskellRepl(SubprocessRepl):
     TYPE = "sublime_haskell"
 
-    def __init__(self, encoding, cmd=None, **kwds):
+    def __init__(self, encoding, cmd=None, loaded=None, caption=None, **kwds):
         super(SublimeHaskellRepl, self).__init__(encoding, cmd=ghci_append_package_db(cmd), **kwds)
+        self.loaded = loaded
+        self.caption = caption
 
     def write(self, command):
         setting_multiline = get_setting('format_multiline', True)
@@ -91,3 +93,8 @@ class SublimeHaskellRepl(SubprocessRepl):
                 lines = ghci_wrap_multiline_syntax(lines)
             new_cmd = "".join(lines)
         return super(SublimeHaskellRepl, self).write(new_cmd)
+
+    def name(self):
+        if self.caption is not None:
+            return self.caption
+        return super(SublimeHaskellRepl, self).name()

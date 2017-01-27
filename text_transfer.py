@@ -127,6 +127,50 @@ def clojure_sender(repl, text, view, repl_view=None):
                 pos = namespace.end()
     return default_sender(repl, text + repl.cmd_postfix, view, repl_view)
 
+@sender("lisp")
+def lisp_sender(repl, text, view, repl_view=None):
+    def find_package_name(point):
+        packages = [in_package for in_package
+                    in view.find_all(r"\((?:cl:|common-lisp:)?in-package\s+?[^\)]+\)", sublime.IGNORECASE)
+                    if in_package.b < point]
+        if packages:
+            begin = view.find(r"\((?:cl:|common-lisp:)?in-package\s+", packages[-1].a, sublime.IGNORECASE).b
+            end = view.find(r"\s*\)", begin, sublime.IGNORECASE).a
+            return view.substr(sublime.Region(begin, end))
+        return None
+
+    def eval_in_package(body, package_name=None):
+        if not body:
+            return ""
+
+        body = body.replace('\\', r'\\').replace('"', r'\"')
+        if package_name:
+            return "(cl:eval (cl:let ((cl:*package* (cl:or (cl:find-package %s) (cl:find-package :cl-user)))) (cl:read-from-string \"%s\")))" % (package_name, body)
+        else:
+            return "(cl:eval (cl:let ((cl:*package* (cl:find-package :cl-user))) (cl:read-from-string \"(cl:progn %s)\")))" % body
+
+    # check if the text contains in-package.
+    inpackages = [[match.start(), match.end()]
+                  for match
+                  in re.finditer(r"\((?:cl:|common-lisp:)?in-package\s+?[^\)]+\)", text)]
+    current = view.sel()[0].begin()
+
+    if inpackages:
+        first = inpackages[0]
+        package_name = find_package_name(current)
+        evalText = eval_in_package(text[0:first[0]], package_name)
+
+        while inpackages:
+            inpkg = inpackages.pop(0)
+            package_name = find_package_name(current + inpkg[1] + 1)
+            evalText = evalText + eval_in_package(text[inpkg[1]+1 : inpackages[0][0] if inpackages else None], package_name)
+        text = evalText
+    else:
+        package_name = find_package_name(current)
+        text = text + eval_in_package(text, package_name)
+
+    return default_sender(repl, text + repl.cmd_postfix, view, repl_view)
+
 class ReplViewWrite(sublime_plugin.TextCommand):
     def run(self, edit, external_id, text):
         for rv in manager.find_repl(external_id):
@@ -159,6 +203,8 @@ class ReplTransferCurrent(sublime_plugin.TextCommand):
             text = self.selected_lines()
         elif scope == "function":
             text = self.selected_functions()
+        elif scope == "expression":
+            text = self.selected_expressions()
         elif scope == "block":
             text = self.selected_blocks()
         elif scope == "file":
@@ -175,7 +221,24 @@ class ReplTransferCurrent(sublime_plugin.TextCommand):
         return "".join(parts)
 
     def selected_blocks(self):
-        # TODO: Clojure only for now
+        # TODO: Lisp-family only for now
+        v = self.view
+        old_sel = list(v.sel())
+        v.run_command("expand_selection", {"to": "brackets"})
+
+        sel = []
+        while sel != list(v.sel()):
+            sel = list(v.sel())
+            v.run_command("expand_selection", {"to": "brackets"})
+
+        v.sel().clear()
+        for s in old_sel:
+            v.sel().add(s)
+
+        return "\n\n".join([v.substr(s) for s in sel])
+
+    def selected_expressions(self):
+        # TODO: Lisp-family only for now
         v = self.view
         strs = []
         old_sel = list(v.sel())

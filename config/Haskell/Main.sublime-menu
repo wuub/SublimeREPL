@@ -1,27 +1,47 @@
-[
-     {
-        "id": "tools",
+[{
+    "id": "tools",
+    "children":
+    [{
+        "caption": "SublimeREPL",
+        "mnemonic": "r",
+        "id": "SublimeREPL",
         "children":
         [{
-            "caption": "SublimeREPL",
-            "mnemonic": "R",
-            "id": "SublimeREPL",
+            "caption": "Haskell",
+            "id": "Haskell",
             "children":
             [
-                {"command": "repl_open", 
-                 "caption": "Haskell",
-                 "id": "repl_haskell",
-                 "mnemonic": "H",
-                 "args": {
+            {
+                "command": "repl_open",
+                "caption": "Haskell",
+                "id": "repl_haskell",
+                "mnemonic": "h",
+                "args": {
                     "type": "sublime_haskell",
                     "encoding": "utf8",
                     "cmd": ["ghci"],
                     "cwd": "$file_path",
                     "external_id": "haskell",
+                    "additional_scopes": ["haskell.bird"],
                     "syntax": "Packages/Haskell/Haskell.tmLanguage"
-                    }
                 }
-            ]   
+            },
+            {
+                "command": "repl_open",
+                "caption": "Haskell - RUN Current file",
+                "id": "repl_haskell_run",
+                "mnemonic": "r",
+                "args": {
+                    "type": "sublime_haskell",
+                    "encoding": "utf8",
+                    "cmd": ["runhaskell", "$file_basename"],
+                    "cwd": "$file_path",
+                    "external_id": "haskell",
+                    "syntax": "Packages/Haskell/Haskell.tmLanguage"
+                }
+            }
+            ]
+
         }]
-    }
-]
+    }]
+}]

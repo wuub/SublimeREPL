@@ -6,5 +6,13 @@
             "id": "repl_haskell",
             "file": "config/Haskell/Main.sublime-menu"
         }
+    },
+    {
+        "caption": "SublimeREPL: Haskell - RUN current file",
+        "command": "run_existing_window_command", "args":
+        {
+            "id": "repl_haskell_run",
+            "file": "config/Haskell/Main.sublime-menu"
+        }
     }
 ]

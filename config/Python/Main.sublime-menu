@@ -38,7 +38,7 @@
                         "encoding": "utf8",
                         "cmd": ["python", "-i", "-u", "-m", "pdb", "$file_basename"],
                         "cwd": "$file_path",
-                        "syntax": "Packages/Python/Python.tmLanguage",
+                        "syntax": "Packages/Text/Plain text.tmLanguage",
                         "external_id": "python",
                         "extend_env": {"PYTHONIOENCODING": "utf-8"}
                         }
@@ -52,7 +52,7 @@
                         "encoding": "utf8",
                         "cmd": ["python", "-u", "$file_basename"],
                         "cwd": "$file_path",
-                        "syntax": "Packages/Python/Python.tmLanguage",
+                        "syntax": "Packages/Text/Plain text.tmLanguage",
                         "external_id": "python",
                         "extend_env": {"PYTHONIOENCODING": "utf-8"}
                         }
@@ -78,6 +78,10 @@
                             "SUBLIMEREPL_EDITOR": "$editor"
                         }
                     }
+                    },
+                    {"command": "python_custom_shell_virtualenv_repl",
+                     "id": "python_custom_shell_virtualenv_repl",
+                     "caption": "Python - Custom shell"
                     }
                 ]}
             ]

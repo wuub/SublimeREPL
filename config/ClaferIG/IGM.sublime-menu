@@ -1,0 +1,30 @@
+[
+     {
+        "id": "tools",
+        "children":
+        [{
+            "caption": "SublimeREPL",
+            "mnemonic": "r",
+            "id": "SublimeREPL",
+            "children":
+            [
+                {"command": "repl_open", 
+                 "caption": "ClaferSMT",
+                 "id": "repl_claferSMT",
+                 "mnemonic": "m",
+                 "args": {
+                    "type": "subprocess",
+                    "encoding": "utf8",
+                    "cmd": [ "python"
+                           , "ClaferSMT.egg"
+                           , "--mode=repl"
+                           , "$file" 
+                           ],
+                    "cwd": "$packages/ClaferToolsST/",
+                    "external_id": "claferSMT"
+                    }
+                }
+            ]   
+        }]
+    }
+]

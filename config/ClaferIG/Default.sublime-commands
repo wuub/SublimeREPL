@@ -1,0 +1,34 @@
+[
+    {
+        "caption": "SublimeREPL: ClaferIG Simple",
+        "command": "run_existing_window_command", 
+        "args": {
+            "id": "repl_claferIGS",
+            "file": "config/ClaferIG/IGS.sublime-menu"
+        }
+    },
+    {
+        "caption": "SublimeREPL: ClaferIG Full",
+        "command": "run_existing_window_command", 
+        "args": {
+            "id": "repl_claferIGF",
+            "file": "config/ClaferIG/IGF.sublime-menu"
+        }
+    },
+    {
+        "caption": "SublimeREPL: ClaferChocoIG",
+        "command": "run_existing_window_command", 
+        "args": {
+            "id": "repl_claferChocoIG",
+            "file": "config/ClaferIG/IGC.sublime-menu"
+        }
+    },
+    {
+        "caption": "SublimeREPL: ClaferSMT",
+        "command": "run_existing_window_command", 
+        "args": {
+            "id": "repl_claferSMT",
+            "file": "config/ClaferIG/IGM.sublime-menu"
+        }
+    }
+]
