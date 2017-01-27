@@ -143,7 +143,19 @@ class SubprocessRepl(Repl):
             try:
                 output = subprocess.check_output(getenv_command)
                 lines = output.decode("utf-8", errors="replace").splitlines()
-                env = dict(line.split('=', 1)  for line in lines)
+                kw_pairs = [line.split('=', 1) for line in lines]
+                santized_kw_pairs = []
+                for kw_pair in kw_pairs:
+                    if len(kw_pair) == 1:
+                        # no `=` inside the line, we will append this to previous
+                        # kw pair's value
+                        previous_pair = santized_kw_pairs[-1]
+                        previous_pair[1] += "\n" + kw_pair[0]
+                    elif len(kw_pair) == 2:
+                        santized_kw_pairs.append(kw_pair)
+                    else:
+                        pass
+                env = dict(santized_kw_pairs)
                 return env
             except:
                 import traceback

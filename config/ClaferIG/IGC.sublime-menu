@@ -1,0 +1,33 @@
+[
+     {
+        "id": "tools",
+        "children":
+        [{
+            "caption": "SublimeREPL",
+            "mnemonic": "r",
+            "id": "SublimeREPL",
+            "children":
+            [
+                {"command": "repl_open", 
+                 "caption": "ClaferChocoIG",
+                 "id": "repl_claferChocoIG",
+                 "mnemonic": "c",
+                 "args": {
+                    "type": "subprocess",
+                    "encoding": "utf8",
+                    "cmd": [ "java"
+                           , "-jar"
+                           , "claferchocoig.jar"
+                           , "--repl"
+                           , "--prettify"
+                           , "--file"
+                           , "$file" 
+                           ],
+                    "cwd": "$packages/ClaferToolsST/",
+                    "external_id": "claferChocoIG"
+                    }
+                }
+            ]   
+        }]
+    }
+]
