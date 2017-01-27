@@ -12,6 +12,34 @@ from contextlib import closing
 
 SETTINGS_FILE = "SublimeREPL.sublime-settings"
 
+
+class ClojureAutoLeinConnectRepl(sublime_plugin.WindowCommand):
+
+    def run(self):
+        self.window.show_input_panel("Enter host and port (default: localhost:4343)", "",
+                                     self.open_lein_connect_repl,
+                                     None, None)
+
+    def open_lein_connect_repl(self, host_and_port):
+        host_and_port = host_and_port or 'localhost:4343'
+        self.window.run_command("repl_open", {
+            "type":"subprocess", 
+            "encoding":"utf8", 
+            "cmd": {
+                "windows": ["lein.bat", "repl", ":connect", host_and_port],
+                "linux": ["lein", "repl", ":connect", host_and_port],
+                "osx":  ["lein", "repl", ":connect", host_and_port]
+            },
+            "cwd": {
+                "windows":"c:/Clojure",
+                "linux": "$file_path",
+                "osx": "$file_path"
+            },
+            "external_id":"clojureremote",
+            "extend_env": {"INSIDE_EMACS": "1"},
+            "syntax":"Packages/Clojure/Clojure.tmLanguage"})
+
+
 class ClojureAutoTelnetRepl(sublime_plugin.WindowCommand):
     def is_running(self, port_str):
         """Check if port is open on localhost"""
