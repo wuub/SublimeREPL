@@ -18,6 +18,7 @@
                     "cmd": ["ghci"],
                     "cwd": "$file_path",
                     "external_id": "haskell",
+                    "additional_scopes": ["haskell.bird"],
                     "syntax": "Packages/Haskell/Haskell.tmLanguage"
                     }
                 }
