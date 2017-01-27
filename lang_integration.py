@@ -7,6 +7,7 @@ import os
 import glob
 import os.path
 import socket
+import shlex
 from functools import partial
 from contextlib import closing
 
@@ -137,7 +138,7 @@ class PythonVirtualenvRepl(sublime_plugin.WindowCommand):
                     "SUBLIMEREPL_ACTIVATE_THIS": activate_file,
                     "PYTHONIOENCODING": "utf-8"
                 },
-                "cmd": [python_executable, "-u", "${packages}/SublimeREPL/config/Python/ipy_repl.py"],
+                "cmd": self._get_python_cmd(python_executable, directory),
                 "cwd": "$file_path",
                 "encoding": "utf8",
                 "syntax": "Packages/Python/Python.tmLanguage",
@@ -148,6 +149,37 @@ class PythonVirtualenvRepl(sublime_plugin.WindowCommand):
         choices = self._scan()
         nice_choices = [[path.split(os.path.sep)[-2], path] for path in choices]
         self.window.show_quick_panel(nice_choices, partial(self.run_virtualenv, nice_choices))
+
+    def _get_python_cmd(self, python_executable, directory):
+        return [python_executable, "-u", "${packages}/SublimeREPL/config/Python/ipy_repl.py"]
+
+
+class PythonCustomShellVirtualenvRepl(PythonVirtualenvRepl):
+    def run(self):
+        shell_settings = sublime.load_settings(SETTINGS_FILE).get("custom_python_shells")
+        shells = [[name, args] for name, args in shell_settings.items()]
+        self.window.show_quick_panel(
+            shells, partial(self._choose_custom_shell, shells))
+
+    def _choose_custom_shell(self, shells, index):
+        if index == -1:
+            return
+        __, self._shell_args = shells[index]
+
+        def show_virtualenv_quick_panel():
+            choices = self._scan()
+            nice_choices = [[path.split(os.path.sep)[-2], path]
+                            for path in choices]
+            self.window.show_quick_panel(
+                nice_choices, partial(self.run_virtualenv, nice_choices))
+
+        sublime.set_timeout(show_virtualenv_quick_panel, 10)  # FIXME are there better way to chain quick panels?
+
+    def _get_python_cmd(self, python_executable, directory):
+        shell_args = self._shell_args if isinstance(self._shell_args, list) \
+            else shlex.split(self._shell_args)
+        shell_file, file_args = shell_args[0], shell_args[1:]
+        return [python_executable, "-u", os.path.join(directory, "../", shell_file)] + file_args
 
 
 VENV_SCAN_CODE = """
