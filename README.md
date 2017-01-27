@@ -21,6 +21,7 @@ Features
  * Launch python in local or remote(1) virtualenv.
  * Quickly run selected script or launch PDB.
  * Use SublimeText2 Python console with history and multiline input.
+ * Configure custom shells (django shell, scrapy shell, etc).
 
 (1) - (ssh, linux/osx only)
 

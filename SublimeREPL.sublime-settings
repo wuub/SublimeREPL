@@ -90,4 +90,14 @@
     // NOTE: This will not fire if REPL view is in the same tab group as 
     // the view from which the code is sent.
     "focus_view_on_transfer": true
+
+    // Define additional arguments for python interpreter in order to access
+    // custom shells (eg django shell). Custom shells can be run from
+    // "Python - Custom shell" menu option.
+    // Config keys represent shell names, values represent arguments and
+    // can be either of str or list type. The first argument is always
+    // treated as python file and is joined with root directory of the
+    // selected virtualenv. For example, this is how you can setup django shell:
+    // "custom_python_shells": {"django": "my_django_project/manage.py shell"}
+    "custom_python_shells": {}
 }
