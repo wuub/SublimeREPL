@@ -1,6 +1,7 @@
 require 'rubygems'
 gem 'pry'
 require 'pry'
+require 'pry/input_completer'
 require 'socket'
 require 'thread'
 require 'json'
@@ -16,7 +17,7 @@ class PryInput
 end
 
 class PryOutput
-    def puts(data="")
+    def print(data="")
         $stdout.puts(data.gsub('`', "'"))
         $stdout.flush
     end
@@ -34,7 +35,7 @@ port = ENV["SUBLIMEREPL_AC_PORT"].to_i
 socket = Socket.new(AF_INET, SOCK_STREAM, 0)
 sockaddr = Socket.pack_sockaddr_in(port, '127.0.0.1')
 socket.connect(sockaddr)
-completer = Pry::InputCompleter.build_completion_proc(binding)
+completer = Pry::InputCompleter.new(binding)
 
 def read_netstring(s)
     size = 0
