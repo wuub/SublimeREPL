@@ -24,11 +24,11 @@ if not IPYTHON:
     import code
     code.InteractiveConsole().interact()
 
-from IPython.config.loader import Config
+from IPython.terminal.ipapp import load_default_config
 
 editor = "subl -w"
 
-cfg = Config()
+cfg = load_default_config()
 cfg.InteractiveShell.use_readline = False
 cfg.InteractiveShell.autoindent = False
 cfg.InteractiveShell.colors = "NoColor"
