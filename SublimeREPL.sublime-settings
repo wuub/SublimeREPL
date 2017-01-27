@@ -1,90 +1,92 @@
 {
-	// default_extend_env are used to augment any environment variables
-	// that should be visible for all subprocess repls launched within
-	// SublimeREPL. This is a very good place to add PATH extension
-	// once "PATH": "{PATH}:/home/username/mylocalinstalls/bin" or whatever
-	"default_extend_env": {},
+    // default_extend_env are used to augment any environment variables
+    // that should be visible for all subprocess repls launched within
+    // SublimeREPL. This is a very good place to add PATH extension
+    // once "PATH": "{PATH}:/home/username/mylocalinstalls/bin" or whatever.
+    "default_extend_env": {},
 
-	// Specify whether to move repls to a different Sublime Text group (frame)
-	// immediately on opening. Setting this to true will simply move it to
-	// the 'next' group from the one that was in focus when it was opened
-	// (one down with row layout, one to the right with column and grid
-	// layout). Alternatively, you can set this to the index of the group in
-	// which you want all repls to be opened (index 0 being the top-left group).
-	// Activating this option will NOT automatically change your layout/create
-	// a new group if it isn't open.
-	"open_repl_in_group": true,
+    // Specify whether to move repls to a different Sublime Text group (frame)
+    // immediately on opening.
+    // Setting this to true will simply move it to the 'next' group from the one
+    // that was in focus when it was opened (one down with row layout, one
+    // to the right with column and grid layout). 
+    // Alternatively, you can set this to the index of the group in
+    // which you want all repls to be opened (index 0 being the top-left group).
+    // NOTE: Activating this option will NOT automatically change your layout or create
+    // a new group if it isn't open.
+    "open_repl_in_group": true,
 
-	// Persistent history is stored per REPL external_id, it means that all python
-	// REPLS will share history. If you wish you can disable history altogether
-	"persistent_history_enabled": true,
+    // Persistent history is stored per REPL external_id, it means that all python
+    // REPLS will share history. If you wish, you can disable history altogether.
+    "persistent_history_enabled": true,
 
-	// By default SublimeREPL leaves REPL view open once the underlying subprocess
-	// dies or closes connection. This is useful when the process dies for an unexpected
-	// reason as it allows you to inspect it output. If you want. Setting this
-	// to true will cause SublimreREPL to close view once the process died.
-	"view_auto_close": false,
+    // By default SublimeREPL leaves REPL view open once the underlying subprocess
+    // dies or closes connection. This is useful when the process dies for an unexpected
+    // reason as it allows you to inspect it output. Setting this to true 
+    // will cause SublimeREPL to close the REPL view once the process dies.
+    "view_auto_close": false,
 
-	// On POSIX system SublimeText launched from GUI does not inherit
-	// a proper environment. Often leading to problems with finding interpreters
-	// or not using the ones affected by changes in ~/.profile / *rc files
-	// This command is used as a workaround, it's launched before any subprocess
-	// repl starts and it's output is parsed as an environment
-	"getenv_command": ["/bin/bash", "--login", "-c", "env"],
+    // On POSIX system Sublime Text launched from GUI does not inherit
+    // a proper environment, which often leads to problems with finding interpreters
+    // or not using the ones affected by changes in ~/.profile / *rc files.
+    // This command is used as a workaround, it's launched before any subprocess
+    // REPL starts and its output is parsed as an environment.
+    "getenv_command": ["/bin/bash", "--login", "-c", "env"],
 
-	// Some terminals output ascii color codes which are not currently supported
-	// enable this option to filter them out.
-	"filter_ascii_color_codes": true,
+    // Some terminals output ASCII color codes which are not currently supported.
+    // Enable this option to filter them out.
+    "filter_ascii_color_codes": true,
 
-	// Where to look for python virtualenvs
-	"python_virtualenv_paths": [
-		"~/.virtualenvs",  // virtualenvwrapper
-		"~/.venv"  // venv.bash https://github.com/wuub/venv
-	],
+    // Where to look for python virtualenvs.
+    "python_virtualenv_paths": [
+        "~/.virtualenvs",  // virtualenvwrapper
+        "~/.venv"  // venv.bash https://github.com/wuub/venv
+    ],
 
-	// Use arrows for history navigation instead of Alt+[P|N]/Ctrl+[P|N]
-	"history_arrows": true,
+    // Use arrows for history navigation instead of Alt+[P|N]/Ctrl+[P|N]
+    "history_arrows": true,
 
-	// standard sublime view settings that will be overwritten on each repl view
-	// this has to be customized as a whole dictionary
-	"repl_view_settings": {
-		"translate_tabs_to_spaces": false,
-		"auto_indent": false,
-		"smart_indent": false,
-		"spell_check": false,
-		"indent_subsequent_lines": false,
-		"detect_indentation": false,
-		"auto_complete": true,
-		"line_numbers": false,
-		"gutter": false
-	},
+    // Standard Sublime view settings that will be overwritten on each repl view.
+    // This has to be customized as a whole dictionary.
+    "repl_view_settings": {
+        "translate_tabs_to_spaces": false,
+        "auto_indent": false,
+        "smart_indent": false,
+        "spell_check": false,
+        "indent_subsequent_lines": false,
+        "detect_indentation": false,
+        "auto_complete": true,
+        "line_numbers": false,
+        "gutter": false
+    },
 
-	// this settings exposes additional variables in repl config files, especially
-	// those related to sublime projects that are not available through standard API
-	// WARNING: this will switch your build system back to Automatic each time a REPL
-	// is started so beware!
-	"use_build_system_hack": false,
+    // This setting exposes additional variables in REPL config files, especially
+    // those related to Sublime projects that are not available through standard API.
+    // WARNING: this will switch your build system back to Automatic each time a REPL
+    // is started so beware!
+    "use_build_system_hack": false,
 
-	// IP address used to setup autocomplete server in sublimerepl.
-	// changing this is usefull when you want to exclude one address
-	// from proxychains/tsocks routing
-	"autocomplete_server_ip": "127.0.0.1",
+    // IP address used to setup autocomplete server in SublimeREPL.
+    // Changing this is useful when you want to exclude an address
+    // from proxychains/tsocks routing
+    "autocomplete_server_ip": "127.0.0.1",
 
-	// Mapping is used, when external_id of REPL does not match
-	// source.[xxx] scope of syntax definition used to highlight
-	// files from which text is being transfered. For example octave
-	// repls use source.matlab syntax files and w/o this mapping text transfer
-	// will not work
-	"external_id_mapping": {
-		"octave": "matlab"
-	},
+    // Mapping is used when external_id of REPL does not match
+    // source.[xxx] scope of syntax definition used to highlight
+    // files from which text is being transferred.
+    // For example, octave repls use source.matlab syntax files and without 
+    // this mapping text transfer will not work.
+    "external_id_mapping": {
+        "octave": "matlab"
+    },
 
-	// If set to true, SublimeREPL will try to append evaluated code to repl
-	// output before evaluation (e.g. Ctrl+, f)
-	"show_transferred_text": false,
+    // If set to true, SublimeREPL will try to append evaluated code to REPL
+    // output before evaluation (e.g. Ctrl+, f).
+    "show_transferred_text": false,
 
-	// If set to true repl view (tab) that receives text for evaluation will
-	// be brought to front after text transfer. Note: This will not fire if repl view
-	// is in the same tab group as the view from which the code is sent.
-	"focus_view_on_transfer": true
+    // If set to true, REPL view (tab) that receives text for evaluation will
+    // be brought to front after text transfer.
+    // NOTE: This will not fire if REPL view is in the same tab group as 
+    // the view from which the code is sent.
+    "focus_view_on_transfer": true
 }
