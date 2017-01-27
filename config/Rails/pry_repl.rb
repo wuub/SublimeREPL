@@ -1,6 +1,19 @@
 # Simply merged `pry_repl.rb` from the Ruby REPL and - https://github.com/doitian/rails-console-pry
 
 require 'rubygems'
+
+use_rails_bundler = ENV["REPL_USE_RAILS_BUNDLER"] && !!(ENV["REPL_USE_RAILS_BUNDLER"].downcase =~ /^(true|t|yes|y|1)$/i)
+if use_rails_bundler
+    require 'bundler'
+    begin 
+        # Set up load paths for all bundled gems 
+        ENV["BUNDLE_GEMFILE"] = "Gemfile"
+        Bundler.setup 
+    rescue Bundler::GemNotFound 
+        raise RuntimeError, "Bundler couldn't find some gems.\n" + "Did you run `bundle install`?" 
+    end
+end
+
 gem 'pry'
 require 'pry'
 require 'thread'
