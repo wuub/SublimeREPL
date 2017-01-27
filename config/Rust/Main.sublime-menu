@@ -1,0 +1,27 @@
+[
+     {
+        "id": "tools",
+        "children":
+        [{
+            "caption": "SublimeREPL",
+            "mnemonic": "R",
+            "id": "SublimeREPL",
+            "children":
+            [
+                {"command": "repl_open", 
+                 "caption": "Rust",
+                 "id": "repl_Rust",
+                 "mnemonic": "R",
+                 "args": {
+                    "type": "subprocess",
+                    "encoding": "utf8",
+                    "cmd": ["cargo", "run"],
+                    "cwd": "$file_path",
+                    "external_id": "rust",
+                    "syntax": "Packages/Rust/Rust.tmLanguage"
+                    }
+                }
+            ]   
+        }]
+    }
+]
