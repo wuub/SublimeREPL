@@ -1,0 +1,10 @@
+[
+    {
+        "caption": "SublimeREPL: Java",
+        "command": "run_existing_window_command", "args":
+        {
+            "id": "repl_java",
+            "file": "config/Java/Main.sublime-menu"
+        }
+    }
+]
