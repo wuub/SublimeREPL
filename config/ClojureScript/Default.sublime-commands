@@ -8,6 +8,14 @@
         }
     },
     {
+        "caption": "SublimeREPL: ClojureScript Figwheel REPL",
+        "command": "run_existing_window_command", "args":
+        {
+            "id": "repl_clojurescript_figwheel",
+            "file": "config/ClojureScript/Main.sublime-menu"
+        }
+    },
+    {
         "caption": "SublimeREPL: ClojureScript",
         "command": "run_existing_window_command", "args":
         {
