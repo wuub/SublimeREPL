@@ -17,7 +17,7 @@
                     "external_id": "r",
                     "additional_scopes": ["tex.latex.knitr"],
                     "additional_scopes": ["tex.latex.knitr.ing"],
- +                  "additional_scopes": ["tex.latex.knitr.beamer.ing"],
+                    "additional_scopes": ["tex.latex.knitr.beamer.ing"],
                     "encoding": {
                         "windows": "$win_cmd_encoding",
                         "linux": "utf8",
