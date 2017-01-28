@@ -89,7 +89,7 @@
     // be brought to front after text transfer.
     // NOTE: This will not fire if REPL view is in the same tab group as 
     // the view from which the code is sent.
-    "focus_view_on_transfer": true
+    "focus_view_on_transfer": true,
 
     // Define additional arguments for python interpreter in order to access
     // custom shells (eg django shell). Custom shells can be run from
