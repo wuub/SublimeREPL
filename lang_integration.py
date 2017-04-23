@@ -93,8 +93,13 @@ class PythonVirtualenvRepl(sublime_plugin.WindowCommand):
             return
         (name, directory) = choices[index]
         activate_file = os.path.join(directory, "activate_this.py")
-        python_executable = os.path.join(directory, "python")
+        ipy = any(os.path.exists(python_executable[:-6]+ipy) for ipy in ["ipython", "ipython.exe"])
+        python_executable = os.path.join(directory, "ipython" if ipy else "python")
         path_separator = ":"
+        if ipy:
+            python_cmdline = [python_executable, "-i"]
+        else:
+            python_cmdline = [python_executable, "-i", "-u"]
         if os.name == "nt":
             python_executable += ".exe"  # ;-)
             path_separator = ";"
@@ -103,13 +108,11 @@ class PythonVirtualenvRepl(sublime_plugin.WindowCommand):
             {
                 "encoding":"utf8",
                 "type": "subprocess",
-                "autocomplete_server": True,
                 "extend_env": {
                     "PATH": directory + path_separator + "{PATH}",
-                    "SUBLIMEREPL_ACTIVATE_THIS": activate_file,
                     "PYTHONIOENCODING": "utf-8"
                 },
-                "cmd": [python_executable, "-u", "${packages}/SublimeREPL/config/Python/ipy_repl.py"],
+                "cmd": python_cmdline,
                 "cwd": "$file_path",
                 "encoding": "utf8",
                 "syntax": "Packages/Python/Python.tmLanguage",
