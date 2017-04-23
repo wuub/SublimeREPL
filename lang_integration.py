@@ -96,13 +96,13 @@ class PythonVirtualenvRepl(sublime_plugin.WindowCommand):
         ipy = any(os.path.exists(python_executable[:-6]+ipy) for ipy in ["ipython", "ipython.exe"])
         python_executable = os.path.join(directory, "ipython" if ipy else "python")
         path_separator = ":"
+        if os.name == "nt":
+            python_executable += ".exe"  # ;-)
+            path_separator = ";"
         if ipy:
             python_cmdline = [python_executable, "-i"]
         else:
             python_cmdline = [python_executable, "-i", "-u"]
-        if os.name == "nt":
-            python_executable += ".exe"  # ;-)
-            path_separator = ";"
 
         self.window.run_command("repl_open",
             {
