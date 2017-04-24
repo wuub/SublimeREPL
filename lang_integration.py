@@ -93,7 +93,7 @@ class PythonVirtualenvRepl(sublime_plugin.WindowCommand):
             return
         (name, directory) = choices[index]
         activate_file = os.path.join(directory, "activate_this.py")
-        ipy = any(os.path.exists(python_executable[:-6]+ipy) for ipy in ["ipython", "ipython.exe"])
+        ipy = any(os.path.exists(os.path.join(directory, ipy)) for ipy in ["ipython", "ipython.exe"])
         python_executable = os.path.join(directory, "ipython" if ipy else "python")
         path_separator = ":"
         if os.name == "nt":
