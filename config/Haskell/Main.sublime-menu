@@ -3,7 +3,7 @@
     "children":
     [{
         "caption": "SublimeREPL",
-        "mnemonic": "r",
+        "mnemonic": "R",
         "id": "SublimeREPL",
         "children":
         [{
@@ -15,7 +15,7 @@
                 "command": "repl_open",
                 "caption": "Haskell",
                 "id": "repl_haskell",
-                "mnemonic": "h",
+                "mnemonic": "H",
                 "args": {
                     "type": "sublime_haskell",
                     "encoding": "utf8",
@@ -30,7 +30,7 @@
                 "command": "repl_open",
                 "caption": "Haskell - RUN Current file",
                 "id": "repl_haskell_run",
-                "mnemonic": "r",
+                "mnemonic": "R",
                 "args": {
                     "type": "sublime_haskell",
                     "encoding": "utf8",
