@@ -323,6 +323,13 @@ class ReplView(object):
         if self._filter_color_codes:
             unistr = re.sub(r'\033\[\d*(;\d*)?\w', '', unistr)
             unistr = re.sub(r'.\x08', '', unistr)
+                        
+        # when opening Shell REPL -> errors because the bash is not running in TTY
+        # and therefore no job control is available
+        #   bash: cannot set terminal process group (10552): Inappropriate ioctl for device
+        #   bash: no job control in this shell
+        # This will surpress these errors
+        unistr = re.sub(r'bash:(.*?)(device|shell)\n', '', unistr)
 
         # string is assumed to be already correctly encoded
         self._view.run_command("repl_insert_text", {"pos": self._output_end - self._prompt_size, "text": unistr})
