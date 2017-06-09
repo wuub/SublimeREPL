@@ -13,7 +13,7 @@
                  "id": "repl_shell",
                  "mnemonic": "S",
                  "args": {
-                    "type": "subprocess",
+                    "type": "sublime_shell",
                     "encoding": {"windows": "$win_cmd_encoding",
                                  "linux": "utf-8",
                                  "osx": "utf-8"},
