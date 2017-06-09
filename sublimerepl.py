@@ -610,6 +610,31 @@ class ReplOpenCommand(sublime_plugin.WindowCommand):
     def run(self, encoding, type, syntax=None, view_id=None, **kwds):
         manager.open(self.window, encoding, type, syntax, view_id, **kwds)
 
+    # The menu entry should only be enabled if the command is also available
+    # on the OS, otherwise the code will respond with errors later on
+    def is_enabled(self, **kwds):
+        # if only check if a command has been set
+        # otherwise the menu will always be enabled
+        if 'cmd' in kwds.keys():        
+            cmds = kwds['cmd']
+            cmd = ''
+
+            # different commmands for various platforms
+            if type(cmds) == dict:
+                if len(cmds.keys()) > 1:
+                    cmd = cmds[PLATFORM][0]
+                else:
+                    cmd = cmds[0]
+            elif type(cmds) == list:
+                cmd = cmds[0]
+
+            if cmd:
+                from shutil import which
+                if not which(cmd):
+                    return False
+
+        return True
+
 
 class ReplRestartCommand(sublime_plugin.TextCommand):
     def run(self, edit):
