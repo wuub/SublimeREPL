@@ -46,19 +46,39 @@
                         "caption": "SublimeREPL",
                         "children":
                         [
+                            // Settings - Default
                             {
-                                "command": "open_file", "args":
-                                {
+                                "caption": "Settings – Default",
+                                "command": "open_file",
+                                "args": {
                                     "file": "${packages}/SublimeREPL/SublimeREPL.sublime-settings"
-                                },
-                                "caption": "Settings – Default"
+                                }
                             },
+                            // Settings - User
                             {
-                                "command": "open_file", "args":
-                                {
+                                "caption": "Settings – User",
+                                "command": "open_file",
+                                "args": {
                                     "file": "${packages}/User/SublimeREPL.sublime-settings"
-                                },
-                                "caption": "Settings – User"
+                                }
+                            },
+                            { "caption": "-" },
+
+                            // Key Bindings - Default
+                            {
+                                "caption": "Key Bindings – Default",
+                                "command": "open_file",
+                                "args": {
+                                    "file": "${packages}/SublimeREPL/Default ($platform).sublime-keymap"
+                                }
+                            },
+                            // Key Bindings - User
+                            {
+                                "caption": "Key Bindings – User",
+                                "command": "open_file",
+                                "args": {
+                                    "file": "${packages}/User/Default ($platform).sublime-keymap"
+                                }
                             },
                             { "caption": "-" }
                         ]
