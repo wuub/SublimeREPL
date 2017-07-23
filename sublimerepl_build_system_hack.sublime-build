@@ -1,5 +1,6 @@
 {
 	"target": "sublimerepl_build_system_hack",
+	"selector": "source.nothing",
 	"cmd": {
 		"file_path": "${file_path}",
 		"file": "${file}",

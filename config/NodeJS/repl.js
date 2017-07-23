@@ -35,4 +35,8 @@
         rep.rli.completer(inData.line, send);
     });
 
+    rep.on('exit', function() {
+        process.exit();
+    });
+
 })();
