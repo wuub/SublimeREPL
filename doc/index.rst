@@ -160,7 +160,7 @@ Both stock Python and Execnet integrations support virtualenv. Various ways to w
 For virtualenv created environments to be discoverable by SublimeREPL they should be created or symlinked in one of the following:
 
 * ~/.virtualenvs default for `virtualenvwrapper`__
-* ~/.venvs default for `venv`__
+* ~/.venv default for `venv`__
 
 Alternatively, more paths can be added to "python_virtualenv_paths" in the SublimeREPL configuration file.
 
