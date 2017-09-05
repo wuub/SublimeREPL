@@ -27,7 +27,7 @@
                         "cwd": "$folder",
                         "cmd_postfix": "\n",
                         "extend_env": {"INSIDE_EMACS": "1"},
-                        "syntax": "Packages/sublime-scheme-syntax/Scheme.tmLanguage"
+                        "syntax": "Packages/Scheme/Scheme.tmLanguage"
                         }
                     },
                     {"command": "repl_open",
@@ -63,7 +63,7 @@
                         "cwd": "$folder",
                         "cmd_postfix": "\n",
                         "extend_env": {"INSIDE_EMACS": "1"},
-                        "syntax": "Packages/sublime-scheme-syntax/Scheme.tmLanguage"
+                        "syntax": "Packages/Scheme/Scheme.tmLanguage"
                         }
                     }
                 ]}
