@@ -13,6 +13,24 @@
 
                  "children":[
                     {"command": "repl_open",
+                     "caption": "CHICKEN Scheme",
+                     "id": "repl_chicken",
+                     "mnemonic": "C",
+                     "args": {
+                        "type": "subprocess",
+                        "encoding": "utf8",
+                        "external_id": "scheme",
+                        "cmd": {"linux": ["csi", "-:c"],
+                                "osx": ["csi", "-:c"],
+                                "windows": ["csi", "-:c"]},
+                        "soft_quit": "\n(quit)\n",
+                        "cwd": "$folder",
+                        "cmd_postfix": "\n",
+                        "extend_env": {},
+                        "syntax": "Packages/Text/Plain text.tmLanguage"
+                        }
+                    },
+                    {"command": "repl_open",
                      "caption": "Scheme",
                      "id": "repl_scheme",
                      "mnemonic": "S",
@@ -27,7 +45,7 @@
                         "cwd": "$folder",
                         "cmd_postfix": "\n",
                         "extend_env": {"INSIDE_EMACS": "1"},
-                        "syntax": "Packages/sublime-scheme-syntax/Scheme.tmLanguage"
+                        "syntax": "Packages/Scheme/Scheme.tmLanguage"
                         }
                     },
                     {"command": "repl_open",
@@ -63,7 +81,7 @@
                         "cwd": "$folder",
                         "cmd_postfix": "\n",
                         "extend_env": {"INSIDE_EMACS": "1"},
-                        "syntax": "Packages/sublime-scheme-syntax/Scheme.tmLanguage"
+                        "syntax": "Packages/Scheme/Scheme.tmLanguage"
                         }
                     }
                 ]}

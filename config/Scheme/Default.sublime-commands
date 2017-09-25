@@ -1,5 +1,13 @@
 [
     {
+        "caption": "SublimeREPL: CHICKEN Scheme",
+        "command": "run_existing_window_command", "args":
+        {
+            "id": "repl_chicken",
+            "file": "config/Scheme/Main.sublime-menu"
+        }
+    },
+    {
         "caption": "SublimeREPL: Scheme",
         "command": "run_existing_window_command", "args":
         {
