@@ -12,6 +12,24 @@
                  "id": "Clojure",
                  "children":[
                     {"command": "repl_open", 
+                     "caption": "Clj",
+                     "id": "repl_clj",
+                     "args": {
+                        "type": "subprocess",
+                        "encoding": "utf8",
+                        "cmd": {"windows": ["lein.bat", "repl"],
+                                "linux": ["lein", "repl"],
+                                "osx":  ["clj"]},
+                        "soft_quit": "\n(. System exit 0)\n",
+                        "cwd": {"windows":"c:/Clojure",
+                                "linux": "$file_path",
+                                "osx": "$folder"},
+                        "syntax": "Packages/Clojure/Clojure.tmLanguage",
+                        "external_id": "clojure",
+                        "extend_env": {"INSIDE_EMACS": "1"}
+                        }
+                    },
+                    {"command": "repl_open", 
                      "caption": "Clojure",
                      "id": "repl_clojure",
                      "args": {

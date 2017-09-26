@@ -1,5 +1,13 @@
 [
     {
+        "caption": "SublimeREPL: Clj",
+        "command": "run_existing_window_command", "args":
+        {
+            "id": "repl_clj",
+            "file": "config/Clojure/Main.sublime-menu"
+        }
+    },
+    {
         "caption": "SublimeREPL: Clojure",
         "command": "run_existing_window_command", "args":
         {
