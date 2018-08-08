@@ -307,6 +307,7 @@ class ReplView(object):
         """If projects were switched, a view could be a new instance"""
         if self._view is not view:
             self._view = view
+            self._window = self._view.window()
 
     def adjust_end(self):
         if self.repl.suppress_echo:
