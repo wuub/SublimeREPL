@@ -19,7 +19,7 @@
                         "encoding": "utf8",
                         "cmd": {"windows": ["lein.bat", "repl"],
                                 "linux": ["lein", "repl"],
-                                "osx":  ["lein", "repl"]},
+                                "osx":  ["lein", "trampoline", "run", "-m", "clojure.main"]},
                         "soft_quit": "\n(. System exit 0)\n",
                         "cwd": {"windows":"c:/Clojure",
                                 "linux": "$file_path",
