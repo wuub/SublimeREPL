@@ -327,6 +327,10 @@ GetExitCodeProcess = GetExitCodeProcessProto(
     GetExitCodeProcessFlags)
 GetExitCodeProcess.errcheck = ErrCheckBool
 
+GetLastErrorProto = WINFUNCTYPE(DWORD)
+GetLastError = GetLastErrorProto(
+    ("GetLastError", windll.kernel32))
+
 def CanCreateJobObject():
     currentProc = GetCurrentProcess()
     if IsProcessInJob(currentProc):

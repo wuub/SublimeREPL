@@ -225,7 +225,15 @@ class Popen(subprocess.Popen):
             super(Popen, self).kill()
             self.returncode = -9
 
-    def wait(self, timeout=None, group=True):
+    def poll(self):
+        if self.returncode is not None:
+            return self.returncode
+        if mswindows:
+            return self.wait(timeout=0, kill=False)
+        else:
+            return subprocess.Popen.poll(self)
+
+    def wait(self, timeout=None, group=True, kill=True):
         """Wait for the process to terminate. Returns returncode attribute.
         If timeout seconds are reached and the process has not terminated,
         it will be forcefully killed. If timeout is -1, wait will not
@@ -243,7 +251,13 @@ class Popen(subprocess.Popen):
         if mswindows:
             if timeout is None:
                 timeout = -1
-            rc = winprocess.WaitForSingleObject(self._handle, timeout)
+            if group and self._job:
+                rc = winprocess.WaitForSingleObject(self._job, timeout)
+            else:
+                rc = winprocess.WaitForSingleObject(self._handle, timeout)
+
+            if rc == winprocess.WAIT_TIMEOUT and not kill:
+                return None
 
             if rc != winprocess.WAIT_TIMEOUT:
                 def check():
@@ -304,7 +318,7 @@ class Popen(subprocess.Popen):
                 if group is True:
                     return group_wait(timeout)
                 else:
-                    if subprocess.poll() is not None:
+                    if subprocess.Popen.poll(self) is not None:
                         returncode = self.returncode
                 time.sleep(.5)
                 now = datetime.datetime.now()
