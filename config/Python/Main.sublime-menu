@@ -19,7 +19,7 @@
                      "args": {
                         "type": "subprocess",
                         "encoding": "utf8",
-                        "cmd": ["python", "-i", "-u"],
+                        "cmd": ["python3", "-i", "-u"],
                         "cwd": "$file_path",
                         "syntax": "Packages/Python/Python.tmLanguage",
                         "external_id": "python",
@@ -36,7 +36,7 @@
                      "args": {
                         "type": "subprocess",
                         "encoding": "utf8",
-                        "cmd": ["python", "-i", "-u", "-m", "pdb", "$file_basename"],
+                        "cmd": ["python3", "-i", "-u", "-m", "pdb", "$file_basename"],
                         "cwd": "$file_path",
                         "syntax": "Packages/Python/Python.tmLanguage",
                         "external_id": "python",
@@ -50,7 +50,7 @@
                      "args": {
                         "type": "subprocess",
                         "encoding": "utf8",
-                        "cmd": ["python", "-u", "$file_basename"],
+                        "cmd": ["python3", "-u", "$file_basename"],
                         "cwd": "$file_path",
                         "syntax": "Packages/Python/Python.tmLanguage",
                         "external_id": "python",
@@ -66,9 +66,9 @@
                         "encoding": "utf8",
                         "autocomplete_server": true,
                         "cmd": {
-                            "osx": ["python", "-u", "${packages}/SublimeREPL/config/Python/ipy_repl.py"],
-                            "linux": ["python", "-u", "${packages}/SublimeREPL/config/Python/ipy_repl.py"],
-                            "windows": ["python", "-u", "${packages}/SublimeREPL/config/Python/ipy_repl.py"]
+                            "osx": ["python3", "-u", "${packages}/SublimeREPL/config/Python/ipy_repl.py"],
+                            "linux": ["python3", "-u", "${packages}/SublimeREPL/config/Python/ipy_repl.py"],
+                            "windows": ["python3", "-u", "${packages}/SublimeREPL/config/Python/ipy_repl.py"]
                         },
                         "cwd": "$file_path",
                         "syntax": "Packages/Python/Python.tmLanguage",
