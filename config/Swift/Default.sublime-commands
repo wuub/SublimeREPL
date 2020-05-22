@@ -1,0 +1,10 @@
+[
+    {
+        "caption": "SublimeREPL: Swift",
+        "command": "run_existing_window_command",
+        "args": {
+            "id": "repl_swift",
+            "file": "config/Swift/Main.sublime-menu"
+        }
+    }
+]

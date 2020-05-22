@@ -1,0 +1,29 @@
+[
+    {
+        "id": "tools",
+        "children":
+        [{
+            "caption": "SublimeREPL",
+            "mnemonic": "r",
+            "id": "SublimeREPL",
+            "children":
+            [
+                {"command": "repl_open",
+                 "caption": "Swift",
+                 "id": "repl_swift",
+                 "args": {
+                    "type": "subprocess",
+                    "external_id": "swift",
+                    "encoding": "utf8",
+                    "cmd": {
+                        "osx": ["swift"]
+                    },
+                    "cwd": "$file_path",
+                    "additional_scopes": ["swift"],
+                    "syntax": "Packages/Swift/Syntaxes/Swift.tmLanguage"
+                    }
+                }
+            ]
+        }]
+    }
+]
