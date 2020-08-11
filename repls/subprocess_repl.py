@@ -143,7 +143,7 @@ class SubprocessRepl(Repl):
             try:
                 output = subprocess.check_output(getenv_command)
                 lines = output.decode("utf-8", errors="replace").splitlines()
-                env = dict(line.split('=', 1)  for line in lines)
+                env = dict(line.split('=', 1) for line in lines if '=' in line)
                 return env
             except:
                 import traceback
