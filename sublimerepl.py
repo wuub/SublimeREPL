@@ -464,7 +464,7 @@ class ReplManager(object):
         return rv
 
     def find_repl(self, external_id):
-        """Yields rvews matching external_id taken from source.[external_id] scope
+        """Yields reviews matching external_id taken from source.[external_id] scope
            Match is done on external_id value of repl and additional_scopes"""
         for rv in self.repl_views.values():
             if not (rv.repl and rv.repl.is_alive()):
