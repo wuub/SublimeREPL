@@ -45,25 +45,12 @@
                 "children":
                 [
                     {
-                        "caption": "SublimeREPL",
-                        "children":
-                        [
-                            {
-                                "command": "open_file", "args":
-                                {
-                                    "file": "${packages}/SublimeREPL/SublimeREPL.sublime-settings"
-                                },
-                                "caption": "Settings – Default"
-                            },
-                            {
-                                "command": "open_file", "args":
-                                {
-                                    "file": "${packages}/User/SublimeREPL.sublime-settings"
-                                },
-                                "caption": "Settings – User"
-                            },
-                            { "caption": "-" }
-                        ]
+                        "caption": "SublimeREPL Settings",
+
+                        "command": "edit_settings", "args":
+                        {
+                            "base_file": "${packages}/SublimeREPL/SublimeREPL.sublime-settings"
+                        },
                     }
                 ]
             }
